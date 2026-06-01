@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya - Deductive Reasoning (Ages 9-12)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
+  :root{--ink:#0f1117;--ink2:#4b5563;--muted:#9ca3af;--bg:#f9f8f4;--card:#fff;
+    --accent:#4f46e5;--accent2:#f59e0b;--green:#059669;--red:#dc2626;
+    --rule:rgba(0,0,0,.06);--sh:0 1px 12px rgba(0,0,0,.06);--r:18px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px;color:var(--ink);}
+  .shell{width:100%;max-width:620px;}
+  .top{text-align:center;margin-bottom:24px;}
+  .badge{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);display:inline-block;margin-bottom:12px;}
+  .top h1{font-family:'DM Serif Display',serif;font-size:clamp(24px,5vw,34px);
+    color:var(--ink);line-height:1.1;margin-bottom:6px;}
+  .top h1 em{font-style:italic;color:var(--accent);}
+  .top p{font-size:13px;color:var(--muted);font-weight:500;}
+  .stepper{display:flex;gap:5px;justify-content:center;margin-bottom:24px;}
+  .step-dot{width:5px;height:5px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .step-dot.active{background:var(--accent2);transform:scale(1.8);}
+  .step-dot.done{background:var(--accent);}
+  .nia{display:flex;gap:12px;align-items:center;background:var(--card);
+    border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px;
+    margin-bottom:20px;box-shadow:var(--sh);min-height:60px;}
+  .nia-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+    animation:bob 3s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .nia-text{font-size:14px;line-height:1.55;color:var(--ink2);flex:1;}
+  .nia-text strong{color:var(--accent);font-weight:700;}
+  .nia-text em{color:var(--accent2);font-style:normal;font-weight:700;}
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);
+    padding:22px;margin-bottom:16px;box-shadow:var(--sh);}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:14px;}
+  .rcc{display:flex;flex-direction:column;gap:0;border-radius:12px;overflow:hidden;
+    border:1.5px solid rgba(79,70,229,.25);margin:10px 0;}
+  .rcc-row{display:flex;align-items:center;gap:12px;padding:11px 14px;
+    border-bottom:1px solid rgba(79,70,229,.1);}
+  .rcc-row:last-child{border-bottom:none;}
+  .rcc-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+    width:90px;flex-shrink:0;}
+  .rcc-text{font-size:14px;color:var(--ink2);flex:1;line-height:1.5;}
+  .rcc-row.rule-row{background:rgba(79,70,229,.06);}
+  .rcc-row.case-row{background:rgba(79,70,229,.03);}
+  .rcc-row.conc-row{background:rgba(5,150,105,.08);}
+  .s-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;
+    font-size:13px;color:var(--ink2);line-height:1.6;}
+  .s-row:last-child{margin-bottom:0;}
+  .s-num{width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;
+    font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:1px;}
+  .slide-nav{display:flex;gap:6px;justify-content:center;margin-top:14px;}
+  .sdot{width:6px;height:6px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .sdot.on{background:var(--accent);transform:scale(1.4);}
+  .snav{display:flex;gap:8px;justify-content:center;margin-top:12px;}
+  .sbtn{padding:8px 20px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;
+    font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+  .sbtn.prev{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);}
+  .sbtn.prev:disabled{opacity:.3;cursor:not-allowed;}
+  .sbtn.nxt{background:var(--accent);color:#fff;}
+  .puz-q{font-family:'DM Serif Display',serif;font-size:clamp(16px,3.5vw,21px);
+    text-align:center;line-height:1.4;margin-bottom:16px;color:var(--ink);}
+  .prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .prog-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .prog-pips{display:flex;gap:5px;}
+  .prog-pip{width:8px;height:8px;border-radius:50%;background:var(--rule);border:1.5px solid #d1d5db;transition:all .3s;}
+  .prog-pip.dp{background:var(--accent);border-color:var(--accent);}
+  .prog-pip.cp{background:var(--accent2);border-color:var(--accent2);transform:scale(1.3);}
+  .res{text-align:center;margin-top:10px;font-size:14px;font-weight:700;min-height:20px;}
+  .res.ok{color:var(--green);}
+  .res.no{color:var(--red);}
+  .stars{display:flex;justify-content:center;gap:5px;margin-bottom:16px;}
+  .star{font-size:20px;opacity:.18;transition:all .3s;}
+  .star.on{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .nav{display:flex;gap:10px;margin-top:4px;}
+  .btn{min-height:50px;padding:0 22px;border-radius:14px;border:none;
+    font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;
+    cursor:pointer;transition:all .2s;}
+  .btn:active{transform:scale(.97);}
+  .btn-back{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);min-width:50px;}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-next{background:var(--accent);color:#fff;flex:1;box-shadow:0 4px 14px rgba(79,70,229,.2);}
+  .btn-next:hover{background:#4338ca;transform:translateY(-1px);}
+  .cc{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .cp{position:absolute;border-radius:2px;animation:cf 2s ease-in forwards;}
+  @keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="shell">
+  <div class="top">
+    <div class="badge">Ages 9 - 12</div>
+    <h1><em>Deductive</em> Reasoning — From General to Specific</h1>
+    <p>Using rules that always apply to reach conclusions that must be true</p>
+  </div>
+  <div class="stepper">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia">
+    <div class="nia-dot">&#127775;</div>
+    <div class="nia-text" id="nia">
+      A general rule applies to everything in a group. X is in that group. Therefore the rule <strong>must apply to X</strong> — no need to check.
+    </div>
+  </div>
+  <div id="main"></div>
+  <div class="nav">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>&#8592;</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let&apos;s go &#8594;</button>
+  </div>
+</div>
+<div class="cc" id="cc"></div>
+<script>
+var step=0,qIdx=0,qScore=0,puzzleLevel=0,puzzleScore=0,puzzleResults=[],levelAnswered=false,qHistory=[];
+
+var OPT_COLS=['#4f46e5','#0369a1','#059669','#b45309'];
+var OPT_LBLS=['A','B','C','D'];
+
+function renderOpts(opts,idPfx,clickFn,disMap){
+  var allShort=opts.every(function(o){return String(o).length<=6;});
+  var html='';
+  if(allShort){
+    html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">';
+    opts.forEach(function(o,i){
+      var dis=disMap?disMap[i]:'';
+      var bg='#ffffff',bc='#e5e7eb',tc='#0f1117';
+      if(dis==='correct'){bg='rgba(5,150,105,.12)';bc='#059669';tc='#059669';}
+      else if(dis==='wrong'){bg='rgba(220,38,38,.08)';bc='#dc2626';tc='#dc2626';}
+      html+='<button id="'+idPfx+i+'" data-val="'+o+'" '+(clickFn&&!dis?'onclick="'+clickFn+'('+i+')"':'')+
+        ' style="min-height:80px;border-radius:16px;border:2px solid '+bc+';background:'+bg+';'+
+        'cursor:'+(dis?'default':'pointer')+';display:flex;align-items:center;justify-content:center;'+
+        'font-family:DM Serif Display,serif;font-size:clamp(20px,4vw,28px);color:'+tc+';padding:12px;'+
+        'border-left:5px solid '+OPT_COLS[i%OPT_COLS.length]+';'+
+        'transition:all .25s cubic-bezier(.34,1.56,.64,1)">'+o+'</button>';
+    });
+    html+='</div>';
+  } else {
+    html='<div style="display:flex;flex-direction:column;gap:8px;margin:12px 0">';
+    opts.forEach(function(o,i){
+      var dis=disMap?disMap[i]:'';
+      var bg='#ffffff',bc='#e5e7eb',tc='#0f1117',lc=OPT_COLS[i%OPT_COLS.length];
+      if(dis==='correct'){bg='rgba(5,150,105,.12)';bc='#059669';tc='#059669';lc='#059669';}
+      else if(dis==='wrong'){bg='rgba(220,38,38,.08)';bc='#dc2626';tc='#dc2626';lc='#dc2626';}
+      html+='<button id="'+idPfx+i+'" data-val="'+o+'" '+(clickFn&&!dis?'onclick="'+clickFn+'('+i+')"':'')+
+        ' style="min-height:54px;border-radius:14px;border:1.5px solid '+bc+';background:'+bg+';'+
+        'cursor:'+(dis?'default':'pointer')+';display:flex;align-items:center;gap:14px;'+
+        'padding:12px 16px;width:100%;box-sizing:border-box;transition:all .2s">'+
+        '<div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;'+
+        'justify-content:center;font-size:13px;font-weight:700;color:#fff;background:'+lc+'">'+OPT_LBLS[i]+'</div>'+
+        '<div style="font-family:DM Sans,sans-serif;font-size:14px;font-weight:600;color:'+tc+';line-height:1.4;flex:1;text-align:left">'+o+'</div>'+
+        '</button>';
+    });
+    html+='</div>';
+  }
+  return html;
+}
+
+function markOpts(idPfx,chosen,correct){
+  [0,1,2,3].forEach(function(i){
+    var b=document.getElementById(idPfx+i);if(!b)return;
+    var bv=b.getAttribute('data-val');
+    var isAns=Array.isArray(correct)?correct.indexOf(bv)>=0:bv===correct;
+    b.onclick=null;b.style.cursor='default';
+    if(bv===chosen&&isAns){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';b.style.color='#059669';}
+    else if(bv===chosen&&!isAns){b.style.background='rgba(220,38,38,.08)';b.style.borderColor='#dc2626';b.style.color='#dc2626';}
+    else if(isAns){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';}
+  });
+}
+
+function rccHTML(rule,cas,conc){
+  return '<div class="rcc">'+
+    '<div class="rcc-row rule-row"><span class="rcc-label" style="color:#4f46e5">Rule</span><span class="rcc-text">'+rule+'</span></div>'+
+    '<div class="rcc-row case-row"><span class="rcc-label" style="color:#0369a1">Case</span><span class="rcc-text">'+cas+'</span></div>'+
+    '<div class="rcc-row conc-row"><span class="rcc-label" style="color:#059669">Conclusion</span><span class="rcc-text"><strong style="color:#059669">'+conc+'</strong></span></div>'+
+    '</div>';
+}
+
+var PUZZLES=[
+  {q:'All multiples of 6 are multiples of 3.\n42 is a multiple of 6.\nIs 42 a multiple of 3?',
+   opts:['Yes','No','Maybe','Cannot tell'],ans:'Yes',
+   explain:'The rule says all multiples of 6 are multiples of 3. 42 is a multiple of 6. Therefore 42 must be a multiple of 3. Check: 42 / 3 = 14. ✓'},
+  {q:'All rectangles have 4 right angles.\nShape P is a rectangle.\nHow many right angles does Shape P have?',
+   opts:['2','3','4','5'],ans:'4',
+   explain:'The rule applies directly: all rectangles have 4 right angles. Shape P is a rectangle. Therefore Shape P has 4 right angles.'},
+  {q:'Angles in any triangle sum to 180°.\nTwo angles are 75° and 65°.\nWhat is the third angle?',
+   opts:['30°','40°','45°','50°'],ans:'40°',
+   explain:'Rule: angles sum to 180°. 75 + 65 = 140. Third angle = 180 - 140 = 40°.'},
+  {q:'All factors of 36 are factors of 72.\n9 is a factor of 36.\nIs 9 a factor of 72?',
+   opts:['Yes','No','Maybe','Cannot tell'],ans:'Yes',
+   explain:'The rule says all factors of 36 are also factors of 72. 9 is a factor of 36. Therefore 9 must be a factor of 72. Check: 72 / 9 = 8. ✓'},
+];
+
+var QS=[
+  {q:'All even numbers are divisible by 2.\n156 is even.\nIs 156 divisible by 2?',
+   opts:['Yes','No','Only if > 100','Cannot tell'],ans:'Yes'},
+  {q:'All squares are rhombuses.\nShape Q is a square.\nIs Shape Q a rhombus?',
+   opts:['Yes','No','Maybe','Only sometimes'],ans:'Yes'},
+  {q:'Two angles of a triangle are 45° and 90°.\nWhat is the third angle?',
+   opts:['35°','40°','45°','55°'],ans:'45°'},
+  {q:'"All primes > 2 are odd. 17 is prime and > 2.\nTherefore 17 is odd."\nIs this deduction valid?',
+   opts:['Yes — valid','No — invalid','Only if 17 > 10','Cannot tell'],ans:'Yes — valid'},
+];
+
+var NIA=[
+  'A general rule applies to everything in a group. X is in that group. Therefore the rule <strong>must apply to X</strong>.',
+  'Rule \u2192 Case \u2192 Conclusion. Three parts. Each one follows from the last.',
+  'The rule runs <strong>one way only</strong>. Reversing it is a trap. And watch out for exceptions.',
+  'Deductive reasoning powers number rules and geometry. Apply it directly.',
+  'Four puzzles. Apply Rule \u2192 Case \u2192 Conclusion.',
+  'Four questions. Think carefully.',
+];
+var BTNS=['Applying rules','Invalid conclusions','Maths deductions','Practice','Quiz'];
+
+function burst(){
+  var c=document.getElementById('cc');c.innerHTML='';
+  var cols=['#4f46e5','#f59e0b','#059669','#dc2626','#0369a1','#7c3aed'];
+  for(var i=0;i<48;i++){
+    var p=document.createElement('div');p.className='cp';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[i%cols.length]+
+      ';width:'+(5+Math.random()*7)+'px;height:'+(5+Math.random()*7)+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+
+      ';animation-delay:'+(Math.random()*.5)+'s;animation-duration:'+(1.5+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){c.innerHTML='';},3000);
+}
+
+// ── STEP 0: Preface ───────────────────────────────────────
+function renderStep0(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">From general rule to specific conclusion</div>'+
+        '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:14px;padding:16px;margin-bottom:14px">'+
+          '<div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:10px">All multiples of 10 end in 0.</div>'+
+          '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">'+
+            ['20','50','100','370','4,730'].map(function(n){
+              return '<div style="padding:8px 14px;border-radius:10px;background:var(--accent);color:#fff;font-family:DM Serif Display,serif;font-size:18px">'+n+'</div>';
+            }).join('')+
+          '</div>'+
+          '<div style="font-size:13px;color:var(--ink2)">Every number here ends in 0. We do not need to check each one — the <strong>rule guarantees it</strong>.</div>'+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px;font-size:13px;color:var(--ink2);font-weight:500;text-align:center;line-height:1.8">'+
+          'Deductive reasoning: start with a <strong style="color:var(--accent)">general rule</strong>.<br>Apply it to a <strong style="color:#0369a1">specific case</strong>.<br>Reach a <strong style="color:var(--green)">certain conclusion</strong>.'+
+        '</div></div>',
+      nia:'When a rule applies to <strong>all</strong> members of a group, it applies to every single one — no exceptions, no checking needed.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Deductive vs Inductive reasoning</div>'+
+        '<div style="display:flex;flex-direction:column;gap:10px">'+
+          '<div style="background:rgba(5,150,105,.06);border:1.5px solid rgba(5,150,105,.2);border-radius:12px;padding:14px">'+
+            '<div style="font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">&#10003; Deductive — certain conclusion</div>'+
+            '<div style="font-size:13px;color:var(--ink2);line-height:1.7">Rule: all even numbers are divisible by 2.<br>Case: 48 is even.<br><strong style="color:var(--green)">Conclusion: 48 is divisible by 2. This must be true.</strong></div>'+
+          '</div>'+
+          '<div style="background:rgba(245,158,11,.06);border:1.5px solid rgba(245,158,11,.3);border-radius:12px;padding:14px">'+
+            '<div style="font-size:12px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">&#126; Inductive — probable but not certain</div>'+
+            '<div style="font-size:13px;color:var(--ink2);line-height:1.7">Observation: the first five numbers in this sequence are odd.<br><strong style="color:#92400e">Guess: the next one is probably odd too — but it might not be.</strong></div>'+
+          '</div>'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:10px;font-size:13px;color:var(--ink2)">'+
+            'Deduction gives <strong>certainty</strong>. Induction gives <strong>probability</strong>. Today we use deduction.'+
+          '</div>'+
+        '</div></div>',
+      nia:'Deduction starts with a rule and reaches a <strong>certain</strong> conclusion. Induction observes examples and makes a guess. Only deduction gives you certainty.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s0b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s0n()">'+(sl<S.length-1?'Next &#8594;':'Applying rules &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+  }
+  window.s0n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s0b=function(){if(sl>0){sl--;show();}};
+  show();
+}
+
+// ── STEP 1: Applying rules ────────────────────────────────
+function renderStep1(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Rule &rarr; Case &rarr; Conclusion</div>'+
+        rccHTML(
+          'All squares have 4 equal sides.',
+          'Shape X is a square.',
+          'Shape X has 4 equal sides.'
+        )+
+        '<div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 8px">Three more examples</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px">'+
+        [
+          {r:'All multiples of 5 end in 0 or 5.',c:'35 is a multiple of 5.',conc:'35 ends in 0 or 5.'},
+          {r:'The sum of angles in a triangle is 180\u00b0.',c:'Triangle ABC has angles 60\u00b0 and 80\u00b0.',conc:'The third angle is 40\u00b0.'},
+          {r:'All prime numbers have exactly 2 factors.',c:'7 is a prime number.',conc:'7 has exactly 2 factors: 1 and 7.'},
+        ].map(function(ex){
+          return '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--ink2)">'+
+            '<span style="color:var(--accent);font-weight:700">Rule:</span> '+ex.r+'<br>'+
+            '<span style="color:#0369a1;font-weight:700">Case:</span> '+ex.c+'<br>'+
+            '<span style="color:var(--green);font-weight:700">&#8756;</span> <strong style="color:var(--green)">'+ex.conc+'</strong>'+
+            '</div>';
+        }).join('')+
+        '</div></div>',
+      nia:'Three parts every time: <strong>Rule</strong>, <strong>Case</strong>, <strong>Conclusion</strong>. The conclusion follows with certainty from the rule and the case.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Chaining rules together</div>'+
+        '<div style="display:flex;flex-direction:column;gap:10px">'+
+          '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:14px">'+
+            '<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px">Chain 1 — factors</div>'+
+            '<div style="font-size:13px;color:var(--ink2);line-height:1.8">'+
+              'Rule 1: all factors of 12 are also factors of 24.<br>'+
+              'Rule 2: 4 is a factor of 12.<br>'+
+              '<strong style="color:var(--green)">&#8756; 4 is a factor of 24.</strong>'+
+            '</div>'+
+          '</div>'+
+          '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:14px">'+
+            '<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px">Chain 2 — divisibility</div>'+
+            '<div style="font-size:13px;color:var(--ink2);line-height:1.8">'+
+              'Rule: numbers divisible by 6 are divisible by both 2 and 3.<br>'+
+              'Case: 42 is divisible by 6.<br>'+
+              '<strong style="color:var(--green)">&#8756; 42 is divisible by 2. And 42 is divisible by 3.</strong>'+
+            '</div>'+
+          '</div>'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:10px;font-size:13px;color:var(--ink2)">'+
+            'Each conclusion can become the case for the next rule. The chain can go as long as needed.'+
+          '</div>'+
+        '</div></div>',
+      nia:'Rules can be chained. Each conclusion becomes the case for the next rule. This is how mathematicians build proofs — one certain step at a time.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s1b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s1n()">'+(sl<S.length-1?'Next &#8594;':'Invalid conclusions &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s1n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s1b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 2: Invalid conclusions ───────────────────────────
+function renderStep2(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">The reversal trap</div>'+
+        '<div style="background:rgba(5,150,105,.06);border:1.5px solid rgba(5,150,105,.2);border-radius:12px;padding:14px;margin-bottom:10px">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:6px">&#10003; Valid deduction</div>'+
+          '<div style="font-size:13px;color:var(--ink2);line-height:1.8">All dogs are animals. Rex is a dog. <strong style="color:var(--green)">&#8756; Rex is an animal.</strong></div>'+
+        '</div>'+
+        '<div style="background:rgba(220,38,38,.05);border:1.5px solid rgba(220,38,38,.2);border-radius:12px;padding:14px;margin-bottom:12px">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:6px">&#10005; Invalid reversal</div>'+
+          '<div style="font-size:13px;color:var(--ink2);line-height:1.8">All dogs are animals. Rex is an animal. <strong style="color:var(--red)">&#8756; Rex is a dog?</strong><br><span style="font-size:12px;color:var(--muted)">Rex might be a cat, a bird, or anything else.</span></div>'+
+        '</div>'+
+        '<div style="display:flex;justify-content:center;margin:10px 0">'+
+          '<svg viewBox="0 0 220 130" width="200" height="120" xmlns="http://www.w3.org/2000/svg">'+
+            '<ellipse cx="110" cy="70" rx="90" ry="50" fill="rgba(79,70,229,.08)" stroke="#4f46e5" stroke-width="2"/>'+
+            '<text x="110" y="30" text-anchor="middle" font-size="12" fill="#4f46e5" font-family="DM Sans,sans-serif" font-weight="700">Animals</text>'+
+            '<ellipse cx="90" cy="80" rx="40" ry="28" fill="rgba(5,150,105,.12)" stroke="#059669" stroke-width="1.5"/>'+
+            '<text x="90" y="84" text-anchor="middle" font-size="11" fill="#059669" font-family="DM Sans,sans-serif" font-weight="700">Dogs</text>'+
+            '<circle cx="160" cy="60" r="8" fill="var(--accent2)" stroke="#92400e" stroke-width="1.5"/>'+
+            '<text x="172" y="64" font-size="11" fill="#92400e" font-family="DM Sans,sans-serif" font-weight="700">Rex?</text>'+
+          '</svg>'+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:10px;font-size:13px;color:var(--ink2)">'+
+          'Rex is somewhere in Animals — but not necessarily in Dogs. The rule runs one way only.'+
+        '</div></div>',
+      nia:'The rule runs <strong>one way only</strong>. "All A are B" does not mean "All B are A". This reversal trap catches everyone — even adults.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">The exception trap and "some"</div>'+
+        '<div style="display:flex;flex-direction:column;gap:10px">'+
+          '<div style="background:rgba(220,38,38,.05);border:1.5px solid rgba(220,38,38,.2);border-radius:12px;padding:14px">'+
+            '<div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:6px">&#9888; Watch exceptions to "all" rules</div>'+
+            '<div style="font-size:13px;color:var(--ink2);line-height:1.8">'+
+              '"All prime numbers are odd." &mdash; Is 2 prime?<br>'+
+              'Yes. 2 is the <strong>one exception</strong> — the only even prime number.<br>'+
+              'The rule should be: <strong style="color:var(--accent)">"All prime numbers greater than 2 are odd."</strong>'+
+            '</div>'+
+          '</div>'+
+          '<div style="background:rgba(220,38,38,.05);border:1.5px solid rgba(220,38,38,.2);border-radius:12px;padding:14px">'+
+            '<div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:6px">&#9888; "Some" is not "all"</div>'+
+            '<div style="font-size:13px;color:var(--ink2);line-height:1.8">'+
+              '"Some quadrilaterals are squares." Shape Y is a quadrilateral.<br>'+
+              '<strong style="color:var(--red)">Is Shape Y a square? Not necessarily.</strong><br>'+
+              '<span style="font-size:12px;color:var(--muted)">It could be a rectangle, rhombus, trapezium, or any other quadrilateral.</span>'+
+            '</div>'+
+          '</div>'+
+          '<div style="background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.2);border-radius:10px;padding:10px;font-size:13px;color:var(--ink2)">'+
+            'Deduction only works when the rule says <strong>"all"</strong> — not "some", "most", or "usually".'+
+          '</div>'+
+        '</div></div>',
+      nia:'Check the rule carefully. <strong>"All"</strong> gives you certainty. <strong>"Some"</strong> does not. And watch for exceptions that the rule-maker forgot to mention.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s2b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s2n()">'+(sl<S.length-1?'Next &#8594;':'Maths deductions &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s2n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s2b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 3: Maths deductions ──────────────────────────────
+function renderStep3(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Number rules — three deductions</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px">'+
+        [
+          {r:'Any number ending in 0 is divisible by 10.',c:'4,730 ends in 0.',conc:'4,730 is divisible by 10.',col:'#4f46e5'},
+          {r:'The product of two even numbers is always even.',c:'8 and 14 are both even.',conc:'8 \u00d7 14 is even (= 112).',col:'#0369a1'},
+          {r:'The sum of two odd numbers is always even.',c:'17 and 23 are both odd.',conc:'17 + 23 is even (= 40).',col:'#059669'},
+        ].map(function(ex){
+          return '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px">'+
+            '<div style="font-size:12px;color:var(--ink2);line-height:1.8">'+
+              '<span style="color:'+ex.col+';font-weight:700">Rule:</span> '+ex.r+'<br>'+
+              '<span style="color:#6b7280;font-weight:600">Case:</span> '+ex.c+'<br>'+
+              '<span style="color:var(--green);font-weight:700">&#8756;</span> <strong style="color:var(--green)">'+ex.conc+'</strong>'+
+            '</div>'+
+            '</div>';
+        }).join('')+
+        '</div></div>',
+      nia:'Number rules give us deductions without any calculation. <strong>"The product of two even numbers is even"</strong> — we know the answer before multiplying.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Geometry rules — three deductions</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px">'+
+        [
+          {r:'Angles in a triangle sum to 180\u00b0.',c:'Two angles are 60\u00b0 and 80\u00b0.',conc:'Third angle = 180 - 60 - 80 = 40\u00b0.',col:'#4f46e5'},
+          {r:'A rectangle has two pairs of equal opposite sides.',c:'Shape Z is a rectangle.',conc:'Opposite sides of Shape Z are equal.',col:'#0369a1'},
+          {r:'An exterior angle of a triangle equals the sum of the two non-adjacent interior angles.',c:'Interior angles are 50\u00b0 and 70\u00b0.',conc:'The exterior angle = 50 + 70 = 120\u00b0.',col:'#059669'},
+        ].map(function(ex){
+          return '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px">'+
+            '<div style="font-size:12px;color:var(--ink2);line-height:1.8">'+
+              '<span style="color:'+ex.col+';font-weight:700">Rule:</span> '+ex.r+'<br>'+
+              '<span style="color:#6b7280;font-weight:600">Case:</span> '+ex.c+'<br>'+
+              '<span style="color:var(--green);font-weight:700">&#8756;</span> <strong style="color:var(--green)">'+ex.conc+'</strong>'+
+            '</div>'+
+            '</div>';
+        }).join('')+
+        '</div></div>',
+      nia:'Geometry is built on deduction. Every theorem you learn is a rule. Every problem you solve applies that rule to a specific case.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s3b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s3n()">'+(sl<S.length-1?'Next &#8594;':'Practice &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s3n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s3b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 4: Puzzles ───────────────────────────────────────
+function renderStep4(){puzzleLevel=0;puzzleScore=0;puzzleResults=[];levelAnswered=false;showPuzzle();}
+
+function showPuzzle(){
+  if(puzzleLevel>=PUZZLES.length){showPuzzleDone();return;}
+  var pz=PUZZLES[puzzleLevel];levelAnswered=false;
+  var pips='';for(var i=0;i<PUZZLES.length;i++)pips+='<div class="prog-pip'+(i<puzzleLevel?' dp':i===puzzleLevel?' cp':'')+'" ></div>';
+  var qDisplay=pz.q.replace(/\n/g,'<br>');
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="prog-row"><span class="prog-label">Puzzle '+(puzzleLevel+1)+' of '+PUZZLES.length+'</span><div class="prog-pips">'+pips+'</div></div>'+
+    '<div class="puz-q">'+qDisplay+'</div>'+
+    renderOpts(pz.opts,'popt','pickPuz',null)+
+    '<div class="res" id="pzRes"></div></div>';
+  document.getElementById('nia').innerHTML='Apply Rule \u2192 Case \u2192 Conclusion.';
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){
+    if(puzzleLevel>0){puzzleLevel--;if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}levelAnswered=false;showPuzzle();}
+    else{goStep(-1);}
+  };}
+}
+
+function pickPuz(idx){
+  if(levelAnswered)return;levelAnswered=true;
+  var pz=PUZZLES[puzzleLevel];
+  var chosen=document.getElementById('popt'+idx)?document.getElementById('popt'+idx).getAttribute('data-val'):'';
+  var ok=(chosen===pz.ans);
+  puzzleResults[puzzleLevel]=ok;
+  markOpts('popt',chosen,pz.ans);
+  var res=document.getElementById('pzRes');
+  puzzleLevel++;
+  var isLast=(puzzleLevel>=PUZZLES.length);
+  if(ok){
+    puzzleScore++;
+    if(res){res.textContent='Correct. '+pz.explain;res.className='res ok';}
+    document.getElementById('nia').innerHTML='Correct. '+pz.explain;
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showPuzzleDone():showPuzzle();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    if(res){res.textContent='Not quite. '+pz.explain;res.className='res no';}
+    document.getElementById('nia').innerHTML=pz.explain+' Take a moment to read the rule again.';
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showPuzzleDone():showPuzzle();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showPuzzleDone(){
+  var perfect=(puzzleScore>=PUZZLES.length);
+  if(perfect)burst();
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){
+    puzzleLevel=PUZZLES.length-1;
+    if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}
+    levelAnswered=false;showPuzzle();
+  };}
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div style="font-size:48px;margin-bottom:14px">'+(perfect?'&#127919;':'&#128077;')+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'All four puzzles correct!':'Practice complete \u2014 '+puzzleScore+' of '+PUZZLES.length+' correct.')+
+    '</div>'+
+    (perfect?'':'<p style="font-size:14px;color:var(--muted)">Tap &#8592; to retry any puzzle.</p>')+
+    '</div>';
+  document.getElementById('nia').innerHTML=perfect?'All four deductions correct. Ready for the quiz.':'Good effort. Use &#8592; to review before the quiz.';
+}
+
+// ── STEP 5: Quiz ──────────────────────────────────────────
+function renderStep5(){qIdx=0;qScore=0;qHistory=[];document.getElementById('nia').innerHTML=NIA[5];showQ();}
+
+function showQ(){
+  if(qIdx>=QS.length){showQEnd();return;}
+  var q=QS[qIdx];
+  var nia=document.getElementById('nia');if(nia)nia.innerHTML='Pick your answer.';
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  var qDisplay=q.q.replace(/\n/g,'<br>');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div class="puz-q">'+qDisplay+'</div>'+
+    renderOpts(q.opts,'qopt','pickQ',null)+
+    '<div class="res" id="qRes"></div></div>';
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){if(qIdx>0&&qHistory.length>0){showQPrev(qIdx-1);}else{goStep(-1);};};}
+}
+
+function showQPrev(idx){
+  if(idx<0||!qHistory[idx])return;
+  var q=QS[idx];var h=qHistory[idx];
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<h.score?' on':'')+'">&#11088;</div>';
+  var disMap={};
+  q.opts.forEach(function(o,i){
+    if(o===h.chosen&&h.wasCorrect)disMap[i]='correct';
+    else if(o===h.chosen&&!h.wasCorrect)disMap[i]='wrong';
+    else if(o===h.correct&&!h.wasCorrect)disMap[i]='correct';
+    else disMap[i]='';
+  });
+  var qDisplay=q.q.replace(/\n/g,'<br>');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:8px">Question '+(idx+1)+' \u2014 reviewed</div>'+
+    '<div class="puz-q">'+qDisplay+'</div>'+
+    renderOpts(q.opts,'qopt',null,disMap)+
+    '<div style="display:flex;gap:8px;justify-content:center;margin-top:14px">'+
+    '<button onclick="showQPrev('+(idx-1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);opacity:'+(idx===0?.3:1)+'" '+(idx===0?'disabled':'')+'>&#8592; Prev</button>'+
+    (idx<qIdx-1?'<button onclick="showQPrev('+(idx+1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted)">Next &#8594;</button>':
+     '<button onclick="showQ()" style="padding:8px 16px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:700;cursor:pointer">Continue quiz &#8594;</button>')+
+    '</div></div>';
+  document.getElementById('nia').innerHTML=(h.wasCorrect?'Correct! ':'Answer was <strong>'+h.correct+'</strong>. ')+'Reviewing question '+(idx+1)+'.';
+}
+
+function pickQ(idx){
+  var q=QS[qIdx];
+  [0,1,2,3].forEach(function(i){var b=document.getElementById('qopt'+i);if(b){b.onclick=null;b.style.cursor='default';}});
+  var chosen=document.getElementById('qopt'+idx)?document.getElementById('qopt'+idx).getAttribute('data-val'):'';
+  var ok=(chosen===q.ans);
+  qHistory[qIdx]={chosen:chosen,correct:q.ans,wasCorrect:ok,score:qScore+(ok?1:0)};
+  markOpts('qopt',chosen,q.ans);
+  var res=document.getElementById('qRes');
+  qIdx++;
+  var isLast=(qIdx>=QS.length);
+  if(ok){
+    qScore++;
+    if(res){res.textContent='Correct.';res.className='res ok';}
+    document.getElementById('nia').innerHTML='Correct.';
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showQEnd():showQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    if(res){res.textContent='Answer: '+q.ans;res.className='res no';}
+    document.getElementById('nia').innerHTML='Answer: <strong>'+q.ans+'</strong>. Take a moment to understand why.';
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showQEnd():showQ();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQEnd(){
+  var perfect=(qScore===QS.length);if(perfect)burst();
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div class="stars" style="margin-bottom:20px">'+stars+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'Perfect.':qScore>=3?'Almost perfect.':qScore>=2?'Good work.':'Keep going.')+
+    '</div>'+
+    '<div style="font-size:14px;color:var(--muted);margin-bottom:20px">'+qScore+' of '+QS.length+' correct</div>'+
+    '<button onclick="goStep(-5)" style="padding:10px 28px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)">Start again</button>'+
+    '</div>';
+  document.getElementById('nia').innerHTML=(perfect?'<strong>Perfect.</strong> ':'')+'Rule \u2192 Case \u2192 Conclusion. The rule runs one way only. "All" gives certainty. "Some" does not.';
+}
+
+// ── Summary ───────────────────────────────────────────────
+function renderSummary(){
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="panel-title">The deductive structure</div>'+
+    '<div class="rcc" style="margin-bottom:14px">'+
+      '<div class="rcc-row rule-row"><span class="rcc-label" style="color:#4f46e5">Rule</span><span class="rcc-text">A general statement that applies to all members of a group.</span></div>'+
+      '<div class="rcc-row case-row"><span class="rcc-label" style="color:#0369a1">Case</span><span class="rcc-text">A specific example that belongs to that group.</span></div>'+
+      '<div class="rcc-row conc-row"><span class="rcc-label" style="color:#059669">Conclusion</span><span class="rcc-text">The rule must apply to the specific case. Certain — no checking needed.</span></div>'+
+    '</div>'+
+    '<div class="panel-title">Two traps to avoid</div>'+
+    '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">'+
+      '<div style="background:rgba(220,38,38,.05);border:1px solid rgba(220,38,38,.15);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink2)">&#9888; <strong>Reversal trap:</strong> "All A are B" does not mean "All B are A".</div>'+
+      '<div style="background:rgba(220,38,38,.05);border:1px solid rgba(220,38,38,.15);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink2)">&#9888; <strong>Exception trap:</strong> "All" rules sometimes have exceptions — check carefully.</div>'+
+      '<div style="background:rgba(220,38,38,.05);border:1px solid rgba(220,38,38,.15);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink2)">&#9888; <strong>"Some" trap:</strong> "Some A are B" does not let you deduce anything about a specific A.</div>'+
+    '</div>'+
+    '<div style="padding-top:12px;border-top:1px solid var(--rule);font-size:14px;color:var(--ink2);text-align:center;font-weight:600">'+
+      '&#127881; <strong style="color:var(--accent)">Version 1 complete.</strong> All 36 animations built and approved.'+
+    '</div></div>';
+}
+
+var RS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4,renderStep5,renderSummary];
+
+function goStep(dir){
+  step=Math.max(0,Math.min(6,step+dir));
+  var dotStep=Math.min(step,4);
+  for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<dotStep?' done':i===dotStep?' active':'');}
+  document.getElementById('nia').innerHTML=NIA[Math.min(step,NIA.length-1)];
+  document.getElementById('btnBack').disabled=(step===0);
+  var bl=['Applying rules','Invalid conclusions','Maths deductions','Practice','Quiz','Summary','Start again'];
+  document.getElementById('btnNext').textContent=(bl[step]||'Next')+' \u2192';
+  if(step>=6){document.getElementById('btnNext').onclick=function(){goStep(-6);};}
+  else{document.getElementById('btnNext').onclick=function(){goStep(1);};}
+  if(step!==4&&step!==5){
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=(step===0);bb.onclick=function(){goStep(-1);};}
+  }
+  RS[Math.min(step,RS.length-1)]();
+}
+goStep(0);
+</script>
+</body>
+</html>

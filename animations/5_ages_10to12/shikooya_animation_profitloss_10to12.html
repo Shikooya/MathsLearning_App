@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya — Why Profit & Loss? (Ages 10–12)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap');
+  :root{--bg:#f0fdf4;--panel:#fff;--violet:#7c5cfc;--sky:#38bdf8;--em:#10b981;--rose:#f43f5e;--amber:#f59e0b;--txt:#1a1a2e;--muted:#6b7280;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+  .header{text-align:center;margin-bottom:16px;}
+  .header-tag{display:inline-block;background:rgba(16,185,129,.12);color:var(--em);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:6px;}
+  .header h1{font-family:'Baloo 2',cursive;font-size:clamp(18px,5vw,28px);color:var(--txt);}
+  .header h1 span{color:var(--em);}
+  .card{background:var(--panel);border-radius:28px;padding:24px;max-width:680px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,.08);}
+  .steps{display:flex;gap:8px;justify-content:center;margin-bottom:14px;}
+  .step-dot{width:10px;height:10px;border-radius:50%;background:#e5e7eb;transition:all .3s;}
+  .step-dot.active{background:var(--em);transform:scale(1.3);}
+  .step-dot.done{background:var(--violet);}
+  .nia-area{display:flex;align-items:flex-start;gap:11px;margin-bottom:16px;min-height:62px;}
+  .nia-avatar{width:44px;height:44px;background:linear-gradient(135deg,var(--em),var(--sky));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;box-shadow:0 4px 12px rgba(16,185,129,.3);animation:nb 2s ease-in-out infinite;}
+  @keyframes nb{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+  .nia-bubble{background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(56,189,248,.06));border:1.5px solid rgba(16,185,129,.2);border-radius:16px 16px 16px 4px;padding:12px 15px;font-size:clamp(12px,2.5vw,14px);font-weight:700;color:var(--txt);line-height:1.6;flex:1;}
+  /* Canvas */
+  .canvas-wrap{display:flex;justify-content:center;margin-bottom:16px;}
+  canvas{border-radius:12px;max-width:100%;}
+  /* Price slider */
+  .slider-section{margin-bottom:16px;}
+  .slider-label{font-size:13px;font-weight:800;color:var(--txt);margin-bottom:8px;text-align:center;}
+  .slider-row{display:flex;align-items:center;gap:12px;}
+  .slider-tag{font-size:11px;font-weight:800;color:var(--muted);white-space:nowrap;}
+  input[type=range]{flex:1;-webkit-appearance:none;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--rose),var(--amber),var(--em));outline:none;cursor:pointer;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--violet);border:3px solid #fff;box-shadow:0 2px 8px rgba(124,92,252,.4);cursor:pointer;}
+  .price-display{font-family:'Baloo 2',cursive;font-size:28px;font-weight:800;text-align:center;margin-bottom:4px;}
+  /* Stats row */
+  .stats-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
+  .stat-box{flex:1;min-width:110px;max-width:160px;border-radius:14px;padding:12px;text-align:center;transition:all .3s;}
+  .stat-cost{background:rgba(245,158,11,.1);border:2px solid rgba(245,158,11,.25);}
+  .stat-sell{background:rgba(124,92,252,.08);border:2px solid rgba(124,92,252,.2);}
+  .stat-profit{background:rgba(16,185,129,.1);border:2px solid rgba(16,185,129,.25);}
+  .stat-profit.loss{background:rgba(244,63,94,.08);border-color:rgba(244,63,94,.25);}
+  .sicon{font-size:18px;margin-bottom:2px;}
+  .slbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:2px;}
+  .sval{font-family:'Baloo 2',cursive;font-size:22px;font-weight:800;line-height:1;transition:color .3s;}
+  .stat-cost .sval{color:#d97706;}
+  .stat-sell .sval{color:var(--violet);}
+  .stat-profit .sval{color:var(--em);}
+  .stat-profit.loss .sval{color:var(--rose);}
+  /* Profit bar */
+  .profit-bar-wrap{margin-bottom:16px;}
+  .pb-label{font-size:11px;font-weight:800;text-align:center;color:var(--muted);margin-bottom:6px;}
+  .pb-track{height:28px;background:#f3f4f6;border-radius:14px;position:relative;overflow:hidden;}
+  .pb-centre{position:absolute;top:0;left:50%;width:2px;height:100%;background:#d1d5db;}
+  .pb-fill{position:absolute;top:0;height:100%;border-radius:14px;transition:all .4s cubic-bezier(.34,1.2,.64,1);}
+  .pb-text{position:absolute;top:50%;transform:translateY(-50%);font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;color:#fff;white-space:nowrap;text-shadow:0 1px 3px rgba(0,0,0,.2);}
+  /* Customers */
+  .customers-row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;min-height:40px;margin-bottom:12px;}
+  .customer{font-size:24px;transition:all .3s;filter:grayscale(0);}
+  .customer.gone{opacity:.2;filter:grayscale(1);transform:scale(.8);}
+  /* Formula */
+  .formula{background:#f9fafb;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:700;color:var(--txt);text-align:center;margin-bottom:12px;}
+  .formula span{color:var(--violet);}
+  /* Insight */
+  .insight{background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(56,189,248,.06));border:1.5px solid rgba(16,185,129,.25);border-radius:14px;padding:12px 16px;font-size:13px;font-weight:700;color:var(--txt);line-height:1.7;opacity:0;transform:translateY(8px);transition:all .5s;text-align:center;}
+  .insight.show{opacity:1;transform:translateY(0);}
+  .insight strong{color:var(--em);}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="header">
+  <div class="header-tag">Shikooya · Ages 10–12 · Concept Animation</div>
+  <h1>What is <span>profit & loss</span>?</h1>
+</div>
+<div class="card">
+  <div class="steps">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+  </div>
+  <div class="nia-area">
+    <div class="nia-avatar">🦋</div>
+    <div class="nia-bubble" id="nia">You run a fruit stall 🍎 You bought apples for <strong>£3 each</strong>. Now drag the slider to set your selling price. Watch what happens to your profit — and your customers!</div>
+  </div>
+
+  <!-- Stall canvas -->
+  <div class="canvas-wrap">
+    <canvas id="c" width="580" height="200"></canvas>
+  </div>
+
+  <!-- Price slider -->
+  <div class="slider-section">
+    <div class="price-display" id="priceDisplay">Selling price: <span id="priceVal" style="color:var(--violet)">£3.00</span></div>
+    <div class="slider-row">
+      <span class="slider-tag">£0</span>
+      <input type="range" id="priceSlider" min="0" max="10" step="0.5" value="3" oninput="updatePrice()">
+      <span class="slider-tag">£10</span>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-box stat-cost">
+      <div class="sicon">🛒</div>
+      <div class="slbl">Cost price</div>
+      <div class="sval">£3.00</div>
+    </div>
+    <div class="stat-box stat-sell">
+      <div class="sicon">🏷️</div>
+      <div class="slbl">Selling price</div>
+      <div class="sval" id="statSell">£3.00</div>
+    </div>
+    <div class="stat-box stat-profit" id="statProfitBox">
+      <div class="sicon" id="profitIcon">➖</div>
+      <div class="slbl" id="profitLabel">Profit / Loss</div>
+      <div class="sval" id="statProfit">£0.00</div>
+    </div>
+  </div>
+
+  <!-- Profit bar -->
+  <div class="profit-bar-wrap">
+    <div class="pb-label">Profit ← Break even → Loss</div>
+    <div class="pb-track">
+      <div class="pb-centre"></div>
+      <div class="pb-fill" id="pbFill"></div>
+      <div class="pb-text" id="pbText"></div>
+    </div>
+  </div>
+
+  <!-- Formula -->
+  <div class="formula">
+    Profit = Selling Price − Cost Price &nbsp;|&nbsp;
+    <span>£<span id="fSell">3.00</span> − £3.00 = <span id="fResult">£0.00</span></span>
+  </div>
+
+  <!-- Customers -->
+  <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:center;margin-bottom:6px" id="custLabel">Your customers:</div>
+  <div class="customers-row" id="customers"></div>
+
+  <!-- Insight -->
+  <div class="insight" id="insight">
+    🌟 <strong>Profit is not just about charging more!</strong><br>
+    Too cheap = you lose money on every sale 📉<br>
+    Too expensive = nobody buys, no sales at all 🚫<br>
+    The sweet spot is where price covers your cost <strong>and</strong> attracts customers — that is smart business!
+  </div>
+</div>
+
+<script>
+const cv=document.getElementById('c');
+const ct=cv.getContext('2d');
+const COST=3.0;
+const MAX_CUSTOMERS=8;
+let sellPrice=3.0;
+let insightShown=false;
+let step=0;
+
+const CUSTOMER_EMOJIS=['👦','👧','🧑','👩','👨','🧒','👴','👵'];
+
+const MSGS=[
+  "You run a fruit stall 🍎 You bought apples for <strong>£3 each</strong>. Now drag the slider to set your selling price. Watch what happens to your profit — and your customers!",
+  "📈 You're making a <strong>profit</strong>! Every apple sold earns you money. But notice — as you charge more, some customers walk away…",
+  "📉 You're making a <strong>loss</strong>! You're selling cheaper than you bought. Every sale costs you money. This is not sustainable!",
+  "🎯 Notice: profit is not just about charging more. Pricing is a <strong>balance</strong> between earning enough and keeping customers happy!",
+];
+
+function nia(t){ document.getElementById('nia').innerHTML=t; }
+function dots(s){ for(let i=0;i<=3;i++){ const d=document.getElementById('d'+i); d.className='step-dot'+(i<s?' done':i===s?' active':''); }}
+
+function customersAtPrice(price){
+  // Demand curve: at £3 all 8 buy, at £6 half buy, at £9+ none buy
+  if(price<=COST) return MAX_CUSTOMERS; // loss but customers don't care
+  const excess=price-COST;
+  const gone=Math.round((excess/6)*MAX_CUSTOMERS);
+  return Math.max(0,MAX_CUSTOMERS-gone);
+}
+
+function updatePrice(){
+  sellPrice=parseFloat(document.getElementById('priceSlider').value);
+  const profit=sellPrice-COST;
+  const customers=customersAtPrice(sellPrice);
+  const isProfit=profit>0;
+  const isLoss=profit<0;
+  const isBreak=profit===0;
+
+  // Update displays
+  document.getElementById('priceVal').textContent='£'+sellPrice.toFixed(2);
+  document.getElementById('statSell').textContent='£'+sellPrice.toFixed(2);
+  document.getElementById('fSell').textContent=sellPrice.toFixed(2);
+
+  const profitStr=(isProfit?'+':'')+profit.toFixed(2);
+  document.getElementById('statProfit').textContent='£'+profitStr;
+  document.getElementById('fResult').textContent=(isProfit?'+':'')+'£'+Math.abs(profit).toFixed(2);
+  document.getElementById('fResult').style.color=isProfit?'var(--em)':isLoss?'var(--rose)':'var(--muted)';
+
+  // Profit box style
+  const box=document.getElementById('statProfitBox');
+  box.classList.toggle('loss',isLoss);
+  document.getElementById('profitIcon').textContent=isProfit?'📈':isLoss?'📉':'➖';
+  document.getElementById('profitLabel').textContent=isProfit?'Profit':isLoss?'Loss':'Break even';
+
+  // Profit bar
+  const pct=Math.min(Math.abs(profit)/7*50,50); // max 50% each side
+  const fill=document.getElementById('pbFill');
+  const txt=document.getElementById('pbText');
+  if(isBreak){
+    fill.style.width='0%'; fill.style.left='50%'; fill.style.background='#9ca3af';
+    txt.style.left='50%'; txt.style.transform='translate(-50%,-50%)';
+    txt.textContent='Break even';
+  } else if(isProfit){
+    fill.style.left='50%'; fill.style.width=pct+'%';
+    fill.style.background='linear-gradient(90deg,var(--em),#34d399)';
+    txt.style.left=(50+pct/2)+'%'; txt.style.transform='translate(-50%,-50%)';
+    txt.textContent='+£'+profit.toFixed(2)+' profit';
+  } else {
+    fill.style.left=(50-pct)+'%'; fill.style.width=pct+'%';
+    fill.style.background='linear-gradient(90deg,#f43f5e,#fb7185)';
+    txt.style.left=(50-pct/2)+'%'; txt.style.transform='translate(-50%,-50%)';
+    txt.textContent='−£'+Math.abs(profit).toFixed(2)+' loss';
+  }
+
+  // Customers
+  const custEl=document.getElementById('customers');
+  custEl.innerHTML='';
+  document.getElementById('custLabel').textContent=
+    customers===0?'No customers at this price! 😢':
+    customers===MAX_CUSTOMERS?'All customers happy! 🎉':
+    `${customers} of ${MAX_CUSTOMERS} customers buy:`;
+  for(let i=0;i<MAX_CUSTOMERS;i++){
+    const div=document.createElement('div');
+    div.className='customer'+(i>=customers?' gone':'');
+    div.textContent=CUSTOMER_EMOJIS[i];
+    custEl.appendChild(div);
+  }
+
+  // Nia messages by step
+  if(isProfit&&step===0){ step=1; dots(1); nia(MSGS[1]); }
+  if(isLoss&&step<=1){ step=2; dots(2); nia(MSGS[2]); }
+  if(customers===0&&!insightShown){ insightShown=true; step=3; dots(3); nia(MSGS[3]); document.getElementById('insight').classList.add('show'); }
+
+  drawStall();
+}
+
+// ── Draw market stall ───────────────────────────────────
+function drawStall(){
+  ct.clearRect(0,0,cv.width,cv.height);
+  const profit=sellPrice-COST;
+
+  // Sky
+  ct.fillStyle='#bfdbfe'; ct.fillRect(0,0,cv.width,80);
+  // Ground
+  ct.fillStyle='#d4b483'; ct.fillRect(0,80,cv.width,cv.height);
+  // Ground highlight
+  ct.fillStyle='#c49a6c'; ct.fillRect(0,80,cv.width,8);
+
+  // Stall structure
+  // Back wall
+  ct.fillStyle='#78350f';
+  ct.fillRect(60,40,460,120);
+  // Roof
+  const roofCol=profit>0?'#15803d':profit<0?'#b91c1c':'#6b7280';
+  ct.fillStyle=roofCol;
+  ct.beginPath();
+  ct.moveTo(40,40); ct.lineTo(540,40); ct.lineTo(520,18); ct.lineTo(60,18); ct.closePath();
+  ct.fill();
+  // Roof stripe
+  ct.fillStyle='rgba(255,255,255,.2)';
+  for(let x=60;x<520;x+=30){
+    ct.fillRect(x,18,15,22);
+  }
+  // Counter
+  ct.fillStyle='#92400e'; ct.fillRect(60,120,460,20);
+  ct.fillStyle='#a16207'; ct.fillRect(60,118,460,5);
+  // Legs
+  ct.fillStyle='#78350f';
+  ct.fillRect(70,140,12,50); ct.fillRect(498,140,12,50);
+
+  // Apples on counter
+  const appleX=[100,150,200,250,300,350,400,450,500];
+  appleX.forEach((x,i)=>{
+    if(i>=6) return;
+    // Apple body
+    ct.beginPath(); ct.arc(x,112,12,0,Math.PI*2);
+    ct.fillStyle='#ef4444'; ct.fill();
+    ct.strokeStyle='#b91c1c'; ct.lineWidth=1.5; ct.stroke();
+    // Apple shine
+    ct.beginPath(); ct.arc(x-3,107,4,0,Math.PI*2);
+    ct.fillStyle='rgba(255,255,255,.4)'; ct.fill();
+    // Stem
+    ct.strokeStyle='#78350f'; ct.lineWidth=2;
+    ct.beginPath(); ct.moveTo(x,100); ct.lineTo(x+3,95); ct.stroke();
+    // Leaf
+    ct.fillStyle='#16a34a';
+    ct.beginPath(); ct.ellipse(x+6,94,5,3,0.5,0,Math.PI*2); ct.fill();
+  });
+
+  // Price tag on stall
+  ct.fillStyle='#fffbeb';
+  ct.beginPath(); ct.roundRect(230,55,120,40,8); ct.fill();
+  ct.strokeStyle='#d97706'; ct.lineWidth=2; ct.stroke();
+  ct.fillStyle='#92400e'; ct.font='bold 11px Nunito,sans-serif';
+  ct.textAlign='center'; ct.textBaseline='middle';
+  ct.fillText('Selling price',290,66);
+  ct.fillStyle=profit>0?'#15803d':profit<0?'#b91c1c':'#374151';
+  ct.font='bold 16px Baloo 2,cursive';
+  ct.fillText('£'+sellPrice.toFixed(2),290,82);
+
+  // Cost label
+  ct.fillStyle='rgba(255,255,255,.85)';
+  ct.beginPath(); ct.roundRect(80,55,110,34,6); ct.fill();
+  ct.fillStyle='#92400e'; ct.font='bold 11px Nunito,sans-serif';
+  ct.textAlign='center'; ct.textBaseline='middle';
+  ct.fillText('Cost price: £3.00',135,72);
+
+  // Profit/loss banner
+  const bannerCol=profit>0?'rgba(21,128,61,.9)':profit<0?'rgba(185,28,28,.9)':'rgba(107,114,128,.9)';
+  ct.fillStyle=bannerCol;
+  ct.beginPath(); ct.roundRect(370,52,160,42,8); ct.fill();
+  ct.fillStyle='white'; ct.font='bold 11px Nunito,sans-serif';
+  ct.textAlign='center'; ct.textBaseline='middle';
+  ct.fillText(profit>0?'PROFIT':'profit<0'?'LOSS':'BREAK EVEN',450,63);
+  ct.font='bold 18px Baloo 2,cursive';
+  ctx_fillText_safe(ct, (profit>=0?'+':'')+'£'+profit.toFixed(2)+' per apple',450,80);
+
+  // Shopkeeper
+  ct.font='36px serif'; ct.textAlign='center'; ct.textBaseline='bottom';
+  ct.fillText('🧑‍🍳',295,200);
+}
+
+function ctx_fillText_safe(c,txt,x,y){
+  c.fillStyle='white'; c.font='bold 15px Baloo 2,cursive';
+  c.textAlign='center'; c.textBaseline='middle'; c.fillText(txt,x,y);
+}
+
+// Init
+updatePrice();
+</script>
+</body>
+</html>

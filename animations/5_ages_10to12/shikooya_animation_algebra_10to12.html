@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya - Algebra (Ages 10-12)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
+  :root{--ink:#0f1117;--ink2:#4b5563;--muted:#9ca3af;--bg:#f9f8f4;--card:#fff;
+    --accent:#4f46e5;--accent2:#f59e0b;--green:#059669;--red:#dc2626;
+    --rule:rgba(0,0,0,.06);--sh:0 1px 12px rgba(0,0,0,.06);--r:18px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px;color:var(--ink);}
+  .shell{width:100%;max-width:620px;}
+  .top{text-align:center;margin-bottom:24px;}
+  .badge{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);display:inline-block;margin-bottom:12px;}
+  .top h1{font-family:'DM Serif Display',serif;font-size:clamp(24px,5vw,34px);
+    color:var(--ink);line-height:1.1;margin-bottom:6px;}
+  .top h1 em{font-style:italic;color:var(--accent);}
+  .top p{font-size:13px;color:var(--muted);font-weight:500;}
+  .stepper{display:flex;gap:5px;justify-content:center;margin-bottom:24px;}
+  .step-dot{width:5px;height:5px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .step-dot.active{background:var(--accent2);transform:scale(1.8);}
+  .step-dot.done{background:var(--accent);}
+  .nia{display:flex;gap:12px;align-items:center;background:var(--card);
+    border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px;
+    margin-bottom:20px;box-shadow:var(--sh);min-height:60px;}
+  .nia-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+    animation:bob 3s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .nia-text{font-size:14px;line-height:1.55;color:var(--ink2);flex:1;}
+  .nia-text strong{color:var(--accent);font-weight:700;}
+  .nia-text em{color:var(--accent2);font-style:normal;font-weight:700;}
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);
+    padding:22px;margin-bottom:16px;box-shadow:var(--sh);}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:14px;}
+  /* Equation display */
+  .eq{font-family:'DM Serif Display',serif;font-size:clamp(26px,6vw,38px);
+    text-align:center;color:var(--ink);line-height:1.3;margin:12px 0;}
+  .eq .xv{color:var(--accent2);}
+  .eq .op{color:var(--accent);margin:0 4px;}
+  .eq .hl{color:var(--accent);background:rgba(79,70,229,.08);
+    border-radius:6px;padding:0 6px;}
+  .eq .moved{color:var(--red);animation:cross .5s ease both;}
+  @keyframes cross{from{transform:translateX(-20px);opacity:0}to{transform:none;opacity:1}}
+  /* Balance SVG */
+  .balance-wrap{display:flex;justify-content:center;margin:12px 0;}
+  /* Working steps */
+  .steps-box{background:var(--bg);border-radius:12px;padding:14px;margin-top:12px;}
+  .s-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;
+    font-size:13px;color:var(--ink2);line-height:1.6;}
+  .s-row:last-child{margin-bottom:0;}
+  .s-num{width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;
+    font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:1px;}
+  /* Clothes animation */
+  .clothes-row{display:flex;gap:8px;justify-content:center;align-items:center;
+    flex-wrap:wrap;margin:16px 0;}
+  .clothes-card{background:var(--bg);border:1.5px solid var(--rule);border-radius:12px;
+    padding:10px 14px;text-align:center;flex:1;min-width:100px;max-width:140px;}
+  .clothes-sym{font-family:'DM Serif Display',serif;font-size:28px;color:var(--accent);}
+  .clothes-arrow{font-size:22px;color:var(--muted);}
+  .clothes-sym2{font-family:'DM Serif Display',serif;font-size:28px;color:var(--red);}
+  /* Slide nav */
+  .slide-nav{display:flex;gap:6px;justify-content:center;margin-top:14px;}
+  .sdot{width:6px;height:6px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .sdot.on{background:var(--accent);transform:scale(1.4);}
+  .snav{display:flex;gap:8px;justify-content:center;margin-top:12px;}
+  .sbtn{padding:8px 20px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;
+    font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+  .sbtn.prev{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);}
+  .sbtn.prev:disabled{opacity:.3;cursor:not-allowed;}
+  .sbtn.nxt{background:var(--accent);color:#fff;}
+  /* Puzzles / Quiz */
+  .puz-q{font-family:'DM Serif Display',serif;font-size:clamp(18px,4vw,24px);
+    text-align:center;line-height:1.3;margin-bottom:16px;color:var(--ink);}
+  .opts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+  .opt{min-width:90px;min-height:52px;border-radius:12px;border:1.5px solid var(--rule);
+    background:var(--bg);font-family:'DM Serif Display',serif;font-size:clamp(15px,3.5vw,20px);
+    cursor:pointer;color:var(--ink);padding:8px 12px;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);}
+  .opt:hover{border-color:var(--accent);transform:translateY(-1px);}
+  .opt.correct{background:rgba(5,150,105,.1);border-color:var(--green);color:var(--green);animation:pop .4s ease;}
+  .opt.wrong{background:rgba(220,38,38,.06);border-color:var(--red);color:var(--red);animation:shake .3s ease;}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  .res{text-align:center;margin-top:10px;font-size:14px;font-weight:700;min-height:20px;}
+  .res.ok{color:var(--green);}
+  .res.no{color:var(--red);}
+  .prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .prog-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .prog-pips{display:flex;gap:5px;}
+  .prog-pip{width:8px;height:8px;border-radius:50%;background:var(--rule);border:1.5px solid #d1d5db;transition:all .3s;}
+  .prog-pip.dp{background:var(--accent);border-color:var(--accent);}
+  .prog-pip.cp{background:var(--accent2);border-color:var(--accent2);transform:scale(1.3);}
+  .stars{display:flex;justify-content:center;gap:5px;margin-bottom:16px;}
+  .star{font-size:20px;opacity:.18;transition:all .3s;}
+  .star.on{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+  /* Nav */
+  .nav{display:flex;gap:10px;margin-top:4px;}
+  .btn{min-height:50px;padding:0 22px;border-radius:14px;border:none;
+    font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;
+    cursor:pointer;transition:all .2s;}
+  .btn:active{transform:scale(.97);}
+  .btn-back{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);min-width:50px;}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-next{background:var(--accent);color:#fff;flex:1;box-shadow:0 4px 14px rgba(79,70,229,.2);}
+  .btn-next:hover{background:#4338ca;transform:translateY(-1px);}
+  .cc{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .cp{position:absolute;border-radius:2px;animation:cf 2s ease-in forwards;}
+  @keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+  @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="shell">
+  <div class="top">
+    <div class="badge">Ages 10 - 12</div>
+    <h1><em>Algebra</em> - Expand, Factorise, Solve</h1>
+    <p>Brackets, changing clothes, and the balance</p>
+  </div>
+  <div class="stepper">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia">
+    <div class="nia-dot">&#127775;</div>
+    <div class="nia-text" id="nia">You can already solve <strong>x + 3 = 7</strong>. Now we go further — brackets, factorising, and a clever shortcut called <em>changing clothes</em>.</div>
+  </div>
+  <div id="main"></div>
+  <div class="nav">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>&#8592;</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let&apos;s go &#8594;</button>
+  </div>
+</div>
+<div class="cc" id="cc"></div>
+<script>
+var step=0,qIdx=0,qScore=0,puzzleLevel=0,puzzleScore=0,puzzleResults=[],levelAnswered=false,qHistory=[];
+
+// ── Balance scale SVG ──────────────────────────────────────
+function scaleSVG(leftLabel,rightLabel,balanced){
+  var W=300,H=140,bc=balanced?'#4f46e5':'#dc2626';
+  var tilt=balanced?0:8;
+  var s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block;max-width:320px;margin:0 auto" xmlns="http://www.w3.org/2000/svg">';
+  s+='<rect x="133" y="72" width="7" height="48" rx="3" fill="#9ca3af"/>';
+  s+='<rect x="103" y="116" width="67" height="9" rx="4" fill="#d1d5db"/>';
+  s+='<circle cx="137" cy="72" r="6" fill="'+bc+'"/>';
+  s+='<g transform="rotate('+tilt+' 137 72)">';
+  s+='<rect x="38" y="68" width="198" height="7" rx="3" fill="'+bc+'"/>';
+  s+='<line x1="62" y1="73" x2="62" y2="97" stroke="#9ca3af" stroke-width="2"/>';
+  s+='<ellipse cx="62" cy="101" rx="28" ry="7" fill="#e5e7eb" stroke="#d1d5db" stroke-width="1.5"/>';
+  s+='<line x1="212" y1="73" x2="212" y2="97" stroke="#9ca3af" stroke-width="2"/>';
+  s+='<ellipse cx="212" cy="101" rx="28" ry="7" fill="#e5e7eb" stroke="#d1d5db" stroke-width="1.5"/>';
+  s+='<text x="62" y="89" text-anchor="middle" font-size="11" font-family="DM Serif Display,serif" fill="#374151">'+leftLabel+'</text>';
+  s+='<text x="212" y="89" text-anchor="middle" font-size="11" font-family="DM Serif Display,serif" fill="#374151">'+rightLabel+'</text>';
+  s+='</g>';
+  s+='<text x="137" y="16" text-anchor="middle" font-size="11" font-family="DM Sans,sans-serif" font-weight="700" fill="'+bc+'">'+(balanced?'Balanced':'Not balanced')+'</text>';
+  s+='</svg>';
+  return s;
+}
+
+// ── Puzzles ────────────────────────────────────────────────
+var PUZZLES=[
+  {q:'Expand:  4(x + 2)',
+   opts:['4x + 2','4x + 8','x + 8','4x + 6'],ans:'4x + 8',
+   explain:'4 x x = 4x, and 4 x 2 = 8. So 4(x + 2) = 4x + 8.'},
+  {q:'Expand:  3(2x - 5)',
+   opts:['6x - 5','6x - 15','3x - 15','6x + 15'],ans:'6x - 15',
+   explain:'3 x 2x = 6x, and 3 x 5 = 15. Sign stays negative: 6x - 15.'},
+  {q:'Solve:  2x + 4 = 12',
+   opts:['x = 3','x = 4','x = 8','x = 16'],ans:'x = 4',
+   explain:'+4 changes clothes to -4. 2x = 12 - 4 = 8. Then x = 8 / 2 = 4.'},
+  {q:'Solve:  3(x - 1) = 9',
+   opts:['x = 2','x = 3','x = 4','x = 10'],ans:'x = 4',
+   explain:'Expand: 3x - 3 = 9. The -3 changes clothes to +3. 3x = 9 + 3 = 12. x = 12 / 3 = 4.'},
+];
+
+// ── Quiz ───────────────────────────────────────────────────
+var QS=[
+  {q:'What does 3(x + 4) expand to?',
+   opts:['3x + 4','3x + 12','x + 12','3x + 7'],ans:'3x + 12'},
+  {q:'Write 6x + 9 in factorised form.',
+   opts:['2(3x + 9)','3(2x + 3)','6(x + 9)','3(3x + 3)'],ans:'3(2x + 3)'},
+  {q:'Solve 2x + 5 = 13  (use changing clothes)',
+   opts:['x = 3','x = 4','x = 9','x = 6'],ans:'x = 4'},
+  {q:'Solve 2(x + 3) = 16',
+   opts:['x = 5','x = 8','x = 6','x = 7'],ans:'x = 5'},
+];
+
+var NIA=[
+  'You can already solve <strong>x + 3 = 7</strong>. Now we go further - brackets, factorising, and a shortcut called <em>changing clothes</em>.',
+  'Expanding brackets and factorising are opposites. Master both.',
+  'Two methods for solving equations. Both give the same answer.',
+  'Apply what you have seen. One puzzle per skill.',
+  'Four questions. Think carefully.',
+];
+var BTNS=['Expanding and factorising','Solving equations','Practice','Quiz','Summary'];
+
+function dots(s){for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<s?' done':i===s?' active':'');}}
+
+function burst(){
+  var c=document.getElementById('cc');c.innerHTML='';
+  var cols=['#4f46e5','#f59e0b','#059669','#dc2626','#0369a1','#8b5cf6'];
+  for(var i=0;i<48;i++){
+    var p=document.createElement('div');p.className='cp';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[i%cols.length]+
+      ';width:'+(5+Math.random()*7)+'px;height:'+(5+Math.random()*7)+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+
+      ';animation-delay:'+(Math.random()*.5)+'s;animation-duration:'+(1.5+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){c.innerHTML='';},3000);
+}
+
+// ── STEP 0: Preface ───────────────────────────────────────
+function renderStep0(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">From simple to powerful</div>'+
+        '<div style="display:flex;flex-direction:column;gap:10px">'+
+          '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:16px">'+
+            '<div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Ages 8-10 (you already know this)</div>'+
+            '<div class="eq" style="font-size:clamp(22px,5vw,30px)"><span class="xv">x</span><span class="op">+</span>3<span class="op">=</span>7</div>'+
+          '</div>'+
+          '<div style="text-align:center;font-size:22px;color:var(--muted)">&#8595;</div>'+
+          '<div style="background:rgba(79,70,229,.1);border:1.5px solid var(--accent);border-radius:12px;padding:16px">'+
+            '<div style="font-size:11px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Ages 10-12 (today)</div>'+
+            '<div class="eq" style="font-size:clamp(22px,5vw,30px)">2<span class="hl">(</span><span class="xv">x</span><span class="op">+</span>3<span class="hl">)</span><span class="op">=</span>14</div>'+
+          '</div>'+
+        '</div></div>',
+      nia:'You already know how to solve simple equations. Today we add brackets, factorising, and a shortcut that makes solving much faster.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Three new skills</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px">'+
+        [
+          {n:'1',t:'Expanding brackets',d:'2(x + 3) = 2x + 6',col:'#4f46e5'},
+          {n:'2',t:'Factorising',d:'2x + 6 = 2(x + 3)',col:'#059669'},
+          {n:'3',t:'Changing clothes',d:'+3 crosses = sign and becomes -3',col:'#dc2626'},
+        ].map(function(r){
+          return '<div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg);border:1px solid var(--rule);border-radius:12px">'+
+            '<div style="width:28px;height:28px;border-radius:8px;background:'+r.col+';color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+r.n+'</div>'+
+            '<div><div style="font-size:13px;font-weight:700;color:var(--ink)">'+r.t+'</div>'+
+              '<div style="font-family:DM Serif Display,serif;font-size:16px;color:var(--ink2);margin-top:2px">'+r.d+'</div></div>'+
+            '</div>';
+        }).join('')+
+        '</div></div>',
+      nia:'Three skills — all connected. Expanding and factorising are opposites. Changing clothes is the solving shortcut.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s0b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s0n()">'+(sl<S.length-1?'Next &#8594;':'Start &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+  }
+  window.s0n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s0b=function(){if(sl>0){sl--;show();}};
+  show();
+}
+
+// ── STEP 1: Expanding and factorising ─────────────────────
+function renderStep1(){
+  var sl=0;
+  var S=[
+    // Slide 1: Why brackets
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">What does 2(x + 3) mean?</div>'+
+        '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:14px">'+
+          '<div style="text-align:center;font-size:44px">&#127820;&#127820;</div>'+
+          '<div style="align-self:center;font-family:DM Serif Display,serif;font-size:18px;color:var(--ink2)">Two bags,<br>each holding<br>x apples + 3 oranges</div>'+
+        '</div>'+
+        '<div class="eq">2<span class="hl">(</span><span class="xv">x</span><span class="op">+</span>3<span class="hl">)</span></div>'+
+        '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:12px;text-align:center;font-size:13px;color:var(--ink2);font-weight:600">'+
+          'The bracket means: multiply <strong>everything inside</strong> by the number outside.'+
+        '</div></div>',
+      nia:'<strong>2(x + 3)</strong> means two groups of (x + 3). Every term inside gets multiplied by 2.'
+    },
+    // Slide 2: Expansion animated
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Expanding - multiply each term</div>'+
+        '<div class="eq">2<span class="op">(</span><span class="xv">x</span><span class="op">+</span>3<span class="op">)</span></div>'+
+        '<div style="display:flex;gap:8px;justify-content:center;align-items:center;margin:14px 0;flex-wrap:wrap">'+
+          '<div style="text-align:center;background:rgba(79,70,229,.08);border-radius:10px;padding:10px 16px;animation:slideIn .4s ease">'+
+            '<div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px">2 x x</div>'+
+            '<div style="font-family:DM Serif Display,serif;font-size:26px;color:var(--accent)">2x</div>'+
+          '</div>'+
+          '<div style="font-family:DM Serif Display,serif;font-size:26px;color:var(--muted)">+</div>'+
+          '<div style="text-align:center;background:rgba(245,158,11,.1);border-radius:10px;padding:10px 16px;animation:slideIn .5s ease">'+
+            '<div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px">2 x 3</div>'+
+            '<div style="font-family:DM Serif Display,serif;font-size:26px;color:var(--accent2)">6</div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="eq"><span style="color:var(--green)">2x + 6</span></div>'+
+        '<div style="display:flex;flex-direction:column;gap:6px;margin-top:10px">'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--ink2)"><strong style="color:var(--ink)">3(x - 4):</strong> &nbsp; 3 x x = 3x, &nbsp; 3 x 4 = 12 &nbsp;&rarr;&nbsp; <strong style="color:var(--green)">3x - 12</strong></div>'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--ink2)"><strong style="color:var(--ink)">4(2x + 1):</strong> &nbsp; 4 x 2x = 8x, &nbsp; 4 x 1 = 4 &nbsp;&rarr;&nbsp; <strong style="color:var(--green)">8x + 4</strong></div>'+
+        '</div></div>',
+      nia:'Multiply the number outside by <strong>each term</strong> inside the bracket. Keep the signs.'
+    },
+    // Slide 3: Factorising - the reverse
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Factorising - the reverse of expanding</div>'+
+        '<div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">'+
+          '<div style="font-family:DM Serif Display,serif;font-size:clamp(18px,4vw,24px);color:var(--accent)">2x + 6</div>'+
+          '<div style="font-size:22px;color:var(--muted)">&#8596;</div>'+
+          '<div style="font-family:DM Serif Display,serif;font-size:clamp(18px,4vw,24px);color:var(--green)">2(x + 3)</div>'+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px;margin-bottom:12px">'+
+          '<div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:10px">To factorise 6x + 9:</div>'+
+          '<div class="s-row"><div class="s-num">1</div><div>What is the largest number that divides into <strong>both</strong> 6 and 9? &nbsp; Answer: <strong style="color:var(--accent)">3</strong></div></div>'+
+          '<div class="s-row"><div class="s-num">2</div><div>Write 3 outside the bracket: &nbsp; <strong>3( )</strong></div></div>'+
+          '<div class="s-row"><div class="s-num">3</div><div>Divide each term by 3: &nbsp; 6x/3 = 2x, &nbsp; 9/3 = 3</div></div>'+
+          '<div class="s-row"><div class="s-num">4</div><div>Result: &nbsp; <strong style="color:var(--green)">3(2x + 3)</strong> &nbsp; Check: 3 x 2x + 3 x 3 = 6x + 9 &#10003;</div></div>'+
+        '</div>'+
+        '<div style="background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.2);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--ink2)">'+
+          '<strong style="color:var(--green)">Try:</strong> &nbsp; 4x + 8 &nbsp;&rarr;&nbsp; factor is 4 &nbsp;&rarr;&nbsp; <strong style="color:var(--green)">4(x + 2)</strong>'+
+        '</div></div>',
+      nia:'Factorising is the <strong>reverse of expanding</strong>. Find the largest common factor, pull it outside the bracket.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s1b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s1n()">'+(sl<S.length-1?'Next &#8594;':'Solving equations &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    // Update outer back button
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=(sl===0&&step===1);bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s1n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s1b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 2: Solving equations ──────────────────────────────
+function renderStep2(){
+  var sl=0;
+  var S=[
+    // Slide 1: Balance method
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Method 1 - The balance</div>'+
+        '<div class="balance-wrap">'+scaleSVG('2x + 3','11',true)+'</div>'+
+        '<div class="eq" style="font-size:clamp(20px,4vw,28px)">2<span class="xv">x</span><span class="op">+</span>3<span class="op">=</span>11</div>'+
+        '<div class="steps-box">'+
+          '<div class="s-row"><div class="s-num">1</div><div>Subtract 3 from both sides &nbsp; <span style="color:var(--accent);font-family:DM Serif Display,serif">2x = 11 - 3 = 8</span></div></div>'+
+          '<div class="s-row"><div class="s-num">2</div><div>Divide both sides by 2 &nbsp; <span style="color:var(--green);font-family:DM Serif Display,serif">x = 4</span></div></div>'+
+        '</div>'+
+        '<div style="background:rgba(79,70,229,.05);border:1px solid rgba(79,70,229,.15);border-radius:10px;padding:10px;text-align:center;font-size:13px;color:var(--ink2);margin-top:10px">'+
+          'Whatever you do to one side, you must do to the other.'+
+        '</div></div>',
+      nia:'The balance shows <strong>why</strong> the rule works. Both sides must stay equal at every step.'
+    },
+    // Slide 2: Changing clothes shortcut
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Method 2 - Changing clothes</div>'+
+        '<div style="background:rgba(220,38,38,.05);border:1.5px solid rgba(220,38,38,.2);border-radius:12px;padding:14px;margin-bottom:14px">'+
+          '<div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:10px">When a term crosses the = sign, it changes clothes:</div>'+
+          '<div class="clothes-row">'+
+            '<div class="clothes-card"><div class="clothes-sym">+3</div><div class="clothes-arrow">&#8594;</div><div class="clothes-sym2">-3</div></div>'+
+            '<div class="clothes-card"><div class="clothes-sym">-5</div><div class="clothes-arrow">&#8594;</div><div class="clothes-sym2">+5</div></div>'+
+            '<div class="clothes-card"><div class="clothes-sym">x2</div><div class="clothes-arrow">&#8594;</div><div class="clothes-sym2">/2</div></div>'+
+            '<div class="clothes-card"><div class="clothes-sym">/3</div><div class="clothes-arrow">&#8594;</div><div class="clothes-sym2">x3</div></div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="eq" style="font-size:clamp(20px,4vw,28px)">2<span class="xv">x</span><span class="op">+</span>3<span class="op">=</span>11</div>'+
+        '<div class="steps-box">'+
+          '<div class="s-row"><div class="s-num">1</div><div><strong>+3</strong> crosses the = and becomes <strong style="color:var(--red)">-3</strong> &nbsp; &rarr; &nbsp; <span style="font-family:DM Serif Display,serif;color:var(--accent)">2x = 11 - 3 = 8</span></div></div>'+
+          '<div class="s-row"><div class="s-num">2</div><div><strong>x2</strong> crosses and becomes <strong style="color:var(--red)">/2</strong> &nbsp; &rarr; &nbsp; <span style="font-family:DM Serif Display,serif;color:var(--green)">x = 8 / 2 = 4</span></div></div>'+
+        '</div></div>',
+      nia:'<em>Changing clothes</em> is the same rule as balancing - just faster. The sign always swaps when a term crosses the equals sign.'
+    },
+    // Slide 3: Why it works - connection between both methods
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">They are the same rule</div>'+
+        '<div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">'+
+          '<div style="flex:1;min-width:130px;background:rgba(79,70,229,.05);border:1px solid rgba(79,70,229,.2);border-radius:12px;padding:12px;text-align:center">'+
+            '<div style="font-size:11px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Balance says</div>'+
+            '<div style="font-size:13px;color:var(--ink2);line-height:1.7">Subtract 3 from <em>both sides</em></div>'+
+          '</div>'+
+          '<div style="flex:1;min-width:130px;background:rgba(220,38,38,.05);border:1px solid rgba(220,38,38,.2);border-radius:12px;padding:12px;text-align:center">'+
+            '<div style="font-size:11px;color:var(--red);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Clothes says</div>'+
+            '<div style="font-size:13px;color:var(--ink2);line-height:1.7">Move +3 across, it becomes -3</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px;margin-bottom:10px">'+
+          '<div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:10px">Two more examples:</div>'+
+          '<div style="font-family:DM Serif Display,serif;font-size:18px;color:var(--ink2);margin-bottom:8px">3x - 1 = 11 &nbsp;&rarr;&nbsp; 3x = 11 + 1 = 12 &nbsp;&rarr;&nbsp; <strong style="color:var(--green)">x = 4</strong></div>'+
+          '<div style="font-family:DM Serif Display,serif;font-size:18px;color:var(--ink2)">5(x + 2) = 25 &nbsp;&rarr;&nbsp; x + 2 = 5 &nbsp;&rarr;&nbsp; <strong style="color:var(--green)">x = 3</strong></div>'+
+        '</div></div>',
+      nia:'Both methods give the same answer. Use whichever feels more natural. Most people switch to <em>changing clothes</em> once they understand the balance.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s2b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s2n()">'+(sl<S.length-1?'Next &#8594;':'Practice &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=(sl===0&&step===2);bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s2n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s2b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 3: Puzzles ───────────────────────────────────────
+function renderStep3(){puzzleLevel=0;puzzleScore=0;puzzleResults=[];levelAnswered=false;showPuzzle();}
+
+function showPuzzle(){
+  if(puzzleLevel>=PUZZLES.length){showPuzzleDone();return;}
+  var pz=PUZZLES[puzzleLevel];levelAnswered=false;
+  var pips='';for(var i=0;i<PUZZLES.length;i++)pips+='<div class="prog-pip'+(i<puzzleLevel?' dp':i===puzzleLevel?' cp':'')+'" ></div>';
+  var opts=pz.opts.map(function(o,oi){return '<button class="opt" id="pb'+oi+'" data-val="'+o+'" onclick="pickPuz('+oi+')">'+o+'</button>';}).join('');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="prog-row"><span class="prog-label">Puzzle '+(puzzleLevel+1)+' of '+PUZZLES.length+'</span><div class="prog-pips">'+pips+'</div></div>'+
+    '<div class="puz-q">'+pz.q+'</div><div class="opts">'+opts+'</div>'+
+    '<div class="res" id="pzRes"></div></div>';
+  document.getElementById('nia').innerHTML='Apply the method. Pick your answer.';
+  var bb=document.getElementById('btnBack');
+  if(bb){
+    bb.disabled=false;
+    bb.onclick=function(){
+      if(puzzleLevel>0){
+        puzzleLevel--;
+        if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}
+        levelAnswered=false;showPuzzle();
+      } else{goStep(-1);}
+    };
+  }
+}
+
+function pickPuz(idx){
+  if(levelAnswered)return;levelAnswered=true;
+  var pz=PUZZLES[puzzleLevel];
+  var btns=document.querySelectorAll('.opt');
+  var chosen=btns[idx]?btns[idx].getAttribute('data-val'):'';
+  var ok=(chosen===pz.ans);
+  puzzleResults[puzzleLevel]=ok;
+  var res=document.getElementById('pzRes');
+  if(ok){btns[idx].className='opt correct';puzzleScore++;if(res){res.textContent='Correct. '+pz.explain;res.className='res ok';}document.getElementById('nia').innerHTML='Correct. '+pz.explain;}
+  else{btns[idx].className='opt wrong';btns.forEach(function(b){if(b.getAttribute('data-val')===pz.ans)b.className='opt correct';});if(res){res.textContent='Not quite. '+pz.explain;res.className='res no';}document.getElementById('nia').innerHTML=pz.explain;}
+  puzzleLevel++;
+  var isLast=(puzzleLevel>=PUZZLES.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showPuzzleDone():showPuzzle();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showPuzzleDone():showPuzzle();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showPuzzleDone(){
+  var perfect=(puzzleScore>=PUZZLES.length);
+  if(perfect)burst();
+  var bb=document.getElementById('btnBack');
+  if(bb){
+    bb.disabled=false;
+    bb.onclick=function(){
+      puzzleLevel=PUZZLES.length-1;
+      if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}
+      levelAnswered=false;showPuzzle();
+    };
+  }
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div style="font-size:48px;margin-bottom:14px">'+(perfect?'&#127919;':'&#128077;')+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'All four puzzles correct!':'Practice complete - '+puzzleScore+' of '+PUZZLES.length+' correct.')+
+    '</div>'+
+    (perfect?'':'<p style="font-size:14px;color:var(--muted)">Tap &#8592; to retry any puzzle.</p>')+
+    '</div>';
+  document.getElementById('nia').innerHTML=perfect?'All four skills applied correctly. Ready for the quiz.':'Good effort. Use &#8592; to review before the quiz.';
+}
+
+// ── STEP 4: Quiz ──────────────────────────────────────────
+function renderStep4(){qIdx=0;qScore=0;qHistory=[];document.getElementById('nia').innerHTML=NIA[4];showQ();}
+
+function showQ(){
+  if(qIdx>=QS.length){showQEnd();return;}
+  var q=QS[qIdx];
+  var nia=document.getElementById('nia');if(nia)nia.innerHTML='Pick your answer.';
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  var opts=q.opts.map(function(o,oi){return '<button class="opt" id="qo'+oi+'" data-val="'+o+'" onclick="pickQ('+oi+')">'+o+'</button>';}).join('');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div class="puz-q">'+q.q+'</div>'+
+    '<div class="opts">'+opts+'</div>'+
+    '<div class="res" id="qRes"></div></div>';
+  var bb=document.getElementById('btnBack');
+  if(bb){
+    bb.disabled=false;
+    bb.onclick=function(){
+      if(qIdx>0&&qHistory.length>0){showQPrev(qIdx-1);}
+      else{goStep(-1);}
+    };
+  }
+}
+
+function showQPrev(idx){
+  if(idx<0||!qHistory[idx])return;
+  var q=QS[idx];var h=qHistory[idx];
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<h.score?' on':'')+'">&#11088;</div>';
+  var opts=q.opts.map(function(o,oi){
+    var cls='opt';
+    if(o===h.chosen&&h.wasCorrect)cls='opt correct';
+    else if(o===h.chosen&&!h.wasCorrect)cls='opt wrong';
+    else if(o===h.correct&&!h.wasCorrect)cls='opt correct';
+    return '<button class="'+cls+'" disabled data-val="'+o+'">'+o+'</button>';
+  }).join('');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:8px">Question '+(idx+1)+' - reviewed</div>'+
+    '<div class="puz-q">'+q.q+'</div>'+
+    '<div class="opts">'+opts+'</div>'+
+    '<div style="text-align:center;margin-top:12px;display:flex;gap:8px;justify-content:center">'+
+      '<button onclick="showQPrev('+(idx-1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);opacity:'+(idx===0?.3:1)+'" '+(idx===0?'disabled':'')+'>&#8592; Prev</button>'+
+      (idx<qIdx-1?'<button onclick="showQPrev('+(idx+1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted)">Next &#8594;</button>':
+       '<button onclick="showQ()" style="padding:8px 16px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:700;cursor:pointer">Continue quiz &#8594;</button>')+
+    '</div></div>';
+  document.getElementById('nia').innerHTML=(h.wasCorrect?'Correct! ':'Answer was <strong>'+h.correct+'</strong>. ')+'Reviewing question '+(idx+1)+'.';
+}
+
+function pickQ(idx){
+  var q=QS[qIdx];
+  var btns=document.querySelectorAll('.opt');btns.forEach(function(b){b.disabled=true;});
+  var chosen=btns[idx]?btns[idx].getAttribute('data-val'):'';
+  var ok=(chosen===q.ans);
+  qHistory[qIdx]={chosen:chosen,correct:q.ans,wasCorrect:ok,score:qScore+(ok?1:0)};
+  var res=document.getElementById('qRes');
+  if(ok){btns[idx].className='opt correct';qScore++;if(res){res.textContent='Correct.';res.className='res ok';}document.getElementById('nia').innerHTML='Correct.';}
+  else{btns[idx].className='opt wrong';btns.forEach(function(b){if(b.getAttribute('data-val')===q.ans)b.className='opt correct';});if(res){res.textContent='Answer: '+q.ans;res.className='res no';}document.getElementById('nia').innerHTML='Answer: <strong>'+q.ans+'</strong>.';}
+  qIdx++;
+  var isLast=(qIdx>=QS.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showQEnd():showQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showQEnd():showQ();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQEnd(){
+  var perfect=(qScore===QS.length);if(perfect)burst();
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div class="stars" style="margin-bottom:20px">'+stars+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'Perfect.':qScore>=3?'Almost perfect.':qScore>=2?'Good work.':'Keep going.')+
+    '</div>'+
+    '<div style="font-size:14px;color:var(--muted);margin-bottom:20px">'+qScore+' of '+QS.length+' correct</div>'+
+    '<button onclick="goStep(-4)" style="padding:10px 28px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)">Start again</button>'+
+    '</div>';
+  document.getElementById('nia').innerHTML=(perfect?'<strong>Perfect.</strong> ':'')+'Expand: multiply each term. Factorise: find common factor. Solve: change clothes when crossing the equals sign.';
+}
+
+// ── STEP 5 (index 4): Summary ─────────────────────────────
+function renderStep4summary(){
+  var rows=[
+    {t:'Expanding',col:'#4f46e5',eg:'2(x + 3) = 2x + 6',rule:'Multiply each term inside by the number outside.'},
+    {t:'Factorising',col:'#059669',eg:'6x + 9 = 3(2x + 3)',rule:'Find largest common factor. Pull it outside the bracket.'},
+    {t:'Solving - Balance',col:'#0369a1',eg:'2x + 3 = 11  x = 4',rule:'Do the same operation to both sides.'},
+    {t:'Solving - Clothes',col:'#dc2626',eg:'+3 crosses = becomes -3',rule:'Every term changes sign when it crosses the equals sign.'},
+  ].map(function(r){
+    return '<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--rule)">'+
+      '<div style="width:10px;height:10px;border-radius:50%;background:'+r.col+';flex-shrink:0;margin-top:4px"></div>'+
+      '<div><div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px">'+r.t+'</div>'+
+        '<div style="font-family:DM Serif Display,serif;font-size:16px;color:'+r.col+';margin-bottom:3px">'+r.eg+'</div>'+
+        '<div style="font-size:12px;color:var(--muted)">'+r.rule+'</div></div>'+
+      '</div>';
+  }).join('');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="panel-title">Four skills</div>'+rows+
+    '<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--rule);font-size:13px;color:var(--ink2);font-weight:500">'+
+      'Next: <strong style="color:var(--ink)">Geometry</strong> - area, volume and Pythagoras.'+
+    '</div></div>';
+}
+
+// step 4 in 0-indexed stepper = summary
+var RS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4,renderStep4summary];
+
+function goStep(dir){
+  step=Math.max(0,Math.min(5,step+dir));
+  // Map stepper dots: 0-4 visible, step 5 = dot 4
+  var dotStep=Math.min(step,4);
+  for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<dotStep?' done':i===dotStep?' active':'');}
+  document.getElementById('nia').innerHTML=NIA[Math.min(step,NIA.length-1)];
+  document.getElementById('btnBack').disabled=(step===0);
+  var bl=['Expanding','Solving equations','Practice','Quiz','Summary','&#8617; Start again'];
+  document.getElementById('btnNext').textContent=(bl[step]||'Next')+' &#8594;';
+  if(step>=5){document.getElementById('btnNext').onclick=function(){goStep(-5);};}
+  else{document.getElementById('btnNext').onclick=function(){goStep(1);};}
+  // Reset back button to default for non-puzzle/quiz steps
+  if(step!==3&&step!==4){
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=(step===0);bb.onclick=function(){goStep(-1);};}
+  }
+  RS[Math.min(step,RS.length-1)]();
+}
+goStep(0);
+</script>
+</body>
+</html>

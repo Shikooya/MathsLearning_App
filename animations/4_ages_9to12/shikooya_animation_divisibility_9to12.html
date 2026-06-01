@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya - Divisibility Rules (Ages 9-12)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
+  :root{--ink:#0f1117;--ink2:#4b5563;--muted:#9ca3af;--bg:#f9f8f4;--card:#fff;
+    --accent:#4f46e5;--accent2:#f59e0b;
+    --easy:#059669;--medium:#d97706;--tricky:#4f46e5;--combined:#0891b2;--special:#7c3aed;--none:#6b7280;
+    --green:#059669;--red:#dc2626;
+    --rule:rgba(0,0,0,.06);--sh:0 1px 12px rgba(0,0,0,.06);--r:18px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px;color:var(--ink);}
+  .shell{width:100%;max-width:620px;}
+  .top{text-align:center;margin-bottom:24px;}
+  .badge{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);display:inline-block;margin-bottom:12px;}
+  .top h1{font-family:'DM Serif Display',serif;font-size:clamp(24px,5vw,34px);
+    color:var(--ink);line-height:1.1;margin-bottom:6px;}
+  .top h1 em{font-style:italic;color:var(--accent);}
+  .top p{font-size:13px;color:var(--muted);font-weight:500;}
+  .stepper{display:flex;gap:5px;justify-content:center;margin-bottom:24px;}
+  .step-dot{width:5px;height:5px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .step-dot.active{background:var(--accent2);transform:scale(1.8);}
+  .step-dot.done{background:var(--accent);}
+  .nia{display:flex;gap:12px;align-items:center;background:var(--card);
+    border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px;
+    margin-bottom:20px;box-shadow:var(--sh);min-height:60px;}
+  .nia-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+    animation:bob 3s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .nia-text{font-size:14px;line-height:1.55;color:var(--ink2);flex:1;}
+  .nia-text strong{color:var(--accent);font-weight:700;}
+  .nia-text em{color:var(--accent2);font-style:normal;font-weight:700;}
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);
+    padding:22px;margin-bottom:16px;box-shadow:var(--sh);}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:14px;}
+  /* Rule cards grid */
+  .rules-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}@media(min-width:480px){.rules-grid{grid-template-columns:repeat(3,1fr);}}
+  .rule-card{border:1.5px solid var(--rule);border-radius:14px;padding:14px;
+    cursor:pointer;transition:all .2s;background:var(--bg);}
+  .rule-card:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.08);}
+  .rule-card.expanded{background:var(--card);box-shadow:var(--sh);}
+  .rule-num{font-family:'DM Serif Display',serif;font-size:32px;line-height:1;margin-bottom:4px;}
+  .rule-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+    padding:2px 8px;border-radius:20px;color:#fff;display:inline-block;margin-bottom:6px;}
+  .rule-headline{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+  .rule-body{font-size:12px;color:var(--ink2);line-height:1.6;display:none;}
+  .rule-card.expanded .rule-body{display:block;}
+  .rule-eg{font-family:'DM Serif Display',serif;font-size:15px;margin:6px 0 4px;}
+  .tick{color:var(--green);font-weight:700;}
+  .cross{color:var(--red);font-weight:700;}
+  /* Number tester */
+  .num-display{font-family:'DM Serif Display',serif;font-size:clamp(40px,9vw,64px);
+    text-align:center;color:var(--accent);margin:12px 0;line-height:1;}
+  .num-pills{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:14px;}
+  .num-pill{padding:7px 14px;border-radius:20px;border:1.5px solid var(--rule);
+    background:var(--bg);font-size:13px;font-weight:700;cursor:pointer;color:var(--ink);
+    transition:all .2s;}
+  .num-pill.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .results-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+  .result-cell{border-radius:10px;padding:10px 6px;text-align:center;border:1.5px solid var(--rule);
+    transition:all .4s;background:var(--bg);}
+  .result-cell.yes{background:rgba(5,150,105,.1);border-color:var(--green);}
+  .result-cell.no{background:rgba(220,38,38,.05);border-color:rgba(220,38,38,.2);}
+  .result-cell .div-by{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:2px;}
+  .result-cell .div-icon{font-size:18px;font-weight:700;}
+  .result-cell.yes .div-icon{color:var(--green);}
+  .result-cell.no .div-icon{color:var(--red);}
+  /* Puzzles / Quiz */
+  .puz-q{font-family:'DM Serif Display',serif;font-size:clamp(17px,4vw,22px);
+    text-align:center;line-height:1.4;margin-bottom:16px;color:var(--ink);}
+  .opts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+  .opt{min-width:80px;min-height:52px;border-radius:12px;border:1.5px solid var(--rule);
+    background:var(--bg);font-family:'DM Sans',sans-serif;font-size:clamp(13px,3vw,16px);
+    font-weight:600;cursor:pointer;color:var(--ink);padding:8px 12px;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);}
+  .opt:hover{border-color:var(--accent);transform:translateY(-1px);}
+  .opt.correct{background:rgba(5,150,105,.1);border-color:var(--green);color:var(--green);animation:pop .4s ease;}
+  .opt.wrong{background:rgba(220,38,38,.06);border-color:var(--red);color:var(--red);animation:shake .3s ease;}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  .res{text-align:center;margin-top:10px;font-size:14px;font-weight:700;min-height:20px;}
+  .res.ok{color:var(--green);}
+  .res.no{color:var(--red);}
+  .prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .prog-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .prog-pips{display:flex;gap:5px;}
+  .prog-pip{width:8px;height:8px;border-radius:50%;background:var(--rule);border:1.5px solid #d1d5db;transition:all .3s;}
+  .prog-pip.dp{background:var(--accent);border-color:var(--accent);}
+  .prog-pip.cp{background:var(--accent2);border-color:var(--accent2);transform:scale(1.3);}
+  .stars{display:flex;justify-content:center;gap:5px;margin-bottom:16px;}
+  .star{font-size:20px;opacity:.18;transition:all .3s;}
+  .star.on{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+  /* Slide nav */
+  .slide-nav{display:flex;gap:6px;justify-content:center;margin-top:14px;}
+  .sdot{width:6px;height:6px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .sdot.on{background:var(--accent);transform:scale(1.4);}
+  .snav{display:flex;gap:8px;justify-content:center;margin-top:12px;}
+  .sbtn{padding:8px 20px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;
+    font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+  .sbtn.prev{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);}
+  .sbtn.prev:disabled{opacity:.3;cursor:not-allowed;}
+  .sbtn.nxt{background:var(--accent);color:#fff;}
+  /* Nav */
+  .nav{display:flex;gap:10px;margin-top:4px;}
+  .btn{min-height:50px;padding:0 22px;border-radius:14px;border:none;
+    font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;
+    cursor:pointer;transition:all .2s;}
+  .btn:active{transform:scale(.97);}
+  .btn-back{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);min-width:50px;}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-next{background:var(--accent);color:#fff;flex:1;box-shadow:0 4px 14px rgba(79,70,229,.2);}
+  .btn-next:hover{background:#075985;transform:translateY(-1px);}
+  .cc{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .cp{position:absolute;border-radius:2px;animation:cf 2s ease-in forwards;}
+  @keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+  @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="shell">
+  <div class="top">
+    <div class="badge">Ages 9 - 12</div>
+    <h1>The <em>Shortcut</em> Test — Divisibility Rules</h1>
+    <p>Know in seconds whether a number divides exactly</p>
+  </div>
+  <div class="stepper">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia">
+    <div class="nia-dot">&#127775;</div>
+    <div class="nia-text" id="nia">Is <strong>324</strong> divisible by 3? You could do long division — or you could know the answer in <em>three seconds</em> using a simple rule.</div>
+  </div>
+  <div id="main"></div>
+  <div class="nav">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>&#8592;</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let&apos;s go &#8594;</button>
+  </div>
+</div>
+<div class="cc" id="cc"></div>
+<script>
+var step=0,qIdx=0,qScore=0,puzzleLevel=0,puzzleScore=0,puzzleResults=[],levelAnswered=false,qHistory=[];
+
+// ── Divisibility rules data ────────────────────────────────
+var RULES=[
+  {n:2, tag:'Easy', col:'var(--easy)',
+   headline:'Last digit is even',
+   body:'If the last digit is 0, 2, 4, 6 or 8 — the number is divisible by 2.',
+   eg:'348 — last digit is <strong>8</strong> (even)',tick:true,egNum:348,
+   check:function(n){return n%2===0;}},
+  {n:3, tag:'Medium', col:'var(--medium)',
+   headline:'Digit sum divisible by 3',
+   body:'Add all the digits together. If the sum is divisible by 3, so is the number.',
+   eg:'324 — 3+2+4 = <strong>9</strong>, and 9 ÷ 3 = 3',tick:true,egNum:324,
+   check:function(n){var s=String(n).split('').reduce(function(a,d){return a+parseInt(d);},0);return s%3===0;}},
+  {n:4, tag:'Trickier', col:'var(--tricky)',
+   headline:'Last two digits divisible by 4',
+   body:'Look at the last two digits only. If that number is divisible by 4, so is the whole number.',
+   eg:'324 — last two digits are <strong>24</strong>, and 24 ÷ 4 = 6',tick:true,egNum:324,
+   check:function(n){return n%4===0;}},
+  {n:5, tag:'Easy', col:'var(--easy)',
+   headline:'Last digit is 0 or 5',
+   body:'If the number ends in 0 or 5, it is divisible by 5. Simple as that.',
+   eg:'270 — last digit is <strong>0</strong>',tick:true,egNum:270,
+   check:function(n){return n%5===0;}},
+  {n:6, tag:'Combined', col:'var(--combined)',
+   headline:'Divisible by both 2 AND 3',
+   body:'A number is divisible by 6 only if it passes BOTH the rule for 2 (even) AND the rule for 3 (digit sum).',
+   eg:'132 — even &#10003; and 1+3+2=6, divisible by 3 &#10003;',tick:true,egNum:132,
+   check:function(n){return n%6===0;}},
+  {n:7, tag:'Step method', col:'var(--none)',
+   headline:'Double last digit, subtract from rest',
+   body:'1. Double the last digit. 2. Subtract from the remaining digits. 3. If divisible by 7, so is the original. Repeat if still large.',
+   eg:'203: double 3 = 6. 20 - 6 = <strong>14</strong>. 14 ÷ 7 = 2 &#10003;',tick:true,egNum:203,
+   check:function(n){return n%7===0;}},
+  {n:8, tag:'Trickier', col:'var(--tricky)',
+   headline:'Last three digits divisible by 8',
+   body:'Look at the last three digits. If that number is divisible by 8, so is the whole number.',
+   eg:'1,024 — last three digits are <strong>024</strong>, and 24 ÷ 8 = 3',tick:true,egNum:1024,
+   check:function(n){return n%8===0;}},
+  {n:9, tag:'Medium', col:'var(--medium)',
+   headline:'Digit sum divisible by 9',
+   body:'Add all the digits. If the sum is divisible by 9, so is the number. (Same idea as the rule for 3 — but stricter.)',
+   eg:'495 — 4+9+5 = <strong>18</strong>, and 18 ÷ 9 = 2',tick:true,egNum:495,
+   check:function(n){var s=String(n).split('').reduce(function(a,d){return a+parseInt(d);},0);return s%9===0;}},
+  {n:10, tag:'Easy', col:'var(--easy)',
+   headline:'Last digit is 0',
+   body:'If a number ends in 0, it is divisible by 10. Every multiple of 10 ends in zero.',
+   eg:'270 — last digit is <strong>0</strong>',tick:true,egNum:270,
+   check:function(n){return n%10===0;}},
+  {n:11, tag:'Special', col:'var(--special)',
+   headline:'Alternating digit sum = 0 or multiple of 11',
+   body:'Subtract and add digits alternately from left to right. If the result is 0 or a multiple of 11, the number is divisible by 11.',
+   eg:'1,001 — 1-0+0-1 = <strong>0</strong> &#10003;',tick:true,egNum:1001,
+   check:function(n){
+     var d=String(n).split('');
+     var s=d.reduce(function(a,x,i){return a+(i%2===0?parseInt(x):-parseInt(x));},0);
+     return s%11===0;
+   }},
+  {n:13, tag:'Step method', col:'#b45309',
+   headline:'Multiply last digit by 4, add to rest',
+   body:'1. Multiply the last digit by 4. 2. Add to the remaining digits. 3. If divisible by 13, so is the original. Repeat if still large.',
+   eg:'962: 2×4=8. 96+8=<strong>104</strong>. 4×4=16. 10+16=26. 26÷13=2 &#10003;',tick:true,egNum:962,
+   check:function(n){return n%13===0;}},
+];
+
+// ── Puzzles ────────────────────────────────────────────────
+var PUZZLES=[
+  {q:'The digits of 273 add up to 12.\nIs 273 divisible by 3?',
+   opts:['Yes','No','Cannot tell','Only if even'],ans:'Yes',
+   explain:'12 is divisible by 3 (12 = 3 x 4), so 273 is too. Check: 273 / 3 = 91.'},
+  {q:'480 ends in 0.\nWhich TWO numbers must it be divisible by?',
+   opts:['2 and 5','3 and 9','4 and 8','5 and 7'],ans:'2 and 5',
+   explain:'Ending in 0 means divisible by 10, which means divisible by both 2 (even) and 5 (ends in 0).'},
+  {q:'Is 324 divisible by 4?\nHint: look at the last two digits.',
+   opts:['Yes — 24 / 4 = 6','No — 32 is not divisible by 4','Yes — because it is even','No — the digit sum is 9'],ans:'Yes — 24 / 4 = 6',
+   explain:'For the rule of 4, only the last two digits matter. 24 / 4 = 6 exactly, so 324 is divisible by 4.'},
+  {q:'A number is divisible by both 2 and 3.\nWhat else must it be divisible by?',
+   opts:['5','6','9','12'],ans:'6',
+   explain:'The rule for 6 says: divisible by 2 AND by 3. If both conditions are met, it must be divisible by 6.'},
+];
+
+// ── Quiz ───────────────────────────────────────────────────
+var QS=[
+  {q:'A number ends in 5. It must be divisible by:',
+   opts:['2','3','5','9'],ans:'5'},
+  {q:'The digits of 891 add up to 18. What is 891 divisible by?',
+   opts:['2 and 5','3 and 9','4 and 8','6 and 11'],ans:'3 and 9'},
+  {q:'Is 312 divisible by 8?',
+   opts:['Yes — 312 / 8 = 39','No — 312 is not even','Yes — last three digits 312 / 8 = 39','No — digit sum is not 8'],ans:'Yes — last three digits 312 / 8 = 39'},
+  {q:'66 is divisible by 2 and 3. Therefore it is also divisible by:',
+   opts:['5','7','6','9'],ans:'6'},
+];
+
+var NIA=[
+  'Is <strong>324</strong> divisible by 3? You could do long division — or know in <em>three seconds</em> using a simple rule.',
+  'Tap any rule card to expand it. See the rule, see it applied, test it yourself.',
+  'Test a number — watch all the rules fire at once.',
+  'Apply the rules. Four puzzles.',
+  'Four questions. Think before picking.',
+];
+var BTNS=['The rules','Number tester','Practice','Quiz','Summary'];
+
+function dots(s){for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<s?' done':i===s?' active':'');}}
+
+function burst(){
+  var c=document.getElementById('cc');c.innerHTML='';
+  var cols=['#0369a1','#059669','#4f46e5','#d97706','#dc2626','#7c3aed'];
+  for(var i=0;i<48;i++){
+    var p=document.createElement('div');p.className='cp';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[i%cols.length]+
+      ';width:'+(5+Math.random()*7)+'px;height:'+(5+Math.random()*7)+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+
+      ';animation-delay:'+(Math.random()*.5)+'s;animation-duration:'+(1.5+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){c.innerHTML='';},3000);
+}
+
+// ── STEP 0: Preface ───────────────────────────────────────
+function renderStep0(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">The problem</div>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">'+
+          '<div style="flex:1;min-width:140px;background:rgba(220,38,38,.05);border:1.5px solid rgba(220,38,38,.2);border-radius:12px;padding:14px;text-align:center">'+
+            '<div style="font-size:11px;color:var(--red);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Long division</div>'+
+            '<div style="font-family:DM Serif Display,serif;font-size:22px;color:var(--ink);margin-bottom:6px">324 ÷ 3 = ?</div>'+
+            '<div style="font-size:12px;color:var(--muted)">Write it out, divide step by step...</div>'+
+          '</div>'+
+          '<div style="flex:1;min-width:140px;background:rgba(5,150,105,.06);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:14px;text-align:center">'+
+            '<div style="font-size:11px;color:var(--green);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Divisibility rule</div>'+
+            '<div style="font-family:DM Serif Display,serif;font-size:22px;color:var(--ink);margin-bottom:6px">3+2+4 = 9</div>'+
+            '<div style="font-size:12px;color:var(--green);font-weight:600">9 ÷ 3 = 3 ✓ Done in 3 seconds</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px;text-align:center;font-size:14px;color:var(--ink2);font-weight:600;line-height:1.7">'+
+          'Divisibility rules are <strong style="color:var(--accent)">shortcuts</strong>.<br>They tell you whether a number divides exactly — without dividing.'+
+        '</div></div>',
+      nia:'Long division works but takes time. Divisibility rules give you the answer in seconds — no calculation needed.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">What does divisible mean?</div>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">'+
+          '<div style="flex:1;min-width:130px;background:rgba(5,150,105,.06);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:14px;text-align:center">'+
+            '<div style="font-family:DM Serif Display,serif;font-size:28px;color:var(--ink);margin-bottom:6px">12 ÷ 4 = 3</div>'+
+            '<div style="font-size:13px;color:var(--green);font-weight:700">No remainder ✓</div>'+
+            '<div style="font-size:12px;color:var(--muted);margin-top:4px">12 IS divisible by 4</div>'+
+          '</div>'+
+          '<div style="flex:1;min-width:130px;background:rgba(220,38,38,.05);border:1.5px solid rgba(220,38,38,.2);border-radius:12px;padding:14px;text-align:center">'+
+            '<div style="font-family:DM Serif Display,serif;font-size:28px;color:var(--ink);margin-bottom:6px">13 ÷ 4 = 3 r1</div>'+
+            '<div style="font-size:13px;color:var(--red);font-weight:700">Remainder 1 ✗</div>'+
+            '<div style="font-size:12px;color:var(--muted);margin-top:4px">13 is NOT divisible by 4</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="display:flex;flex-direction:column;gap:6px">'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--ink2)">&#128994; <strong style="color:var(--easy)">Easy rules</strong> — just look at the last digit: 2, 5, 10</div>'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--ink2)">&#128993; <strong style="color:var(--medium)">Digit sum rules</strong> — add the digits: 3, 9</div>'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--ink2)">&#128997; <strong style="color:var(--tricky)">Trickier rules</strong> — last 2 or 3 digits: 4, 8</div>'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--ink2)">&#128998; <strong style="color:var(--combined)">Combined</strong> — pass two rules: 6</div>'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--ink2)">&#128996; <strong style="color:var(--special)">Special</strong> — alternating digits: 11</div>'+
+        '</div></div>',
+      nia:'A number is <strong>divisible</strong> by another when it divides exactly with no remainder. We have ten rules — grouped by how they work.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s0b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s0n()">'+(sl<S.length-1?'Next &#8594;':'See the rules &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+  }
+  window.s0n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s0b=function(){if(sl>0){sl--;show();}};
+  show();
+}
+
+// ── STEP 1: Rule cards ────────────────────────────────────
+var expandedRule=-1;
+function renderStep1(){
+  expandedRule=-1;
+  buildRuleCards();
+}
+
+function buildRuleCards(){
+  var cards=RULES.map(function(r,i){
+    var isExp=(i===expandedRule);
+    return '<div class="rule-card'+(isExp?' expanded':'')+'" onclick="toggleRule('+i+')" style="border-color:'+(isExp?r.col:'var(--rule)')+'">'+
+      '<div class="rule-num" style="color:'+r.col+'">'+r.n+'</div>'+
+      '<span class="rule-tag" style="background:'+r.col+'">'+r.tag+'</span>'+
+      '<div class="rule-headline">'+r.headline+'</div>'+
+      '<div class="rule-body">'+
+        '<div style="font-size:12px;color:var(--ink2);margin-bottom:8px;line-height:1.6">'+r.body+'</div>'+
+        '<div class="rule-eg" style="color:'+r.col+'">e.g. '+r.eg+' <span class="tick">&#10003;</span></div>'+
+      '</div>'+
+      '</div>';
+  }).join('');
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="panel-title">Tap any rule to expand it</div>'+
+    '<div class="rules-grid">'+cards+'</div>'+
+    '</div>';
+  if(expandedRule>=0){
+    var r=RULES[expandedRule];
+    document.getElementById('nia').innerHTML='<strong>Rule for '+r.n+':</strong> '+r.headline+'. '+r.body.replace(/<[^>]+>/g,'');
+  } else {
+    document.getElementById('nia').innerHTML='Ten rules — each one a shortcut. Tap to learn each one.';
+  }
+}
+
+function toggleRule(i){
+  expandedRule=(expandedRule===i?-1:i);
+  buildRuleCards();
+}
+
+// ── STEP 2: Number tester ─────────────────────────────────
+var testNum=324;
+function renderStep2(){
+  testNum=324;
+  buildTester();
+}
+
+function buildTester(){
+  var presets=[324,270,132,495,1001,962];
+  var pills=presets.map(function(n){
+    return '<button class="num-pill'+(n===testNum?' on':'')+'" onclick="testNumber('+n+')">'+n+'</button>';
+  }).join('');
+
+  var cells=RULES.map(function(r){
+    var passes=r.check(testNum);
+    return '<div class="result-cell'+(passes?' yes':' no')+'">'+
+      '<div class="div-by">÷ '+r.n+'</div>'+
+      '<div class="div-icon">'+(passes?'&#10003;':'&#10005;')+'</div>'+
+      '</div>';
+  }).join('');
+
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="panel-title">Pick a number — see which rules apply</div>'+
+    '<div class="num-pills">'+pills+'</div>'+
+    '<div class="num-display">'+testNum+'</div>'+
+    '<div class="results-grid">'+cells+'</div>'+
+    '<div style="display:flex;gap:14px;justify-content:center;margin-top:12px;font-size:12px;font-weight:600">'+
+      '<span style="color:var(--green)">&#10003; Divisible</span>'+
+      '<span style="color:var(--red)">&#10005; Not divisible</span>'+
+    '</div>'+
+    '</div>';
+
+  var passing=RULES.filter(function(r){return r.check(testNum);}).map(function(r){return r.n;});
+  document.getElementById('nia').innerHTML=
+    '<strong>'+testNum+'</strong> is divisible by: <strong>'+passing.join(', ')+'</strong>. Tap another number to test.';
+}
+
+function testNumber(n){testNum=n;buildTester();}
+
+// ── STEP 3: Puzzles ───────────────────────────────────────
+function renderStep3(){puzzleLevel=0;puzzleScore=0;puzzleResults=[];levelAnswered=false;showPuzzle();}
+
+function showPuzzle(){
+  if(puzzleLevel>=PUZZLES.length){showPuzzleDone();return;}
+  var pz=PUZZLES[puzzleLevel];levelAnswered=false;
+  var pips='';for(var i=0;i<PUZZLES.length;i++)pips+='<div class="prog-pip'+(i<puzzleLevel?' dp':i===puzzleLevel?' cp':'')+'" ></div>';
+  var opts=pz.opts.map(function(o,oi){return '<button class="opt" id="pb'+oi+'" data-val="'+o+'" onclick="pickPuz('+oi+')">'+o+'</button>';}).join('');
+  // Handle multiline question
+  var qDisplay=pz.q.replace(/\n/g,'<br>');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="prog-row"><span class="prog-label">Puzzle '+(puzzleLevel+1)+' of '+PUZZLES.length+'</span><div class="prog-pips">'+pips+'</div></div>'+
+    '<div class="puz-q">'+qDisplay+'</div><div class="opts">'+opts+'</div>'+
+    '<div class="res" id="pzRes"></div></div>';
+  document.getElementById('nia').innerHTML='Apply the rule. Pick your answer.';
+  var bb=document.getElementById('btnBack');
+  if(bb){
+    bb.disabled=false;
+    bb.onclick=function(){
+      if(puzzleLevel>0){
+        puzzleLevel--;
+        if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}
+        levelAnswered=false;showPuzzle();
+      } else{goStep(-1);}
+    };
+  }
+}
+
+function pickPuz(idx){
+  if(levelAnswered)return;levelAnswered=true;
+  var pz=PUZZLES[puzzleLevel];
+  var btns=document.querySelectorAll('.opt');
+  var chosen=btns[idx]?btns[idx].getAttribute('data-val'):'';
+  var ok=(chosen===pz.ans);
+  puzzleResults[puzzleLevel]=ok;
+  var res=document.getElementById('pzRes');
+  if(ok){btns[idx].className='opt correct';puzzleScore++;if(res){res.textContent='Correct. '+pz.explain;res.className='res ok';}document.getElementById('nia').innerHTML='Correct. '+pz.explain;}
+  else{btns[idx].className='opt wrong';btns.forEach(function(b){if(b.getAttribute('data-val')===pz.ans)b.className='opt correct';});if(res){res.textContent='Not quite. '+pz.explain;res.className='res no';}document.getElementById('nia').innerHTML=pz.explain;}
+  puzzleLevel++;
+  var isLast=(puzzleLevel>=PUZZLES.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showPuzzleDone():showPuzzle();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showPuzzleDone():showPuzzle();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showPuzzleDone(){
+  var perfect=(puzzleScore>=PUZZLES.length);
+  if(perfect)burst();
+  var bb=document.getElementById('btnBack');
+  if(bb){
+    bb.disabled=false;
+    bb.onclick=function(){
+      puzzleLevel=PUZZLES.length-1;
+      if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}
+      levelAnswered=false;showPuzzle();
+    };
+  }
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div style="font-size:48px;margin-bottom:14px">'+(perfect?'&#127919;':'&#128077;')+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'All four puzzles correct!':'Practice complete — '+puzzleScore+' of '+PUZZLES.length+' correct.')+
+    '</div>'+
+    (perfect?'':'<p style="font-size:14px;color:var(--muted)">Tap &#8592; to retry any puzzle.</p>')+
+    '</div>';
+  document.getElementById('nia').innerHTML=perfect?'All four rules applied correctly. Ready for the quiz.':'Good effort. Use &#8592; to review before the quiz.';
+}
+
+// ── STEP 4: Quiz ──────────────────────────────────────────
+function renderStep4(){qIdx=0;qScore=0;qHistory=[];document.getElementById('nia').innerHTML=NIA[4];showQ();}
+
+function showQ(){
+  if(qIdx>=QS.length){showQEnd();return;}
+  var q=QS[qIdx];
+  var nia=document.getElementById('nia');if(nia)nia.innerHTML='Pick your answer.';
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  var opts=q.opts.map(function(o,oi){return '<button class="opt" id="qo'+oi+'" data-val="'+o+'" onclick="pickQ('+oi+')">'+o+'</button>';}).join('');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div class="puz-q">'+q.q+'</div>'+
+    '<div class="opts">'+opts+'</div>'+
+    '<div class="res" id="qRes"></div></div>';
+  var bb=document.getElementById('btnBack');
+  if(bb){
+    bb.disabled=false;
+    bb.onclick=function(){
+      if(qIdx>0&&qHistory.length>0){showQPrev(qIdx-1);}
+      else{goStep(-1);}
+    };
+  }
+}
+
+function showQPrev(idx){
+  if(idx<0||!qHistory[idx])return;
+  var q=QS[idx];var h=qHistory[idx];
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<h.score?' on':'')+'">&#11088;</div>';
+  var opts=q.opts.map(function(o){
+    var cls='opt';
+    if(o===h.chosen&&h.wasCorrect)cls='opt correct';
+    else if(o===h.chosen&&!h.wasCorrect)cls='opt wrong';
+    else if(o===h.correct&&!h.wasCorrect)cls='opt correct';
+    return '<button class="'+cls+'" disabled>'+o+'</button>';
+  }).join('');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:8px">Question '+(idx+1)+' — reviewed</div>'+
+    '<div class="puz-q">'+q.q+'</div>'+
+    '<div class="opts">'+opts+'</div>'+
+    '<div style="text-align:center;margin-top:12px;display:flex;gap:8px;justify-content:center">'+
+      '<button onclick="showQPrev('+(idx-1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);opacity:'+(idx===0?.3:1)+'" '+(idx===0?'disabled':'')+'>&#8592; Prev</button>'+
+      (idx<qIdx-1?'<button onclick="showQPrev('+(idx+1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted)">Next &#8594;</button>':
+       '<button onclick="showQ()" style="padding:8px 16px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:700;cursor:pointer">Continue quiz &#8594;</button>')+
+    '</div></div>';
+  document.getElementById('nia').innerHTML=(h.wasCorrect?'Correct! ':'Answer was <strong>'+h.correct+'</strong>. ')+'Reviewing question '+(idx+1)+'.';
+}
+
+function pickQ(idx){
+  var q=QS[qIdx];
+  var btns=document.querySelectorAll('.opt');btns.forEach(function(b){b.disabled=true;});
+  var chosen=btns[idx]?btns[idx].getAttribute('data-val'):'';
+  var ok=(chosen===q.ans);
+  qHistory[qIdx]={chosen:chosen,correct:q.ans,wasCorrect:ok,score:qScore+(ok?1:0)};
+  var res=document.getElementById('qRes');
+  if(ok){btns[idx].className='opt correct';qScore++;if(res){res.textContent='Correct.';res.className='res ok';}document.getElementById('nia').innerHTML='Correct.';}
+  else{btns[idx].className='opt wrong';btns.forEach(function(b){if(b.getAttribute('data-val')===q.ans)b.className='opt correct';});if(res){res.textContent='Answer: '+q.ans;res.className='res no';}document.getElementById('nia').innerHTML='Answer: <strong>'+q.ans+'</strong>.';}
+  qIdx++;
+  var isLast=(qIdx>=QS.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showQEnd():showQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showQEnd():showQ();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQEnd(){
+  var perfect=(qScore===QS.length);if(perfect)burst();
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div class="stars" style="margin-bottom:20px">'+stars+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'Perfect.':qScore>=3?'Almost perfect.':qScore>=2?'Good work.':'Keep going.')+
+    '</div>'+
+    '<div style="font-size:14px;color:var(--muted);margin-bottom:20px">'+qScore+' of '+QS.length+' correct</div>'+
+    '<button onclick="goStep(-4)" style="padding:10px 28px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)">Start again</button>'+
+    '</div>';
+  document.getElementById('nia').innerHTML=(perfect?'<strong>Perfect.</strong> ':'')+'You know the divisibility rules. Next: use them to find factors quickly.';
+}
+
+// ── STEP 5 (index 4): Summary ─────────────────────────────
+function renderStep4summary(){
+  var rows=RULES.map(function(r){
+    return '<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--rule)">'+
+      '<div style="width:28px;height:28px;border-radius:8px;background:'+r.col+';color:#fff;font-family:DM Serif Display,serif;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+r.n+'</div>'+
+      '<div style="flex:1;font-size:13px;color:var(--ink2)"><strong style="color:var(--ink)">'+r.headline+'</strong></div>'+
+      '<div style="font-size:11px;color:var(--muted);font-weight:600;flex-shrink:0">'+r.tag+'</div>'+
+      '</div>';
+  }).join('');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="panel-title">All ten rules</div>'+rows+
+    '<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--rule);font-size:13px;color:var(--ink2);font-weight:500">'+
+      'Next: <strong style="color:var(--ink)">Factors and HCF</strong> — use these rules to find factors quickly.'+
+    '</div></div>';
+}
+
+var RS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4,renderStep4summary];
+
+function goStep(dir){
+  step=Math.max(0,Math.min(5,step+dir));
+  var dotStep=Math.min(step,4);
+  for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<dotStep?' done':i===dotStep?' active':'');}
+  document.getElementById('nia').innerHTML=NIA[Math.min(step,NIA.length-1)];
+  document.getElementById('btnBack').disabled=(step===0);
+  var bl=['The rules','Number tester','Practice','Quiz','Summary','&#8617; Start again'];
+  document.getElementById('btnNext').textContent=(bl[step]||'Next')+' →';
+  if(step>=5){document.getElementById('btnNext').onclick=function(){goStep(-5);};}
+  else{document.getElementById('btnNext').onclick=function(){goStep(1);};}
+  if(step!==3&&step!==4){
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=(step===0);bb.onclick=function(){goStep(-1);};}
+  }
+  RS[Math.min(step,RS.length-1)]();
+}
+goStep(0);
+</script>
+</body>
+</html>

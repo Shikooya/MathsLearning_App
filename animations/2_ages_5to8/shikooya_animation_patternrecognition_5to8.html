@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya — Pattern Recognition (Ages 5–8)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap');
+  :root{
+    --txt:#1a1a2e;--panel:rgba(255,255,255,0.95);
+    --violet:#7c5cfc;--amber:#f59e0b;--green:#43a047;--rose:#f43f5e;--sky:#38bdf8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Nunito',sans-serif;
+    background:linear-gradient(180deg,#ede7f6 0%,#d1c4e9 100%);
+    min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:16px;
+  }
+  .header{text-align:center;margin-bottom:12px;width:100%;max-width:700px;}
+  .age-badge{display:inline-block;background:linear-gradient(135deg,#7c5cfc,#5c35d4);
+    color:#fff;font-size:13px;font-weight:900;letter-spacing:.06em;
+    text-transform:uppercase;padding:5px 18px;border-radius:20px;margin-bottom:8px;
+    box-shadow:0 3px 10px rgba(124,92,252,.35);}
+  .header h1{font-family:'Fredoka One',cursive;font-size:clamp(22px,5vw,32px);
+    color:#4a148c;text-shadow:0 2px 6px rgba(0,0,0,.1);line-height:1.2;}
+  .header h1 span{color:#f59e0b;}
+  .card{background:var(--panel);border-radius:28px;padding:20px;
+    max-width:700px;width:100%;
+    box-shadow:0 12px 48px rgba(0,0,0,.12);border:3px solid rgba(180,140,255,.35);}
+
+  /* Steps — 5 steps = d0..d4 */
+  .steps{display:flex;gap:8px;justify-content:center;margin-bottom:14px;}
+  .step-dot{width:10px;height:10px;border-radius:50%;background:#ddd;transition:all .3s;}
+  .step-dot.active{background:#f59e0b;transform:scale(1.5);}
+  .step-dot.done{background:#7c5cfc;}
+
+  /* Nia */
+  .nia-area{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;min-height:60px;}
+  .nia-avatar{width:52px;height:52px;flex-shrink:0;
+    background:linear-gradient(135deg,#7c5cfc,#5c35d4);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:26px;
+    box-shadow:0 4px 12px rgba(124,92,252,.35);animation:bob 2.5s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  .nia-bubble{background:linear-gradient(135deg,#ede7f6,#e8eaf6);
+    border:2.5px solid #ce93d8;border-radius:16px 16px 16px 4px;
+    padding:12px 16px;font-size:clamp(14px,3vw,17px);font-weight:700;
+    color:var(--txt);line-height:1.6;flex:1;}
+  .nia-bubble strong{color:#4a148c;}
+  .nia-bubble em{color:#f59e0b;font-style:normal;font-weight:900;}
+
+  /* Preface */
+  .preface{background:linear-gradient(135deg,#ede7f6,#e8f5e9);
+    border-radius:18px;padding:16px 18px;margin-bottom:16px;
+    border:2.5px solid #ce93d8;}
+  .preface-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;
+    font-size:clamp(13px,2.5vw,15px);font-weight:700;color:var(--txt);line-height:1.6;}
+  .preface-row:last-child{margin-bottom:0;}
+  .preface-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+
+  /* Tile grid */
+  .tile-grid{display:grid;gap:4px;margin:0 auto;
+    background:#e0d7f5;border-radius:16px;padding:10px;
+    border:3px solid #ce93d8;margin-bottom:12px;}
+  .tile{width:100%;aspect-ratio:1;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:clamp(18px,4vw,28px);cursor:pointer;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);
+    border:2px solid rgba(0,0,0,.1);
+    box-shadow:0 2px 6px rgba(0,0,0,.1);
+    user-select:none;}
+  .tile:hover{transform:scale(1.08);}
+  .tile.missing{background:#f5f5f5 !important;
+    border:3px dashed #bdbdbd !important;
+    animation:pulse-miss 1s ease-in-out infinite;}
+  @keyframes pulse-miss{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+  .tile.correct-flash{animation:correct-flash .5s ease;}
+  @keyframes correct-flash{0%{transform:scale(1)}40%{transform:scale(1.3)}70%{transform:scale(.9)}100%{transform:scale(1)}}
+  .tile.wrong-flash{animation:wrong-flash .3s ease;}
+  @keyframes wrong-flash{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+  /* Choice row */
+  .choice-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;}
+  .choice-tile{width:clamp(56px,10vw,72px);height:clamp(56px,10vw,72px);
+    border-radius:14px;display:flex;align-items:center;justify-content:center;
+    font-size:clamp(22px,5vw,32px);cursor:pointer;border:3px solid rgba(0,0,0,.1);
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);
+    box-shadow:0 3px 8px rgba(0,0,0,.12);}
+  .choice-tile:hover{transform:scale(1.12);}
+
+  /* Level indicator */
+  .level-row{display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+  .level-badge{display:inline-flex;align-items:center;gap:6px;
+    background:rgba(124,92,252,.1);border:2px solid #ce93d8;
+    border-radius:12px;padding:5px 14px;
+    font-family:'Fredoka One',cursive;font-size:clamp(13px,3vw,16px);color:#4a148c;}
+  .progress-dots{display:flex;gap:6px;}
+  .prog-dot{width:12px;height:12px;border-radius:50%;background:#e0d7f5;
+    border:2px solid #ce93d8;transition:all .3s;}
+  .prog-dot.done-p{background:#7c5cfc;border-color:#5c35d4;}
+  .prog-dot.curr-p{background:#f59e0b;border-color:#e65100;transform:scale(1.3);}
+
+  /* Quiz */
+  .quiz-area{background:linear-gradient(135deg,#ede7f6,#e8eaf6);
+    border-radius:18px;padding:16px 18px;margin-bottom:14px;
+    border:2.5px solid #ce93d8;}
+  .quiz-q{font-family:'Fredoka One',cursive;font-size:clamp(16px,4vw,22px);
+    color:var(--txt);margin-bottom:12px;text-align:center;line-height:1.5;}
+  .quiz-grid{display:grid;gap:4px;margin:0 auto 12px;width:fit-content;}
+  .quiz-tile{width:clamp(40px,7vw,52px);height:clamp(40px,7vw,52px);
+    border-radius:8px;display:flex;align-items:center;justify-content:center;
+    font-size:clamp(16px,4vw,24px);border:2px solid rgba(0,0,0,.1);}
+  .quiz-tile.blank{background:#f5f5f5;border:2.5px dashed #bdbdbd;}
+  .quiz-options{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .quiz-btn{min-width:64px;min-height:64px;border-radius:14px;
+    border:3px solid #ddd;background:#fff;
+    font-size:clamp(22px,5vw,30px);cursor:pointer;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);
+    box-shadow:0 3px 8px rgba(0,0,0,.1);
+    display:flex;align-items:center;justify-content:center;}
+  .quiz-btn:hover{transform:scale(1.1);border-color:#7c5cfc;}
+  .quiz-btn.correct{background:linear-gradient(135deg,#66bb6a,#43a047);
+    border-color:#2e7d32;animation:pop .4s ease;}
+  .quiz-btn.wrong{background:linear-gradient(135deg,#ef9a9a,#e57373);
+    border-color:#c62828;animation:shake .3s ease;}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .quiz-result{text-align:center;margin-top:10px;font-family:'Fredoka One',cursive;
+    font-size:clamp(14px,3.5vw,18px);min-height:26px;}
+  .quiz-result.correct{color:#2e7d32;}
+  .quiz-result.wrong{color:#c62828;}
+
+  .stars{display:flex;justify-content:center;gap:6px;margin-bottom:10px;}
+  .star{font-size:28px;opacity:.25;transition:all .3s;}
+  .star.earned{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+
+  /* Nav */
+  .controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:4px;}
+  .btn{min-width:64px;min-height:56px;padding:12px 20px;border-radius:16px;border:none;
+    font-family:'Fredoka One',cursive;font-size:clamp(15px,3.5vw,19px);cursor:pointer;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 0 rgba(0,0,0,.18);}
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.18);}
+  .btn-next{background:linear-gradient(135deg,#7c5cfc,#5c35d4);color:#fff;flex:1;max-width:220px;}
+  .btn-next:hover{transform:translateY(-2px);}
+  .btn-back{background:linear-gradient(135deg,#90a4ae,#607d8b);color:#fff;}
+  .btn-back:hover{transform:translateY(-2px);}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;transform:none;}
+
+  .confetti-container{position:fixed;top:0;left:0;right:0;bottom:0;
+    pointer-events:none;z-index:100;overflow:hidden;}
+  .confetti-piece{position:absolute;border-radius:2px;
+    animation:confetti-fall 2s ease-in forwards;}
+  @keyframes confetti-fall{
+    0%{transform:translateY(-20px) rotate(0deg);opacity:1}
+    100%{transform:translateY(100vh) rotate(720deg);opacity:0}
+  }
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="header">
+  <div><span class="age-badge">Ages 5–8 · Mathematical Thinking</span></div>
+  <h1>The <span>Tile Floor</span> 🔲 — Pattern Recognition!</h1>
+</div>
+<div class="card">
+  <!-- 5 steps = d0..d4 -->
+  <div class="steps">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia-area">
+    <div class="nia-avatar">🌟</div>
+    <div class="nia-bubble" id="nia">
+      A builder is laying tiles on a floor. But some tiles are <strong>missing</strong>! Can you spot the pattern and place the right tile in the right spot? 🔲
+    </div>
+  </div>
+  <div id="mainArea"></div>
+  <div class="controls">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>← Back</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let's go! →</button>
+  </div>
+</div>
+<div class="confetti-container" id="confetti"></div>
+
+<script>
+var currentStep = 0;
+var puzzleLevel = 0;
+var quizIdx = 0;
+var quizCorrect = 0;
+
+// ── Puzzle levels ─────────────────────────────────────────
+// Each level: a grid (rows x cols), each cell has emoji+color or null=missing
+// Pattern types: alternating, repeating sequence, diagonal
+
+var LEVELS = [
+  {
+    label: 'Level 1 — Alternating tiles',
+    cols: 4, rows: 3,
+    // Pattern: 🔴🔵 alternating
+    tiles: function(r, c) {
+      return (r + c) % 2 === 0 ?
+        { e:'🟥', bg:'#ef9a9a' } :
+        { e:'🟦', bg:'#90caf9' };
+    },
+    missing: [[1,1],[1,3],[2,0]],
+  },
+  {
+    label: 'Level 2 — Row pattern',
+    cols: 4, rows: 3,
+    tiles: function(r, c) {
+      var row = [
+        [{ e:'🟡', bg:'#fff176' },{ e:'🟢', bg:'#a5d6a7' },{ e:'🟡', bg:'#fff176' },{ e:'🟢', bg:'#a5d6a7' }],
+        [{ e:'🟢', bg:'#a5d6a7' },{ e:'🟡', bg:'#fff176' },{ e:'🟢', bg:'#a5d6a7' },{ e:'🟡', bg:'#fff176' }],
+        [{ e:'🟡', bg:'#fff176' },{ e:'🟢', bg:'#a5d6a7' },{ e:'🟡', bg:'#fff176' },{ e:'🟢', bg:'#a5d6a7' }],
+      ];
+      return row[r][c];
+    },
+    missing: [[0,1],[1,2],[2,3]],
+  },
+  {
+    label: 'Level 3 — Three-tile pattern',
+    cols: 5, rows: 3,
+    tiles: function(r, c) {
+      var seq = [
+        { e:'🔴', bg:'#ef9a9a' },
+        { e:'🟠', bg:'#ffcc80' },
+        { e:'🟣', bg:'#ce93d8' },
+      ];
+      return seq[(r * 5 + c) % 3];
+    },
+    missing: [[0,2],[1,0],[1,4],[2,3]],
+  },
+  {
+    label: 'Level 4 — Shape pattern',
+    cols: 4, rows: 4,
+    tiles: function(r, c) {
+      var shapes = [
+        { e:'⭐', bg:'#fff176' },
+        { e:'💠', bg:'#90caf9' },
+        { e:'🟢', bg:'#a5d6a7' },
+        { e:'🔴', bg:'#ef9a9a' },
+      ];
+      return shapes[(r + c * 2) % 4];
+    },
+    missing: [[0,1],[1,3],[2,0],[3,2],[3,3]],
+  },
+];
+
+// ── Quiz questions ─────────────────────────────────────────
+var QUIZ_QS = [
+  {
+    q:'What tile goes in the blank spot?',
+    grid:[[{e:'🔴',bg:'#ef9a9a'},{e:'🔵',bg:'#90caf9'},{e:'🔴',bg:'#ef9a9a'},null]],
+    answer:'🔵', opts:['🔴','🔵','🟢','⭐'],
+    optBgs:['#ef9a9a','#90caf9','#a5d6a7','#fff176'],
+  },
+  {
+    q:'Which tile completes the pattern?',
+    grid:[
+      [{e:'⭐',bg:'#fff176'},{e:'🔴',bg:'#ef9a9a'},{e:'⭐',bg:'#fff176'}],
+      [{e:'🔴',bg:'#ef9a9a'},null,{e:'🔴',bg:'#ef9a9a'}],
+    ],
+    answer:'⭐', opts:['🔴','🟢','⭐','🔵'],
+    optBgs:['#ef9a9a','#a5d6a7','#fff176','#90caf9'],
+  },
+  {
+    q:'The pattern is 🟡🟢🟣 repeating. What is missing?',
+    grid:[[{e:'🟡',bg:'#fff176'},{e:'🟢',bg:'#a5d6a7'},{e:'🟣',bg:'#ce93d8'},{e:'🟡',bg:'#fff176'},null,{e:'🟣',bg:'#ce93d8'}]],
+    answer:'🟢', opts:['🟡','🟢','🟣','🔴'],
+    optBgs:['#fff176','#a5d6a7','#ce93d8','#ef9a9a'],
+  },
+  {
+    q:'What rule does this floor follow?',
+    grid:[
+      [{e:'🔴',bg:'#ef9a9a'},{e:'🔵',bg:'#90caf9'},{e:'🔴',bg:'#ef9a9a'}],
+      [{e:'🔵',bg:'#90caf9'},{e:'🔴',bg:'#ef9a9a'},{e:'🔵',bg:'#90caf9'}],
+    ],
+    answer:'Diagonal alternating', opts:['All same colour','Diagonal alternating','Random','All different'],
+    optBgs:['#fff','#fff','#fff','#fff'],
+  },
+];
+
+// ── Helpers ──────────────────────────────────────────────
+function dots(s) {
+  for (var i = 0; i <= 4; i++) {
+    var d = document.getElementById('d' + i);
+    if (d) d.className = 'step-dot' + (i < s ? ' done' : i === s ? ' active' : '');
+  }
+}
+
+function confettiBurst() {
+  var c = document.getElementById('confetti');
+  c.innerHTML = '';
+  var cols = ['#ffe066','#7c5cfc','#f44336','#43a047','#38bdf8','#f59e0b'];
+  for (var i = 0; i < 52; i++) {
+    var p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.cssText = 'left:'+(Math.random()*100)+'%;background:'+cols[Math.floor(Math.random()*cols.length)]+
+      ';width:'+(8+Math.random()*8)+'px;height:'+(8+Math.random()*8)+'px;' +
+      'border-radius:'+(Math.random()>.5?'50%':'2px')+';' +
+      'animation-delay:'+(Math.random()*.6)+'s;animation-duration:'+(1.5+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){ c.innerHTML=''; }, 3000);
+}
+
+function isMissing(lv, r, c) {
+  return lv.missing.some(function(m){ return m[0]===r && m[1]===c; });
+}
+
+// ── STEP 0 — Preface ─────────────────────────────────────
+function renderStep0() {
+  // Show a pretty demo tile floor
+  var demoHtml = '<div class="tile-grid" style="grid-template-columns:repeat(5,1fr);max-width:260px">';
+  var demo = [
+    ['#ef9a9a','#90caf9','#ef9a9a','#90caf9','#ef9a9a'],
+    ['#90caf9','#ef9a9a','#90caf9','#ef9a9a','#90caf9'],
+    ['#ef9a9a','#90caf9','#ef9a9a','#90caf9','#ef9a9a'],
+    ['#90caf9','#ef9a9a','#90caf9','#ef9a9a','#90caf9'],
+  ];
+  var emojis = [['🔴','🔵'],['🔵','🔴']];
+  for (var r=0;r<4;r++) {
+    for (var c=0;c<5;c++) {
+      var e = emojis[(r+c)%2===0?0:1][(r+c)%2];
+      demoHtml += '<div class="tile" style="background:'+demo[r][c]+';cursor:default;font-size:clamp(16px,3vw,22px)">'+e+'</div>';
+    }
+  }
+  demoHtml += '</div>';
+
+  document.getElementById('mainArea').innerHTML =
+    '<div class="preface">' +
+    '<div class="preface-row"><div class="preface-icon">📘</div><div><strong>What you will learn:</strong> How to spot a pattern in a grid and use it to find missing tiles.</div></div>' +
+    '<div class="preface-row"><div class="preface-icon">🌍</div><div><strong>Why it matters:</strong> Pattern recognition is one of the most powerful skills in mathematics and science. Spotting what repeats helps you predict what comes next — every time.</div></div>' +
+    '<div class="preface-row"><div class="preface-icon">🎯</div><div><strong>By the end:</strong> You will be able to identify the rule in any repeating grid pattern and find the missing piece with confidence!</div></div>' +
+    '</div>' +
+    '<div style="text-align:center;margin-bottom:4px;font-family:Fredoka One,cursive;font-size:clamp(13px,3vw,16px);color:#4a148c">A tile floor with a pattern — spot the rule!</div>' +
+    demoHtml;
+}
+
+// ── STEP 1 — Tile puzzles ─────────────────────────────────
+var solvedMissing = [];
+var selectedChoice = null;
+var levelSolved = false;
+
+function renderStep1() {
+  puzzleLevel = 0;
+  solvedMissing = [];
+  selectedChoice = null;
+  levelSolved = false;
+  showPuzzle();
+}
+
+function startNewLevel() {
+  solvedMissing = [];
+  selectedChoice = null;
+  levelSolved = false;
+}
+
+function showPuzzle() {
+  if (puzzleLevel >= LEVELS.length) { showAllSolved(); return; }
+  var lv = LEVELS[puzzleLevel];
+  // Do NOT reset solvedMissing here — it persists across redraws within same level
+  selectedChoice = null;
+
+  // Progress dots
+  var progHtml = '<div class="level-row"><div class="level-badge">🔲 ' + lv.label + '</div>' +
+    '<div class="progress-dots">';
+  for (var i=0;i<LEVELS.length;i++)
+    progHtml += '<div class="prog-dot'+(i<puzzleLevel?' done-p':i===puzzleLevel?' curr-p':'')+'" ></div>';
+  progHtml += '</div></div>';
+
+  // Build grid
+  var tileSize = Math.min(56, Math.floor(280 / lv.cols));
+  var gridHtml = '<div class="tile-grid" style="grid-template-columns:repeat('+lv.cols+','+tileSize+'px);max-width:'+(tileSize*lv.cols+lv.cols*4+20)+'px">';
+  for (var r=0;r<lv.rows;r++) {
+    for (var c=0;c<lv.cols;c++) {
+      var missing = isMissing(lv,r,c);
+      var solved = solvedMissing.some(function(m){ return m[0]===r&&m[1]===c; });
+      var tile = lv.tiles(r,c);
+      if (missing && !solved) {
+        gridHtml += '<div class="tile missing" style="font-size:'+tileSize*0.4+'px" ' +
+          'onclick="clickMissing('+r+','+c+')" title="Click to place tile here!"><span style="color:#bdbdbd;font-size:'+Math.round(tileSize*0.45)+'px;font-weight:900">?</span></div>';
+      } else {
+        gridHtml += '<div class="tile" style="background:'+tile.bg+';font-size:'+tileSize*0.5+'px;cursor:default">'+tile.e+'</div>';
+      }
+    }
+  }
+  gridHtml += '</div>';
+
+  // Get unique choices — correct answer + distractors
+  var allTiles = [];
+  for (var rr=0;rr<lv.rows;rr++)
+    for (var cc=0;cc<lv.cols;cc++) {
+      var t = lv.tiles(rr,cc);
+      if (!allTiles.some(function(x){ return x.e===t.e; })) allTiles.push(t);
+    }
+  // Shuffle and take up to 4
+  allTiles = allTiles.sort(function(){ return Math.random()-.5; }).slice(0,4);
+  // Make sure correct answers are in there
+  var needTiles = lv.missing.map(function(m){ return lv.tiles(m[0],m[1]); });
+  needTiles.forEach(function(nt){
+    if (!allTiles.some(function(x){ return x.e===nt.e; })) allTiles[3]=nt;
+  });
+
+  var choicesHtml = '<div style="font-family:Fredoka One,cursive;font-size:clamp(13px,3vw,16px);color:#4a148c;text-align:center;margin-bottom:8px">Pick a tile, then tap a blank spot! 👇</div>' +
+    '<div class="choice-row">';
+  allTiles.forEach(function(t,i){
+    choicesHtml += '<div class="choice-tile" id="choice_'+i+'" style="background:'+t.bg+'" onclick="selectChoice('+i+',\''+t.e+'\',\''+t.bg+'\')">' + t.e + '</div>';
+  });
+  choicesHtml += '</div>';
+
+  var remaining = lv.missing.length - solvedMissing.length;
+  var statusHtml = '<div style="text-align:center;font-family:Fredoka One,cursive;font-size:clamp(13px,3vw,16px);color:#7c5cfc;margin-bottom:6px">' +
+    (remaining > 0 ? remaining + ' tile'+(remaining>1?'s':'')+' still missing!' : '✅ All tiles placed!') + '</div>';
+
+  document.getElementById('mainArea').innerHTML = progHtml + gridHtml + statusHtml + choicesHtml;
+}
+
+function selectChoice(idx, emoji, bg) {
+  selectedChoice = { e: emoji, bg: bg };
+  // Highlight selected
+  document.querySelectorAll('.choice-tile').forEach(function(el,i){
+    el.style.border = i===idx ? '4px solid #7c5cfc' : '3px solid rgba(0,0,0,.1)';
+    el.style.transform = i===idx ? 'scale(1.15)' : '';
+  });
+  document.getElementById('nia').innerHTML = 'Good choice! Now tap a <strong>blank tile</strong> on the floor to place it! 🔲';
+}
+
+function clickMissing(r, c) {
+  if (!selectedChoice) {
+    document.getElementById('nia').innerHTML = '👆 First pick a tile from the choices below — then tap a blank spot!';
+    return;
+  }
+  var lv = LEVELS[puzzleLevel];
+  var correct = lv.tiles(r,c);
+  if (selectedChoice.e === correct.e) {
+    solvedMissing.push([r,c]);
+    document.getElementById('nia').innerHTML = '✅ <strong>Correct!</strong> ' + correct.e + ' fits the pattern perfectly!';
+    // Check if all solved
+    if (solvedMissing.length === lv.missing.length) {
+      levelSolved = true;
+      confettiBurst();
+      document.getElementById('nia').innerHTML = '🎉 <strong>Level complete!</strong> You found the rule and placed every tile! 🔲';
+      setTimeout(function(){
+        puzzleLevel++;
+        startNewLevel();
+        showPuzzle();
+      }, 1500);
+    } else {
+      showPuzzle();
+    }
+  } else {
+    document.getElementById('nia').innerHTML = '💛 Not quite — look at the tiles around the blank spot. What colour or shape should go there?';
+  }
+}
+
+function showAllSolved() {
+  confettiBurst();
+  document.getElementById('mainArea').innerHTML =
+    '<div style="text-align:center;padding:16px 0">' +
+    '<div style="font-size:64px">🏆</div>' +
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(18px,4vw,26px);color:#4a148c;margin-top:10px">All 4 floors tiled!</div>' +
+    '<div style="font-size:clamp(13px,3vw,16px);font-weight:700;color:#555;margin-top:8px">The builder is very impressed! 🔲✨</div>' +
+    '</div>';
+  document.getElementById('nia').innerHTML = '🏆 You spotted the pattern in every floor! You are a <strong>pattern recognition</strong> expert!';
+}
+
+// ── STEP 2 — Make your own pattern ───────────────────────
+var myGrid = [];
+var mySelected = 0;
+var PALETTE = [
+  {e:'🔴',bg:'#ef9a9a'},{e:'🔵',bg:'#90caf9'},{e:'🟢',bg:'#a5d6a7'},
+  {e:'🟡',bg:'#fff176'},{e:'🟣',bg:'#ce93d8'},{e:'⭐',bg:'#fff9c4'},
+  {e:'💠',bg:'#b3e5fc'},{e:'🔶',bg:'#ffcc80'},
+];
+var MY_COLS = 5; var MY_ROWS = 4;
+
+function renderStep2() {
+  myGrid = [];
+  for (var r=0;r<MY_ROWS;r++) {
+    myGrid.push([]);
+    for (var c=0;c<MY_COLS;c++) myGrid[r].push(null);
+  }
+  mySelected = 0;
+  buildMyGrid();
+}
+
+function buildMyGrid() {
+  var tileSize = Math.min(52, Math.floor(260/MY_COLS));
+  var palHtml = '<div class="choice-row" style="margin-bottom:10px">';
+  PALETTE.forEach(function(p,i){
+    palHtml += '<div class="choice-tile" id="mypal_'+i+'" style="background:'+p.bg+';width:clamp(44px,8vw,56px);height:clamp(44px,8vw,56px);'+
+      (i===mySelected?'border:4px solid #7c5cfc;transform:scale(1.15);':'border:3px solid rgba(0,0,0,.1)')+
+      '" onclick="selectMyTile('+i+')">' + p.e + '</div>';
+  });
+  palHtml += '</div>';
+
+  var filledCount = 0;
+  var gridHtml = '<div class="tile-grid" style="grid-template-columns:repeat('+MY_COLS+','+tileSize+'px);max-width:'+(tileSize*MY_COLS+MY_COLS*4+20)+'px">';
+  for (var r=0;r<MY_ROWS;r++){
+    for (var c=0;c<MY_COLS;c++){
+      var cell = myGrid[r][c];
+      if (cell) {
+        filledCount++;
+        gridHtml += '<div class="tile" style="background:'+cell.bg+';font-size:'+tileSize*0.5+'px" onclick="clearCell('+r+','+c+')">'+cell.e+'</div>';
+      } else {
+        gridHtml += '<div class="tile" style="background:#f5f5f5;border:2.5px dashed #bdbdbd;font-size:'+tileSize*0.4+'px;cursor:pointer" onclick="placeMyTile('+r+','+c+')"><span style="color:#ccc">+</span></div>';
+      }
+    }
+  }
+  gridHtml += '</div>';
+
+  var totalCells = MY_ROWS * MY_COLS;
+  var progressPct = Math.round((filledCount / totalCells) * 100);
+  var progressBar = '<div style="margin:8px 0 4px;background:#e0d7f5;border-radius:8px;height:10px;overflow:hidden">' +
+    '<div style="width:'+progressPct+'%;height:100%;background:linear-gradient(90deg,#7c5cfc,#5c35d4);border-radius:8px;transition:width .3s"></div>' +
+    '</div>' +
+    '<div style="font-family:Fredoka One,cursive;font-size:13px;color:#7c5cfc;text-align:center;margin-bottom:8px">'+filledCount+' of '+totalCells+' tiles placed</div>';
+
+  var btnRow = '<div style="display:flex;gap:8px;justify-content:center;margin-top:8px;flex-wrap:wrap">' +
+    '<button onclick="checkMyPattern()" style="padding:10px 20px;border-radius:14px;border:none;' +
+    'background:linear-gradient(135deg,#7c5cfc,#5c35d4);color:#fff;' +
+    'font-family:Fredoka One,cursive;font-size:clamp(14px,3vw,17px);cursor:pointer;' +
+    'box-shadow:0 4px 0 rgba(0,0,0,.2);' + (filledCount < 6 ? 'opacity:.4;pointer-events:none;' : '') + '">' +
+    '✅ Check my pattern!</button>' +
+    '<button onclick="clearMyGrid()" style="padding:10px 18px;border-radius:14px;border:2px solid #ce93d8;background:#fff;' +
+    'font-family:Fredoka One,cursive;font-size:clamp(14px,3vw,17px);cursor:pointer;color:#4a148c">🗑️ Clear</button>' +
+    '</div>';
+
+  document.getElementById('mainArea').innerHTML =
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(13px,3vw,16px);color:#4a148c;text-align:center;margin-bottom:8px">Pick a tile then tap the floor to place it! Make your own pattern! 🎨</div>' +
+    palHtml + gridHtml + progressBar + btnRow;
+}
+
+function checkMyPattern() {
+  var filled = 0;
+  for (var r=0;r<MY_ROWS;r++)
+    for (var c=0;c<MY_COLS;c++)
+      if (myGrid[r][c]) filled++;
+
+  if (filled < 6) {
+    document.getElementById('nia').innerHTML = '👆 Place at least 6 tiles first so I can check if your pattern repeats!';
+    return;
+  }
+
+  // Build grid as emoji strings (null for empty)
+  var grid = [];
+  for (var r=0;r<MY_ROWS;r++) {
+    grid.push([]);
+    for (var c=0;c<MY_COLS;c++)
+      grid[r].push(myGrid[r][c] ? myGrid[r][c].e : null);
+  }
+
+  // ── Detection 1: Horizontal repeating row ─────────────────
+  var firstRow = grid[0].filter(function(x){ return x!==null; });
+  var horizPattern = null;
+  var horizLen = 0;
+  for (var len=1; len<=Math.floor(firstRow.length/2); len++) {
+    var unit = firstRow.slice(0,len);
+    var ok = true;
+    for (var i=len;i<firstRow.length;i++) {
+      if (firstRow[i] !== unit[i%len]) { ok=false; break; }
+    }
+    if (ok && unit.length>0) { horizPattern=unit; horizLen=len; break; }
+  }
+
+  // ── Detection 2: Row offset (each row is cyclic shift of prev) ──────────
+  var offsetPattern = false;
+  var offsetDesc = '';
+  if (firstRow.length >= 2) {
+    var allMatch = true;
+    for (var r2=1;r2<MY_ROWS;r2++) {
+      var row = grid[r2].filter(function(x){ return x!==null; });
+      if (row.length === 0) continue;
+      // Check if row is a cyclic shift of firstRow
+      var shifted = false;
+      for (var shift=0;shift<firstRow.length;shift++) {
+        var shiftedRow = firstRow.slice(shift).concat(firstRow.slice(0,shift));
+        if (row.join(',') === shiftedRow.slice(0,row.length).join(',')) {
+          shifted = true; break;
+        }
+      }
+      if (!shifted) { allMatch=false; break; }
+    }
+    if (allMatch) {
+      offsetPattern = true;
+      offsetDesc = 'Each row shifts the pattern along — that is a diagonal pattern!';
+    }
+  }
+
+  // ── Detection 3: Column repeating ──────────────────────────
+  var colPattern = false;
+  var colDesc = '';
+  var firstCol = grid.map(function(r){ return r[0]; }).filter(function(x){ return x!==null; });
+  if (firstCol.length >= 2) {
+    var colOk = true;
+    for (var c2=1;c2<MY_COLS;c2++) {
+      var col = grid.map(function(r){ return r[c2]; }).filter(function(x){ return x!==null; });
+      if (col.length===0) continue;
+      // Check if col matches firstCol pattern (possibly shifted)
+      var colMatch = col.join(',') === firstCol.slice(0,col.length).join(',');
+      if (!colMatch) { colOk=false; break; }
+    }
+    if (colOk && firstCol.length >= 2) {
+      colPattern = true;
+      colDesc = 'Each column follows the same pattern going downward!';
+    }
+  }
+
+  var hasPattern = horizPattern || offsetPattern || colPattern;
+  var patternDesc = '';
+  var patternTitle = '';
+  if (offsetPattern) {
+    patternTitle = 'Diagonal pattern spotted!';
+    patternDesc = offsetDesc + ' This is a very clever pattern — each row is a shifted version of the one above!';
+  } else if (horizPattern) {
+    patternTitle = 'Repeating row pattern! Repeats every ' + horizLen + ' tile' + (horizLen>1?'s':'') + '!';
+    patternDesc = 'Your pattern rule is: ' + horizPattern.join(' ') + ' ' + horizPattern.join(' ') + ' ...';
+  } else if (colPattern) {
+    patternTitle = 'Column pattern spotted!';
+    patternDesc = colDesc;
+  }
+
+  var tileSize = Math.min(52, Math.floor(260/MY_COLS));
+  var gridHtml = '<div class="tile-grid" style="grid-template-columns:repeat('+MY_COLS+','+tileSize+'px);max-width:'+(tileSize*MY_COLS+MY_COLS*4+20)+'px;margin-bottom:12px">';
+  for (var rr=0;rr<MY_ROWS;rr++){
+    for (var cc=0;cc<MY_COLS;cc++){
+      var cell = myGrid[rr][cc];
+      if (cell) {
+        gridHtml += '<div class="tile" style="background:'+cell.bg+';font-size:'+tileSize*0.5+'px;cursor:default">'+cell.e+'</div>';
+      } else {
+        gridHtml += '<div class="tile" style="background:#f5f5f5;border:2.5px dashed #e0d7f5;cursor:default"></div>';
+      }
+    }
+  }
+  gridHtml += '</div>';
+
+  var resultBox = '';
+  if (hasPattern) {
+    confettiBurst();
+    resultBox = '<div style="background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border:2.5px solid #81c784;border-radius:16px;padding:14px 16px;text-align:center">' +
+      '<div style="font-family:Fredoka One,cursive;font-size:clamp(16px,4vw,22px);color:#2e7d32;margin-bottom:8px">🎉 ' + patternTitle + '</div>' +
+      '<div style="font-size:13px;font-weight:700;color:#555">' + patternDesc + '</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;justify-content:center;margin-top:10px">' +
+      '<button onclick="renderStep2()" style="padding:10px 18px;border-radius:14px;border:2px solid #ce93d8;background:#fff;font-family:Fredoka One,cursive;font-size:15px;cursor:pointer;color:#4a148c">🎨 Make another!</button>' +
+      '</div>';
+    document.getElementById('nia').innerHTML = '🎉 <strong>Brilliant!</strong> ' + patternTitle + ' ' + patternDesc + ' That is real mathematical thinking!';
+  } else {
+    resultBox = '<div style="background:linear-gradient(135deg,#fff9c4,#fff3e0);border:2.5px solid #ffcc80;border-radius:16px;padding:14px 16px;text-align:center">' +
+      '<div style="font-family:Fredoka One,cursive;font-size:clamp(16px,4vw,22px);color:#e65100;margin-bottom:8px">🤔 Hmm — tell me your rule!</div>' +
+      '<div style="font-size:13px;font-weight:700;color:#555;margin-bottom:8px">I can see you made something interesting! A pattern needs a <strong>rule that repeats</strong>. Try making the same tiles appear in the same order across each row — like 🔴🔵🔴🔵</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;justify-content:center;margin-top:10px">' +
+      '<button onclick="renderStep2()" style="padding:10px 18px;border-radius:14px;border:2px solid #ce93d8;background:#fff;font-family:Fredoka One,cursive;font-size:15px;cursor:pointer;color:#4a148c">🔄 Try again!</button>' +
+      '</div>';
+    document.getElementById('nia').innerHTML = '💛 I see something interesting! Make sure your tile rule <em>repeats</em> in every row or column!';
+  }
+
+  document.getElementById('mainArea').innerHTML =
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(13px,3vw,16px);color:#4a148c;text-align:center;margin-bottom:8px">Your tile floor:</div>' +
+    gridHtml + resultBox;
+}
+
+function selectMyTile(idx) { mySelected=idx; buildMyGrid(); }
+function placeMyTile(r,c) { myGrid[r][c]=PALETTE[mySelected]; buildMyGrid(); }
+function clearCell(r,c) { myGrid[r][c]=null; buildMyGrid(); }
+function clearMyGrid() { for(var r=0;r<MY_ROWS;r++) for(var c=0;c<MY_COLS;c++) myGrid[r][c]=null; buildMyGrid(); }
+
+// ── STEP 3 — Quiz ─────────────────────────────────────────
+function renderStep3() {
+  quizIdx = 0;
+  quizCorrect = 0;
+  showQuizQ();
+}
+
+function showQuizQ() {
+  if (quizIdx >= QUIZ_QS.length) { showQuizEnd(); return; }
+  var q = QUIZ_QS[quizIdx];
+  var stars = '';
+  for(var i=0;i<QUIZ_QS.length;i++)
+    stars+='<div class="star'+(i<quizCorrect?' earned':'')+'" >⭐</div>';
+
+  var tileSize = 44;
+  var gCols = q.grid[0].length;
+  var gridHtml = '<div class="quiz-grid" style="grid-template-columns:repeat('+gCols+','+tileSize+'px)">';
+  q.grid.forEach(function(row){
+    row.forEach(function(cell){
+      if (!cell) {
+        gridHtml += '<div class="quiz-tile blank"><span style="color:#bdbdbd;font-weight:900;font-size:18px">?</span></div>';
+      } else {
+        gridHtml += '<div class="quiz-tile" style="background:'+cell.bg+'">'+cell.e+'</div>';
+      }
+    });
+  });
+  gridHtml += '</div>';
+
+  var opts = '';
+  q.opts.forEach(function(o,oi){
+    var bg = q.optBgs && q.optBgs[oi] ? q.optBgs[oi] : '#fff';
+    opts += '<button class="quiz-btn" style="background:'+bg+'" onclick="answerQ(\''+o.replace(/'/g,"\\'")+'\',\''+q.answer.replace(/'/g,"\\'")+'\')">'+o+'</button>';
+  });
+
+  document.getElementById('mainArea').innerHTML =
+    '<div class="stars">'+stars+'</div>'+
+    '<div class="quiz-area">'+
+    '<div class="quiz-q">'+q.q+'</div>'+
+    gridHtml+
+    '<div class="quiz-options" style="margin-top:12px">'+opts+'</div>'+
+    '<div class="quiz-result" id="qRes"></div>'+
+    '</div>';
+}
+
+function answerQ(chosen, correct) {
+  var btns = document.querySelectorAll('.quiz-btn');
+  btns.forEach(function(b){ b.disabled=true; });
+  var res = document.getElementById('qRes');
+  if (chosen===correct) {
+    btns.forEach(function(b){ if(b.textContent.trim()===correct) b.className='quiz-btn correct'; });
+    quizCorrect++;
+    if(res){res.textContent='✅ Correct!';res.className='quiz-result correct';}
+    document.getElementById('nia').innerHTML='✅ <strong>Correct!</strong> You spotted the pattern! 🔲';
+  } else {
+    btns.forEach(function(b){
+      if(b.textContent.trim()===chosen) b.className='quiz-btn wrong';
+      if(b.textContent.trim()===correct) b.className='quiz-btn correct';
+    });
+    if(res){res.textContent='❌ Not quite! The answer is: '+correct;res.className='quiz-result wrong';}
+    document.getElementById('nia').innerHTML='💛 The answer is <strong>'+correct+'</strong>! Look at what surrounds the blank tile.';
+  }
+  quizIdx++;
+  if(chosen===correct){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;showQuizQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxtOk=document.createElement('button');
+    nxtOk.textContent='Next \u2192';
+    nxtOk.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxtOk.onclick=function(){clearTimeout(_t);_doAdv();};
+    var _r=document.getElementById('quizResult')||document.getElementById('qResult')||document.getElementById('qRes');
+    if(_r&&_r.parentNode)_r.parentNode.appendChild(nxtOk);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent='Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){showQuizQ();};
+    var _r2=document.getElementById('quizResult')||document.getElementById('qResult')||document.getElementById('qRes');
+    if(_r2&&_r2.parentNode)_r2.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQuizEnd() {
+  var stars='';
+  for(var i=0;i<QUIZ_QS.length;i++)
+    stars+='<div class="star'+(i<quizCorrect?' earned':'')+'" >⭐</div>';
+  var msg=quizCorrect===4?'🏆 PERFECT! You are a pattern recognition master!':
+          quizCorrect>=3?'🌟 Brilliant! Almost perfect!':
+          quizCorrect>=2?'👍 Good work! Keep practising!':'💪 Keep looking for the rule!';
+  document.getElementById('mainArea').innerHTML=
+    '<div class="stars">'+stars+'</div>'+
+    '<div style="text-align:center;padding:16px;background:linear-gradient(135deg,#ede7f6,#e8eaf6);border-radius:18px;border:2.5px solid #ce93d8">'+
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(17px,4vw,24px);color:#4a148c;margin-bottom:8px">'+msg+'</div>'+
+    '<div style="font-size:clamp(14px,3vw,17px);font-weight:700;color:#555">You got <strong style="color:#e53935">'+quizCorrect+'</strong> out of <strong>4</strong> correct!</div>'+
+    '</div>';
+  if(quizCorrect>=3) confettiBurst();
+  document.getElementById('nia').innerHTML=quizCorrect===4?
+    '🏆 <strong>Perfect!</strong> You can spot any tile pattern now! 🔲':
+    '🌟 Well done! Remember — look at what surrounds each blank tile to find the rule!';
+}
+
+// ── STEP 4 — Summary ──────────────────────────────────────
+function renderStep4() {
+  document.getElementById('mainArea').innerHTML=
+    '<div style="text-align:center;padding:8px 0 14px">'+
+    '<div style="font-size:64px">🏆</div>'+
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(17px,4vw,24px);color:#4a148c;margin-top:8px;margin-bottom:14px">You can recognise any pattern!</div>'+
+    '</div>'+
+    '<div class="preface">'+
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>A <strong>pattern</strong> is a rule that repeats — in rows, columns, diagonals or all directions.</div></div>'+
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>To find a missing tile: <strong>look at the tiles around it</strong> and find the rule they follow.</div></div>'+
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>Pattern recognition appears in <strong>maths, music, science and nature</strong> — it is one of the most useful skills you can have!</div></div>'+
+    '<div class="preface-row"><div class="preface-icon">🚀</div><div>Next — we will explore <strong>spatial reasoning</strong>: understanding shapes in 3D space!</div></div>'+
+    '</div>';
+  confettiBurst();
+}
+
+// ── Navigation ────────────────────────────────────────────
+var NIA = [
+  "A builder is laying tiles on a floor. But some tiles are <strong>missing</strong>! Can you spot the pattern and place the right tile in the right spot? 🔲",
+  "Look carefully at the floor! Pick a tile from the choices below, then tap a <strong>blank spot</strong> to place it. The pattern will tell you what goes where! 🔲",
+  "Now <strong>create your own</strong> tile floor! Pick colours and arrange them into a pattern. Can you make one that repeats perfectly? 🎨",
+  "Quiz time! 🌟 Look at the tile patterns and answer the questions!",
+  "Brilliant! 🏆 You can spot, complete and create patterns in a grid — that is pattern recognition!"
+];
+
+var BTNS = [
+  "Start tiling! →",
+  "Make your own! →",
+  "Quiz time! →",
+  "See the summary! →",
+  "🔁 Play Again!"
+];
+
+var RENDERS = [renderStep0, renderStep1, renderStep2, renderStep3, renderStep4];
+
+function goStep(dir) {
+  currentStep = Math.max(0, Math.min(4, currentStep + dir));
+  dots(currentStep);
+  document.getElementById('nia').innerHTML = NIA[currentStep];
+  document.getElementById('btnBack').disabled = (currentStep === 0);
+  document.getElementById('btnNext').textContent = BTNS[currentStep];
+  document.getElementById('btnNext').disabled = false;
+  if (currentStep === 4) {
+    document.getElementById('btnNext').onclick = function(){ goStep(-4); };
+  } else {
+    document.getElementById('btnNext').onclick = function(){ goStep(1); };
+  }
+  RENDERS[currentStep]();
+}
+
+goStep(0);
+</script>
+</body>
+</html>

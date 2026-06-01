@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya - Geometry (Ages 10-12)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
+  :root{--ink:#0f1117;--ink2:#4b5563;--muted:#9ca3af;--bg:#f9f8f4;--card:#fff;
+    --accent:#4f46e5;--accent2:#f59e0b;--green:#059669;--red:#dc2626;
+    --rule:rgba(0,0,0,.06);--sh:0 1px 12px rgba(0,0,0,.06);--r:18px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px;color:var(--ink);}
+  .shell{width:100%;max-width:620px;}
+  .top{text-align:center;margin-bottom:24px;}
+  .badge{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);display:inline-block;margin-bottom:12px;}
+  .top h1{font-family:'DM Serif Display',serif;font-size:clamp(24px,5vw,34px);
+    color:var(--ink);line-height:1.1;margin-bottom:6px;}
+  .top h1 em{font-style:italic;color:var(--accent);}
+  .top p{font-size:13px;color:var(--muted);font-weight:500;}
+  .stepper{display:flex;gap:5px;justify-content:center;margin-bottom:24px;}
+  .step-dot{width:5px;height:5px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .step-dot.active{background:var(--accent2);transform:scale(1.8);}
+  .step-dot.done{background:var(--accent);}
+  .nia{display:flex;gap:12px;align-items:center;background:var(--card);
+    border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px;
+    margin-bottom:20px;box-shadow:var(--sh);min-height:60px;}
+  .nia-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+    animation:bob 3s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .nia-text{font-size:14px;line-height:1.55;color:var(--ink2);flex:1;}
+  .nia-text strong{color:var(--accent);font-weight:700;}
+  .nia-text em{color:var(--accent2);font-style:normal;font-weight:700;}
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);
+    padding:22px;margin-bottom:16px;box-shadow:var(--sh);}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:14px;}
+  .formula{font-family:'DM Serif Display',serif;font-size:clamp(20px,4.5vw,28px);
+    text-align:center;color:var(--accent);margin:10px 0;}
+  .s-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;
+    font-size:13px;color:var(--ink2);line-height:1.6;}
+  .s-row:last-child{margin-bottom:0;}
+  .s-num{width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;
+    font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:1px;}
+  .slide-nav{display:flex;gap:6px;justify-content:center;margin-top:14px;}
+  .sdot{width:6px;height:6px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .sdot.on{background:var(--accent);transform:scale(1.4);}
+  .snav{display:flex;gap:8px;justify-content:center;margin-top:12px;}
+  .sbtn{padding:8px 20px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;
+    font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+  .sbtn.prev{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);}
+  .sbtn.prev:disabled{opacity:.3;cursor:not-allowed;}
+  .sbtn.nxt{background:var(--accent);color:#fff;}
+  .puz-q{font-family:'DM Serif Display',serif;font-size:clamp(17px,4vw,22px);
+    text-align:center;line-height:1.4;margin-bottom:16px;color:var(--ink);}
+  .prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .prog-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .prog-pips{display:flex;gap:5px;}
+  .prog-pip{width:8px;height:8px;border-radius:50%;background:var(--rule);border:1.5px solid #d1d5db;transition:all .3s;}
+  .prog-pip.dp{background:var(--accent);border-color:var(--accent);}
+  .prog-pip.cp{background:var(--accent2);border-color:var(--accent2);transform:scale(1.3);}
+  .res{text-align:center;margin-top:10px;font-size:14px;font-weight:700;min-height:20px;}
+  .res.ok{color:var(--green);}
+  .res.no{color:var(--red);}
+  .stars{display:flex;justify-content:center;gap:5px;margin-bottom:16px;}
+  .star{font-size:20px;opacity:.18;transition:all .3s;}
+  .star.on{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  .nav{display:flex;gap:10px;margin-top:4px;}
+  .btn{min-height:50px;padding:0 22px;border-radius:14px;border:none;
+    font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;
+    cursor:pointer;transition:all .2s;}
+  .btn:active{transform:scale(.97);}
+  .btn-back{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);min-width:50px;}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-next{background:var(--accent);color:#fff;flex:1;box-shadow:0 4px 14px rgba(79,70,229,.2);}
+  .btn-next:hover{background:#0e7490;transform:translateY(-1px);}
+  .cc{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .cp{position:absolute;border-radius:2px;animation:cf 2s ease-in forwards;}
+  @keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+  @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes fillIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="shell">
+  <div class="top">
+    <div class="badge">Ages 10 - 12</div>
+    <h1>Geometry — <em>Area</em>, Volume and Pythagoras</h1>
+    <p>Measuring the space inside shapes and the power of the right angle</p>
+  </div>
+  <div class="stepper">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia">
+    <div class="nia-dot">&#127775;</div>
+    <div class="nia-text" id="nia">
+      Three powerful tools: <strong>Area</strong> measures flat space, <strong>Volume</strong> measures 3D space, and <strong>Pythagoras</strong> unlocks the right angle.
+    </div>
+  </div>
+  <div id="main"></div>
+  <div class="nav">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>&#8592;</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let&apos;s go &#8594;</button>
+  </div>
+</div>
+<div class="cc" id="cc"></div>
+<script>
+var step=0,qIdx=0,qScore=0,puzzleLevel=0,puzzleScore=0,puzzleResults=[],levelAnswered=false,qHistory=[];
+var PI=3.14159;
+
+// ── Option renderer (inline styles) ───────────────────────
+var OPT_COLS=['#0891b2','#0369a1','#059669','#b45309'];
+var OPT_LBLS=['A','B','C','D'];
+
+function renderOpts(opts,idPfx,clickFn,disMap){
+  var allShort=opts.every(function(o){return String(o).length<=6;});
+  var html='';
+  if(allShort){
+    html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">';
+    opts.forEach(function(o,i){
+      var dis=disMap?disMap[i]:'';
+      var bg='#ffffff';var bc='#e5e7eb';var tc='#0f1117';
+      if(dis==='correct'){bg='rgba(5,150,105,.12)';bc='#059669';tc='#059669';}
+      else if(dis==='wrong'){bg='rgba(220,38,38,.08)';bc='#dc2626';tc='#dc2626';}
+      html+='<button id="'+idPfx+i+'" data-val="'+o+'" '+
+        (clickFn&&!dis?'onclick="'+clickFn+'('+i+')"':'')+
+        ' style="min-height:80px;border-radius:16px;border:2px solid '+bc+';background:'+bg+';'+
+        'cursor:'+(dis?'default':'pointer')+';display:flex;align-items:center;justify-content:center;'+
+        'font-family:DM Serif Display,serif;font-size:clamp(20px,4vw,28px);color:'+tc+';padding:12px;'+
+        'border-left:5px solid '+OPT_COLS[i%OPT_COLS.length]+';'+
+        'transition:all .25s cubic-bezier(.34,1.56,.64,1)">'+o+'</button>';
+    });
+    html+='</div>';
+  } else {
+    html='<div style="display:flex;flex-direction:column;gap:8px;margin:12px 0">';
+    opts.forEach(function(o,i){
+      var dis=disMap?disMap[i]:'';
+      var bg='#ffffff';var bc='#e5e7eb';var tc='#0f1117';var lc=OPT_COLS[i%OPT_COLS.length];
+      if(dis==='correct'){bg='rgba(5,150,105,.12)';bc='#059669';tc='#059669';lc='#059669';}
+      else if(dis==='wrong'){bg='rgba(220,38,38,.08)';bc='#dc2626';tc='#dc2626';lc='#dc2626';}
+      html+='<button id="'+idPfx+i+'" data-val="'+o+'" '+
+        (clickFn&&!dis?'onclick="'+clickFn+'('+i+')"':'')+
+        ' style="min-height:54px;border-radius:14px;border:1.5px solid '+bc+';background:'+bg+';'+
+        'cursor:'+(dis?'default':'pointer')+';display:flex;align-items:center;gap:14px;'+
+        'padding:12px 16px;width:100%;box-sizing:border-box;transition:all .2s">'+
+        '<div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;'+
+        'justify-content:center;font-size:13px;font-weight:700;color:#fff;background:'+lc+'">'+OPT_LBLS[i]+'</div>'+
+        '<div style="font-family:DM Sans,sans-serif;font-size:14px;font-weight:600;color:'+tc+';line-height:1.4;flex:1;text-align:left">'+o+'</div>'+
+        '</button>';
+    });
+    html+='</div>';
+  }
+  return html;
+}
+
+function markOpts(idPfx,chosen,correct){
+  [0,1,2,3].forEach(function(i){
+    var b=document.getElementById(idPfx+i);if(!b)return;
+    var bv=b.getAttribute('data-val');
+    var isAns=Array.isArray(correct)?correct.indexOf(bv)>=0:bv===correct;
+    b.onclick=null;b.style.cursor='default';
+    if(bv===chosen&&isAns){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';b.style.color='#059669';}
+    else if(bv===chosen&&!isAns){b.style.background='rgba(220,38,38,.08)';b.style.borderColor='#dc2626';b.style.color='#dc2626';}
+    else if(isAns){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';}
+  });
+}
+
+// ── SVG shapes ────────────────────────────────────────────
+function rectSVG(w,h,fill,label){
+  var sw=180,sh=120,px=20,py=16;
+  var rw=sw-px*2,rh=sh-py*2;
+  return '<svg viewBox="0 0 '+sw+' '+sh+'" width="'+sw+'" height="'+sh+'" xmlns="http://www.w3.org/2000/svg">'+
+    '<rect x="'+px+'" y="'+py+'" width="'+rw+'" height="'+rh+'" fill="'+fill+'" opacity=".15" stroke="'+fill+'" stroke-width="2" rx="3"/>'+
+    '<text x="'+(sw/2)+'" y="'+(sh/2+6)+'" text-anchor="middle" font-size="13" font-family="DM Sans,sans-serif" font-weight="700" fill="'+fill+'">'+label+'</text>'+
+    '<text x="'+(sw/2)+'" y="'+(py-4)+'" text-anchor="middle" font-size="11" fill="'+fill+'" font-family="DM Sans,sans-serif">'+w+'</text>'+
+    '<text x="'+(px-4)+'" y="'+(sh/2+4)+'" text-anchor="end" font-size="11" fill="'+fill+'" font-family="DM Sans,sans-serif">'+h+'</text>'+
+    '</svg>';
+}
+
+function triSVG(fill){
+  return '<svg viewBox="0 0 200 130" width="180" height="120" xmlns="http://www.w3.org/2000/svg">'+
+    '<rect x="10" y="10" width="180" height="100" fill="'+fill+'" opacity=".07" stroke="'+fill+'" stroke-width="1.5" stroke-dasharray="5,3" rx="2"/>'+
+    '<polygon points="10,110 190,110 10,10" fill="'+fill+'" opacity=".2" stroke="'+fill+'" stroke-width="2"/>'+
+    '<line x1="10" y1="10" x2="10" y2="110" stroke="'+fill+'" stroke-width="1.5" stroke-dasharray="4,3" opacity=".6"/>'+
+    '<text x="100" y="105" text-anchor="middle" font-size="11" fill="'+fill+'" font-family="DM Sans,sans-serif" font-weight="700">base</text>'+
+    '<text x="4" y="60" text-anchor="middle" font-size="11" fill="'+fill+'" font-family="DM Sans,sans-serif" font-weight="700">h</text>'+
+    '</svg>';
+}
+
+function circleSVG(fill){
+  return '<svg viewBox="0 0 160 160" width="140" height="140" xmlns="http://www.w3.org/2000/svg">'+
+    '<circle cx="80" cy="80" r="65" fill="'+fill+'" opacity=".12" stroke="'+fill+'" stroke-width="2"/>'+
+    '<line x1="80" y1="80" x2="145" y2="80" stroke="'+fill+'" stroke-width="2"/>'+
+    '<text x="112" y="74" text-anchor="middle" font-size="12" fill="'+fill+'" font-family="DM Sans,sans-serif" font-weight="700">r</text>'+
+    '<circle cx="80" cy="80" r="3" fill="'+fill+'"/>'+
+    '</svg>';
+}
+
+function cuboidSVG(fill){
+  return '<svg viewBox="0 0 200 150" width="180" height="130" xmlns="http://www.w3.org/2000/svg">'+
+    '<polygon points="20,110 140,110 140,30 20,30" fill="'+fill+'" opacity=".12" stroke="'+fill+'" stroke-width="1.5"/>'+
+    '<polygon points="140,30 180,10 180,90 140,110" fill="'+fill+'" opacity=".08" stroke="'+fill+'" stroke-width="1.5"/>'+
+    '<polygon points="20,30 60,10 180,10 140,30" fill="'+fill+'" opacity=".16" stroke="'+fill+'" stroke-width="1.5"/>'+
+    '<text x="80" y="75" text-anchor="middle" font-size="12" fill="'+fill+'" font-family="DM Sans,sans-serif" font-weight="700">l x w x h</text>'+
+    '</svg>';
+}
+
+// Improved isometric unit cube grid
+function unitCubesHTML(l,w,h,showLayers){
+  var cw=36,ch=20,cd=18;
+  var PAD=20;
+  var W=l*cw+w*(cd>>1)+PAD*2+20;
+  var H=w*(cd>>1)+h*ch+PAD*2+20;
+  var TOP='#93c5fd',FRONT='#2563eb',SIDE='#1e3a8a';
+  var ox=PAD+w*(cd>>1), oy=H-PAD;
+  function face(cx,cy,cz){
+    var sx=ox+cx*cw+cy*(cd>>1);
+    var sy=oy-cz*ch-cy*(cd>>1);
+    var t=[[sx,sy-ch],[sx+cw,sy-ch],[sx+cw+(cd>>1),sy-ch-(cd>>1)],[sx+(cd>>1),sy-ch-(cd>>1)]];
+    var f=[[sx,sy-ch],[sx+cw,sy-ch],[sx+cw,sy],[sx,sy]];
+    var r=[[sx+cw,sy-ch],[sx+cw+(cd>>1),sy-ch-(cd>>1)],[sx+cw+(cd>>1),sy-(cd>>1)],[sx+cw,sy]];
+    return {t:t,f:f,r:r};
+  }
+  function pts(c){return c.map(function(p){return Math.round(p[0])+','+Math.round(p[1]);}).join(' ');}
+  var s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="max-width:'+(W+20)+'px;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg">';
+  for(var layer=0;layer<Math.min(showLayers,h);layer++){
+    for(var dep=w-1;dep>=0;dep--){
+      for(var col=0;col<l;col++){
+        var fc=face(col,dep,layer);
+        s+='<polygon points="'+pts(fc.t)+'" fill="'+TOP+'" stroke="white" stroke-width="1.5"/>';
+        s+='<polygon points="'+pts(fc.f)+'" fill="'+FRONT+'" stroke="white" stroke-width="1.5"/>';
+        s+='<polygon points="'+pts(fc.r)+'" fill="'+SIDE+'" stroke="white" stroke-width="1.5"/>';
+      }
+    }
+  }
+  var lc='#1e40af';
+  s+='<text x="'+(ox+l*cw/2)+'" y="'+(H-4)+'" text-anchor="middle" font-size="12" fill="'+lc+'" font-family="DM Sans,sans-serif" font-weight="700">'+l+' wide</text>';
+  s+='<text x="'+(ox-12)+'" y="'+(oy-Math.min(showLayers,h)*ch/2)+'" text-anchor="end" font-size="12" fill="'+lc+'" font-family="DM Sans,sans-serif" font-weight="700">Layer '+Math.min(showLayers,h)+' of '+h+'</text>';
+  s+='</svg>';
+  return s;
+}
+
+function pythagorasSVG(){return pythSquaresSVG();}
+
+function pythSquaresSVG(){
+  return '<svg viewBox="0 0 345 285" width="100%" style="max-width:345px;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg"><polygon points="110,50 110,140 20,140 20,50" fill="rgba(220,38,38,.15)" stroke="#dc2626" stroke-width="2"/><line x1="80" y1="50" x2="80" y2="140" stroke="#dc2626" stroke-width="0.8" opacity="0.5"/><line x1="110" y1="80" x2="20" y2="80" stroke="#dc2626" stroke-width="0.8" opacity="0.5"/><line x1="50" y1="50" x2="50" y2="140" stroke="#dc2626" stroke-width="0.8" opacity="0.5"/><line x1="110" y1="110" x2="20" y2="110" stroke="#dc2626" stroke-width="0.8" opacity="0.5"/><text x="65" y="89" text-anchor="middle" font-size="14" fill="#dc2626" font-family="DM Serif Display,serif" font-weight="700">a²=9</text><text x="65" y="107" text-anchor="middle" font-size="11" fill="#dc2626" font-family="DM Sans,sans-serif">(3×3 = 9 squares)</text><polygon points="110,140 230,140 230,260 110,260" fill="rgba(29,78,216,.15)" stroke="#1d4ed8" stroke-width="2"/><line x1="110" y1="170" x2="230" y2="170" stroke="#1d4ed8" stroke-width="0.8" opacity="0.5"/><line x1="140" y1="140" x2="140" y2="260" stroke="#1d4ed8" stroke-width="0.8" opacity="0.5"/><line x1="110" y1="200" x2="230" y2="200" stroke="#1d4ed8" stroke-width="0.8" opacity="0.5"/><line x1="170" y1="140" x2="170" y2="260" stroke="#1d4ed8" stroke-width="0.8" opacity="0.5"/><line x1="110" y1="230" x2="230" y2="230" stroke="#1d4ed8" stroke-width="0.8" opacity="0.5"/><line x1="200" y1="140" x2="200" y2="260" stroke="#1d4ed8" stroke-width="0.8" opacity="0.5"/><text x="170" y="194" text-anchor="middle" font-size="14" fill="#1d4ed8" font-family="DM Serif Display,serif" font-weight="700">b²=16</text><text x="170" y="212" text-anchor="middle" font-size="11" fill="#1d4ed8" font-family="DM Sans,sans-serif">(4×4 = 16 squares)</text><polygon points="110,50 230,140 320,20 200,-70" fill="rgba(5,150,105,.15)" stroke="#059669" stroke-width="2"/><line x1="128" y1="26" x2="248" y2="116" stroke="#059669" stroke-width="0.8" opacity="0.5"/><line x1="134" y1="68" x2="224" y2="-52" stroke="#059669" stroke-width="0.8" opacity="0.5"/><line x1="146" y1="2" x2="266" y2="92" stroke="#059669" stroke-width="0.8" opacity="0.5"/><line x1="158" y1="86" x2="248" y2="-34" stroke="#059669" stroke-width="0.8" opacity="0.5"/><line x1="164" y1="-22" x2="284" y2="68" stroke="#059669" stroke-width="0.8" opacity="0.5"/><line x1="182" y1="104" x2="272" y2="-16" stroke="#059669" stroke-width="0.8" opacity="0.5"/><line x1="182" y1="-46" x2="302" y2="44" stroke="#059669" stroke-width="0.8" opacity="0.5"/><line x1="206" y1="122" x2="296" y2="2" stroke="#059669" stroke-width="0.8" opacity="0.5"/><text x="215" y="29" text-anchor="middle" font-size="14" fill="#059669" font-family="DM Serif Display,serif" font-weight="700">c²=25</text><text x="215" y="47" text-anchor="middle" font-size="11" fill="#059669" font-family="DM Sans,sans-serif">(5×5 = 25 squares)</text><polygon points="110,50 110,140 230,140" fill="rgba(55,65,81,.12)" stroke="#374151" stroke-width="2.5"/><rect x="110" y="128" width="12" height="12" fill="none" stroke="#0891b2" stroke-width="2"/><text x="102" y="99" text-anchor="end" font-size="13" fill="#dc2626" font-family="DM Serif Display,serif">a=3</text><text x="170" y="134" text-anchor="middle" font-size="13" fill="#1d4ed8" font-family="DM Serif Display,serif">b=4</text><text x="184" y="95" text-anchor="start" font-size="13" fill="#059669" font-family="DM Serif Display,serif">c=5</text></svg>';
+}
+
+// ── Puzzles ───────────────────────────────────────────────
+var PUZZLES=[
+  {q:'Area of a rectangle:\n8cm x 5cm',
+   opts:['30cm²','40cm²','26cm²','45cm²'],ans:'40cm²',
+   explain:'Area = length x width = 8 x 5 = 40cm².'},
+  {q:'Area of a triangle:\nbase 6cm, height 4cm',
+   opts:['24cm²','10cm²','12cm²','20cm²'],ans:'12cm²',
+   explain:'Area = 1/2 x base x height = 1/2 x 6 x 4 = 12cm².'},
+  {q:'Volume of a cuboid:\n3cm x 4cm x 5cm',
+   opts:['60cm³','36cm³','47cm³','120cm³'],ans:'60cm³',
+   explain:'Volume = l x w x h = 3 x 4 x 5 = 60cm³.'},
+  {q:'Right triangle: sides 5cm and 12cm.\nWhat is the hypotenuse?',
+   opts:['13cm','17cm','11cm','15cm'],ans:'13cm',
+   explain:'5² + 12² = 25 + 144 = 169. √169 = 13cm.'},
+];
+
+// ── Quiz ──────────────────────────────────────────────────
+var QS=[
+  {q:'Area of a circle, radius 3cm (use π = 3.14):',
+   opts:['18.84cm²','28.26cm²','9.42cm²','12.56cm²'],ans:'28.26cm²'},
+  {q:'Triangle: base 10cm, height 6cm. Area = ?',
+   opts:['60cm²','30cm²','16cm²','25cm²'],ans:'30cm²'},
+  {q:'Cylinder: radius 2cm, height 5cm. Volume (π=3.14):',
+   opts:['62.8cm³','31.4cm³','20cm³','12.56cm³'],ans:'62.8cm³'},
+  {q:'Right triangle: hypotenuse 10cm, one side 6cm. Other side = ?',
+   opts:['6cm','7cm','8cm','9cm'],ans:'8cm'},
+];
+
+var NIA=[
+  'Three powerful tools: <strong>Area</strong> measures flat space, <strong>Volume</strong> measures 3D space, and <strong>Pythagoras</strong> unlocks the right angle.',
+  'Area — counting the squares inside a shape. Each formula is just a fast way to count.',
+  'Volume — stacking layers. Area of base, multiplied by height.',
+  'Pythagoras — the relationship between sides of every right-angled triangle.',
+  'Four puzzles. Apply the formulas.',
+];
+var BTNS=['Area','Volume','Pythagoras','Practice','Quiz'];
+
+function dots(s){for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<s?' done':i===s?' active':'');}}
+
+function burst(){
+  var c=document.getElementById('cc');c.innerHTML='';
+  var cols=['#0891b2','#059669','#dc2626','#f59e0b','#0369a1','#7c3aed'];
+  for(var i=0;i<48;i++){
+    var p=document.createElement('div');p.className='cp';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[i%cols.length]+
+      ';width:'+(5+Math.random()*7)+'px;height:'+(5+Math.random()*7)+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+
+      ';animation-delay:'+(Math.random()*.5)+'s;animation-duration:'+(1.5+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){c.innerHTML='';},3000);
+}
+
+// ── STEP 0: Preface ───────────────────────────────────────
+function renderStep0(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Three things we are measuring</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px">'+
+        [
+          {icon:'&#9632;',col:'#0891b2',t:'Area',d:'Space inside a 2D shape',unit:'cm²',eg:'Floor tiles, painting a wall'},
+          {icon:'&#9646;',col:'#0369a1',t:'Volume',d:'Space inside a 3D shape',unit:'cm³',eg:'Water in a tank, filling a box'},
+          {icon:'&#9651;',col:'#059669',t:'Pythagoras',d:'Sides of a right-angled triangle',unit:'cm',eg:'Building ramps, checking corners are square'},
+        ].map(function(r){
+          return '<div style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--bg);border:1px solid var(--rule);border-radius:12px">'+
+            '<div style="width:44px;height:44px;border-radius:12px;background:'+r.col+';color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+r.icon+'</div>'+
+            '<div style="flex:1">'+
+              '<div style="font-size:14px;font-weight:700;color:var(--ink)">'+r.t+' <span style="font-size:12px;color:var(--muted);font-weight:500">— measured in '+r.unit+'</span></div>'+
+              '<div style="font-size:12px;color:var(--ink2);margin-top:2px">'+r.d+'</div>'+
+              '<div style="font-size:11px;color:var(--muted);margin-top:2px;font-style:italic">'+r.eg+'</div>'+
+            '</div></div>';
+        }).join('')+
+        '</div></div>',
+      nia:'Three tools — each for a different kind of measurement. Area for flat shapes, Volume for 3D shapes, Pythagoras for right-angled triangles.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Real-world uses</div>'+
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+
+        [
+          {e:'&#127968;',t:'Flooring',d:'Area of a room tells you how many tiles to buy'},
+          {e:'&#128167;',t:'Water tank',d:'Volume tells you how much water it holds'},
+          {e:'&#128663;',t:'Building a ramp',d:'Pythagoras gives you the exact slope length'},
+          {e:'&#128218;',t:'Wrapping a gift',d:'Surface area tells you how much paper you need'},
+          {e:'&#127758;',t:'Mapping land',d:'Area of fields measured in m² or km²'},
+          {e:'&#9981;',t:'Square corners',d:'Builders use 3-4-5 triangles to check 90° angles'},
+        ].map(function(r){
+          return '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px">'+
+            '<div style="font-size:24px;margin-bottom:5px">'+r.e+'</div>'+
+            '<div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px">'+r.t+'</div>'+
+            '<div style="font-size:11px;color:var(--muted);line-height:1.4">'+r.d+'</div>'+
+            '</div>';
+        }).join('')+
+        '</div></div>',
+      nia:'Geometry is everywhere — floors, tanks, ramps, maps. Every formula you learn today has a direct real-world use.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s0b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s0n()">'+(sl<S.length-1?'Next &#8594;':'Area &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+  }
+  window.s0n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s0b=function(){if(sl>0){sl--;show();}};
+  show();
+}
+
+// ── STEP 1: Area ──────────────────────────────────────────
+function renderStep1(){
+  var sl=0;
+  var S=[
+    // Rectangle
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Rectangle — Area = length x width</div>'+
+        '<div style="display:flex;justify-content:center;margin-bottom:12px">'+rectSVG('l','w','#0891b2','l x w')+'</div>'+
+        '<div class="formula">A = l x w</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px;margin-top:10px">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px">Why? We are counting equal squares.</div>'+
+          '<div class="s-row"><div class="s-num">1</div><div>A rectangle 5cm x 3cm has 5 columns and 3 rows of 1cm² squares.</div></div>'+
+          '<div class="s-row"><div class="s-num">2</div><div>Total squares = 5 x 3 = <strong style="color:var(--accent)">15cm²</strong></div></div>'+
+          '<div class="s-row"><div class="s-num">3</div><div>Example: Room 8m x 6m. Area = 8 x 6 = <strong style="color:var(--accent)">48m²</strong></div></div>'+
+        '</div></div>',
+      nia:'Area of a rectangle = <strong>length x width</strong>. We are counting the unit squares that fit inside. The formula is just a fast way to count them.'
+    },
+    // Triangle
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Triangle — Area = 1/2 x base x height</div>'+
+        '<div style="display:flex;justify-content:center;margin-bottom:12px">'+triSVG('#0369a1')+'</div>'+
+        '<div class="formula">A = &#189; x b x h</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px;margin-top:10px">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px">Why 1/2? A triangle is always half a rectangle.</div>'+
+          '<div class="s-row"><div class="s-num">1</div><div>Draw a rectangle around any triangle — the triangle fills exactly half of it.</div></div>'+
+          '<div class="s-row"><div class="s-num">2</div><div>Example: base 6cm, height 4cm. Area = 1/2 x 6 x 4 = <strong style="color:#0369a1">12cm²</strong></div></div>'+
+        '</div></div>',
+      nia:'A triangle is always <strong>half a rectangle</strong>. That is why we multiply by 1/2. Draw the rectangle around it and you will see.'
+    },
+    // Circle
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Circle — Area = &#960; x r&#178;</div>'+
+        '<div style="display:flex;justify-content:center;margin-bottom:8px">'+circleSVG('#7c3aed')+'</div>'+
+        '<div class="formula">A = &#960; x r&#178;</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px;margin-top:8px">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px">&#960; (pi) &asymp; 3.14. r = radius (centre to edge).</div>'+
+          '<div class="s-row"><div class="s-num">1</div><div>Circle with radius 4cm: A = 3.14 x 4² = 3.14 x 16 = <strong style="color:#7c3aed">50.24cm²</strong></div></div>'+
+          '<div class="s-row"><div class="s-num">2</div><div>Circle with radius 3cm: A = 3.14 x 9 = <strong style="color:#7c3aed">28.26cm²</strong></div></div>'+
+        '</div></div>',
+      nia:'Area of a circle = <strong>&#960; x r²</strong>. Pi (&#960; &#8776; 3.14) is the ratio of a circle\'s circumference to its diameter — the same for every circle.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s1b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s1n()">'+(sl<S.length-1?'Next &#8594;':'Volume &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s1n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s1b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 2: Volume ────────────────────────────────────────
+function renderStep2(){
+  var sl=0;
+  var S=[
+    // Cuboid — animated layer builder
+    {
+      html:(function(){
+        var layerStep=1;
+        var L=3,W=2,H=3;
+        window._volLayer=1;
+        window._volL=L;window._volW=W;window._volH=H;
+        function buildVol(layers){
+          return '<div style="animation:fi .3s ease">'+
+            '<div class="panel-title">Cuboid — built from unit cubes</div>'+
+            '<div id="cubeViz" style="margin:8px 0">'+unitCubesHTML(L,W,H,layers)+'</div>'+
+            '<div style="background:rgba(3,105,161,.06);border:1px solid rgba(79,70,229,.2);border-radius:10px;padding:10px;text-align:center;margin-bottom:10px">'+
+              '<div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:4px">Layer '+(layers)+' of '+H+'</div>'+
+              '<div style="font-family:DM Serif Display,serif;font-size:18px;color:#0369a1">'+L+' x '+W+' = '+  (L*W)+' cubes per layer</div>'+
+              (layers===H?'<div style="font-family:DM Serif Display,serif;font-size:22px;color:var(--green);margin-top:6px">'+H+' layers x '+(L*W)+' = <strong>'+(L*W*H)+'cm³</strong></div>':'')+
+            '</div>'+
+            '<div class="formula" style="font-size:clamp(18px,4vw,24px)">V = '+L+' x '+W+' x '+H+' = '+(L*W*H)+'cm³</div>'+
+            '<div style="display:flex;gap:8px;justify-content:center;margin-top:12px">'+
+              '<button onclick="volBack()" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);opacity:'+(layers<=1?.3:1)+'" '+(layers<=1?'disabled':'')+'>&#8592; Remove layer</button>'+
+              (layers<H?'<button onclick="volNext()" style="padding:8px 18px;border-radius:10px;border:none;background:#0369a1;color:#fff;font-size:13px;font-weight:700;cursor:pointer">Add layer &#8594;</button>':
+               '<button onclick="s2n()" style="padding:8px 18px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:700;cursor:pointer">Cylinder &#8594;</button>')+
+            '</div>'+
+            '</div>';
+        }
+        window.volNext=function(){if(window._volLayer<window._volH){window._volLayer++;var el=document.getElementById('cubeViz');if(el)el.innerHTML=unitCubesHTML(window._volL,window._volW,window._volH,window._volLayer);rebuildVolPanel();}};
+        window.volBack=function(){if(window._volLayer>1){window._volLayer--;rebuildVolPanel();}};
+        window.rebuildVolPanel=function(){var m=document.getElementById('main');if(m)m.innerHTML='<div class="panel">'+buildVol(window._volLayer)+'<div class="slide-nav"><div class="sdot on"></div><div class="sdot"></div></div></div>';document.getElementById('nia').innerHTML=window._volLayer<window._volH?'Each layer is <strong>'+window._volL+' x '+window._volW+' = '+(window._volL*window._volW)+'</strong> unit cubes. Add all layers to get the volume.':'<strong>'+window._volH+' layers</strong> of '+(window._volL*window._volW)+' cubes each = '+(window._volL*window._volW*window._volH)+'cm³. Volume = length x width x height.';};
+        return buildVol(1);
+      })(),
+      nia:'Each layer is <strong>3 x 2 = 6</strong> unit cubes. Add all 3 layers to get the total volume.'
+    },
+    // Cylinder
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Cylinder — Volume = &#960; x r&#178; x h</div>'+
+        '<div style="display:flex;justify-content:center;margin:8px 0">'+
+          '<svg viewBox="0 0 160 180" width="130" height="150" xmlns="http://www.w3.org/2000/svg">'+
+          '<ellipse cx="80" cy="40" rx="60" ry="18" fill="rgba(79,70,229,.2)" stroke="#0891b2" stroke-width="2"/>'+
+          '<rect x="20" y="40" width="120" height="100" fill="rgba(8,145,178,.08)" stroke="none"/>'+
+          '<ellipse cx="80" cy="140" rx="60" ry="18" fill="rgba(8,145,178,.15)" stroke="#0891b2" stroke-width="2"/>'+
+          '<line x1="20" y1="40" x2="20" y2="140" stroke="#0891b2" stroke-width="2"/>'+
+          '<line x1="140" y1="40" x2="140" y2="140" stroke="#0891b2" stroke-width="2"/>'+
+          '<line x1="80" y1="40" x2="140" y2="40" stroke="#0891b2" stroke-width="1.5"/>'+
+          '<text x="110" y="34" text-anchor="middle" font-size="11" fill="#0891b2" font-family="DM Sans,sans-serif" font-weight="700">r</text>'+
+          '<text x="8" y="95" text-anchor="middle" font-size="11" fill="#0891b2" font-family="DM Sans,sans-serif" font-weight="700">h</text>'+
+          '</svg>'+
+        '</div>'+
+        '<div class="formula">V = &#960; x r&#178; x h</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px;margin-top:8px">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px">Same idea as the cuboid — circular base x height.</div>'+
+          '<div class="s-row"><div class="s-num">1</div><div>Base area = &#960; x r² (area of circle)</div></div>'+
+          '<div class="s-row"><div class="s-num">2</div><div>Stack h layers of that circle.</div></div>'+
+          '<div class="s-row"><div class="s-num">3</div><div>Cylinder r=3, h=10: V = 3.14 x 9 x 10 = <strong style="color:var(--accent)">282.6cm³</strong></div></div>'+
+        '</div></div>',
+      nia:'A cylinder is just a circle stretched upward. Volume = <strong>&#960; x r² x h</strong>. The circular base area, multiplied by the height.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s2b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s2n()">'+(sl<S.length-1?'Next &#8594;':'Pythagoras &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s2n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s2b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 3: Pythagoras ────────────────────────────────────
+function renderStep3(){
+  var sl=0;
+  var S=[
+    // Discovery — squares on each side visual proof
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Pythagoras — a square plus b square equals c square</div>'+
+        pythSquaresSVG()+
+        '<div style="background:rgba(5,150,105,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:14px;margin-top:10px">'+
+          '<div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin-bottom:8px">'+
+            '<span style="background:#fee2e2;border-radius:8px;padding:4px 10px;font-family:DM Serif Display,serif;font-size:18px;color:#dc2626">a&#178; = 9</span>'+
+            '<span style="font-size:18px;color:var(--muted)">+</span>'+
+            '<span style="background:#dbeafe;border-radius:8px;padding:4px 10px;font-family:DM Serif Display,serif;font-size:18px;color:#1d4ed8">b&#178; = 16</span>'+
+            '<span style="font-size:18px;color:var(--muted)">=</span>'+
+            '<span style="background:#dcfce7;border-radius:8px;padding:4px 10px;font-family:DM Serif Display,serif;font-size:18px;color:#059669">c&#178; = 25</span>'+
+          '</div>'+
+          '<div style="font-size:13px;color:var(--ink2);text-align:center">The two smaller squares together always equal the square on the hypotenuse.</div>'+
+        '</div></div>',
+      nia:'Each side of the triangle forms a square. The <strong style="color:#dc2626">red square</strong> (a²=9) plus the <strong style="color:#1d4ed8">blue square</strong> (b²=16) exactly equals the <strong style="color:#059669">green square</strong> (c²=25). Always.'
+    },
+    // Finding hypotenuse
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Finding the hypotenuse</div>'+
+        '<div style="text-align:center;margin-bottom:12px">'+
+          '<svg viewBox="0 0 200 160" width="180" height="140" xmlns="http://www.w3.org/2000/svg">'+
+          '<polygon points="20,140 140,140 20,20" fill="rgba(8,145,178,.08)" stroke="#0891b2" stroke-width="2"/>'+
+          '<rect x="20" y="120" width="20" height="20" fill="none" stroke="#0891b2" stroke-width="1.5"/>'+
+          '<text x="14" y="85" text-anchor="end" font-size="13" fill="#dc2626" font-family="DM Serif Display,serif">a=3</text>'+
+          '<text x="82" y="155" text-anchor="middle" font-size="13" fill="#0369a1" font-family="DM Serif Display,serif">b=4</text>'+
+          '<text x="100" y="80" text-anchor="middle" font-size="13" fill="#059669" font-family="DM Serif Display,serif">c=?</text>'+
+          '</svg>'+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px">'+
+          '<div class="s-row"><div class="s-num">1</div><div>a² + b² = c² &nbsp;&rarr;&nbsp; 3² + 4² = c²</div></div>'+
+          '<div class="s-row"><div class="s-num">2</div><div>9 + 16 = c²</div></div>'+
+          '<div class="s-row"><div class="s-num">3</div><div>c² = 25 &nbsp;&rarr;&nbsp; c = &#8730;25 = <strong style="color:var(--green)">5cm</strong></div></div>'+
+        '</div>'+
+        '<div style="background:rgba(5,150,105,.06);border:1px solid rgba(79,70,229,.2);border-radius:10px;padding:10px;margin-top:8px;font-size:13px;color:var(--ink2)">'+
+          'The 3-4-5 triangle is the most famous right triangle. Builders have used it for thousands of years to make square corners.'+
+        '</div></div>',
+      nia:'The 3-4-5 triangle: <strong>9 + 16 = 25</strong>. Square root of 25 = 5. The hypotenuse is always opposite the right angle — the longest side.'
+    },
+    // Finding a shorter side
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Finding a shorter side</div>'+
+        '<div style="background:rgba(3,105,161,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:14px;padding:14px;margin-bottom:12px;text-align:center">'+
+          '<div class="formula">a&#178; = c&#178; &#8722; b&#178;</div>'+
+          '<div style="font-size:13px;color:var(--ink2);margin-top:4px">Rearrange: subtract the known side&#178; from the hypotenuse&#178;</div>'+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px;margin-bottom:8px">'+
+          '<div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:8px">Example: hypotenuse = 13cm, one side = 5cm</div>'+
+          '<div class="s-row"><div class="s-num">1</div><div>a² = 13² - 5² = 169 - 25 = 144</div></div>'+
+          '<div class="s-row"><div class="s-num">2</div><div>a = &#8730;144 = <strong style="color:#0369a1">12cm</strong></div></div>'+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px;font-size:13px;color:var(--ink2)">'+
+          '<strong style="color:var(--ink)">Second example:</strong> hypotenuse 10, one side 6: a² = 100 - 36 = 64. a = <strong style="color:#0369a1">8cm</strong>'+
+        '</div></div>',
+      nia:'Pythagoras works in <strong>both directions</strong>. To find a shorter side: a² = c² - b². Subtract the known side squared from the hypotenuse squared.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s3b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s3n()">'+(sl<S.length-1?'Next &#8594;':'Practice &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s3n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s3b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 4: Puzzles ───────────────────────────────────────
+function renderStep4(){puzzleLevel=0;puzzleScore=0;puzzleResults=[];levelAnswered=false;showPuzzle();}
+
+function showPuzzle(){
+  if(puzzleLevel>=PUZZLES.length){showPuzzleDone();return;}
+  var pz=PUZZLES[puzzleLevel];levelAnswered=false;
+  var pips='';for(var i=0;i<PUZZLES.length;i++)pips+='<div class="prog-pip'+(i<puzzleLevel?' dp':i===puzzleLevel?' cp':'')+'" ></div>';
+  var qDisplay=pz.q.replace(/\n/g,'<br>');
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="prog-row"><span class="prog-label">Puzzle '+(puzzleLevel+1)+' of '+PUZZLES.length+'</span><div class="prog-pips">'+pips+'</div></div>'+
+    '<div class="puz-q">'+qDisplay+'</div>'+
+    renderOpts(pz.opts,'popt','pickPuz',null)+
+    '<div class="res" id="pzRes"></div></div>';
+  document.getElementById('nia').innerHTML='Apply the formula. Pick your answer.';
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){
+    if(puzzleLevel>0){puzzleLevel--;if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}levelAnswered=false;showPuzzle();}
+    else{goStep(-1);}
+  };}
+}
+
+function pickPuz(idx){
+  if(levelAnswered)return;levelAnswered=true;
+  var pz=PUZZLES[puzzleLevel];
+  var chosen=document.getElementById('popt'+idx)?document.getElementById('popt'+idx).getAttribute('data-val'):'';
+  var ok=(chosen===pz.ans);
+  puzzleResults[puzzleLevel]=ok;
+  markOpts('popt',chosen,pz.ans);
+  var res=document.getElementById('pzRes');
+  if(ok){puzzleScore++;if(res){res.textContent='Correct. '+pz.explain;res.className='res ok';}document.getElementById('nia').innerHTML='Correct. '+pz.explain;}
+  else{if(res){res.textContent='Not quite. '+pz.explain;res.className='res no';}document.getElementById('nia').innerHTML=pz.explain;}
+  puzzleLevel++;
+  var isLast=(puzzleLevel>=PUZZLES.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showPuzzleDone():showPuzzle();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showPuzzleDone():showPuzzle();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showPuzzleDone(){
+  var perfect=(puzzleScore>=PUZZLES.length);
+  if(perfect)burst();
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){
+    puzzleLevel=PUZZLES.length-1;
+    if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}
+    levelAnswered=false;showPuzzle();
+  };}
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div style="font-size:48px;margin-bottom:14px">'+(perfect?'&#127919;':'&#128077;')+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'All four puzzles correct!':'Practice complete \u2014 '+puzzleScore+' of '+PUZZLES.length+' correct.')+
+    '</div>'+
+    (perfect?'':'<p style="font-size:14px;color:var(--muted)">Tap &#8592; to retry any puzzle.</p>')+
+    '</div>';
+  document.getElementById('nia').innerHTML=perfect?'All four correct. Ready for the quiz.':'Good effort. Use &#8592; to review before the quiz.';
+}
+
+// ── STEP 5: Quiz ──────────────────────────────────────────
+function renderStep5(){qIdx=0;qScore=0;qHistory=[];document.getElementById('nia').innerHTML='Four questions. Think carefully.';showQ();}
+
+function showQ(){
+  if(qIdx>=QS.length){showQEnd();return;}
+  var q=QS[qIdx];
+  var nia=document.getElementById('nia');if(nia)nia.innerHTML='Pick your answer.';
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div class="puz-q">'+q.q+'</div>'+
+    renderOpts(q.opts,'qopt','pickQ',null)+
+    '<div class="res" id="qRes"></div></div>';
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){if(qIdx>0&&qHistory.length>0){showQPrev(qIdx-1);}else{goStep(-1);};};}
+}
+
+function showQPrev(idx){
+  if(idx<0||!qHistory[idx])return;
+  var q=QS[idx];var h=qHistory[idx];
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<h.score?' on':'')+'">&#11088;</div>';
+  var disMap={};
+  q.opts.forEach(function(o,i){
+    if(o===h.chosen&&h.wasCorrect)disMap[i]='correct';
+    else if(o===h.chosen&&!h.wasCorrect)disMap[i]='wrong';
+    else if(o===h.correct&&!h.wasCorrect)disMap[i]='correct';
+    else disMap[i]='';
+  });
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:8px">Question '+(idx+1)+' \u2014 reviewed</div>'+
+    '<div class="puz-q">'+q.q+'</div>'+
+    renderOpts(q.opts,'qopt',null,disMap)+
+    '<div style="display:flex;gap:8px;justify-content:center;margin-top:14px">'+
+    '<button onclick="showQPrev('+(idx-1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);opacity:'+(idx===0?.3:1)+'" '+(idx===0?'disabled':'')+'>&#8592; Prev</button>'+
+    (idx<qIdx-1?'<button onclick="showQPrev('+(idx+1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted)">Next &#8594;</button>':
+     '<button onclick="showQ()" style="padding:8px 16px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:700;cursor:pointer">Continue quiz &#8594;</button>')+
+    '</div></div>';
+  document.getElementById('nia').innerHTML=(h.wasCorrect?'Correct! ':'Answer was <strong>'+h.correct+'</strong>. ')+'Reviewing question '+(idx+1)+'.';
+}
+
+function pickQ(idx){
+  var q=QS[qIdx];
+  [0,1,2,3].forEach(function(i){var b=document.getElementById('qopt'+i);if(b){b.onclick=null;b.style.cursor='default';}});
+  var chosen=document.getElementById('qopt'+idx)?document.getElementById('qopt'+idx).getAttribute('data-val'):'';
+  var ok=(chosen===q.ans);
+  qHistory[qIdx]={chosen:chosen,correct:q.ans,wasCorrect:ok,score:qScore+(ok?1:0)};
+  markOpts('qopt',chosen,q.ans);
+  var res=document.getElementById('qRes');
+  if(ok){qScore++;if(res){res.textContent='Correct.';res.className='res ok';}document.getElementById('nia').innerHTML='Correct.';}
+  else{if(res){res.textContent='Answer: '+q.ans;res.className='res no';}document.getElementById('nia').innerHTML='Answer: <strong>'+q.ans+'</strong>.';}
+  qIdx++;
+  var isLast=(qIdx>=QS.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showQEnd():showQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showQEnd():showQ();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQEnd(){
+  var perfect=(qScore===QS.length);if(perfect)burst();
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div class="stars" style="margin-bottom:20px">'+stars+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'Perfect.':qScore>=3?'Almost perfect.':qScore>=2?'Good work.':'Keep going.')+
+    '</div>'+
+    '<div style="font-size:14px;color:var(--muted);margin-bottom:20px">'+qScore+' of '+QS.length+' correct</div>'+
+    '<button onclick="goStep(-5)" style="padding:10px 28px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)">Start again</button>'+
+    '</div>';
+  document.getElementById('nia').innerHTML=(perfect?'<strong>Perfect.</strong> ':'')+'Area: l\xd7w, \xbdb\xd7h, \u03c0r\xb2. Volume: l\xd7w\xd7h, \u03c0r\xb2h. Pythagoras: a\xb2+b\xb2=c\xb2.';
+}
+
+// ── Summary (step index 5) ─────────────────────────────────
+function renderSummary(){
+  var rows=[
+    {shape:'Rectangle',formula:'A = l \xd7 w',eg:'5\xd74 = 20cm\xb2',col:'#0891b2'},
+    {shape:'Triangle',formula:'A = \xbd \xd7 b \xd7 h',eg:'\xbd\xd76\xd74 = 12cm\xb2',col:'#0369a1'},
+    {shape:'Circle',formula:'A = \u03c0 \xd7 r\xb2',eg:'3.14\xd79 = 28.26cm\xb2',col:'#7c3aed'},
+    {shape:'Cuboid',formula:'V = l \xd7 w \xd7 h',eg:'3\xd74\xd75 = 60cm\xb3',col:'#059669'},
+    {shape:'Cylinder',formula:'V = \u03c0 \xd7 r\xb2 \xd7 h',eg:'3.14\xd74\xd710 = 125.6cm\xb3',col:'#0891b2'},
+    {shape:'Pythagoras',formula:'a\xb2 + b\xb2 = c\xb2',eg:'3\xb2+4\xb2=25 \u2192 c=5cm',col:'#059669'},
+  ].map(function(r){
+    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--rule)">'+
+      '<div style="width:8px;height:8px;border-radius:50%;background:'+r.col+';flex-shrink:0"></div>'+
+      '<div style="flex:1;font-size:12px;font-weight:700;color:var(--ink)">'+r.shape+'</div>'+
+      '<div style="font-family:DM Serif Display,serif;font-size:15px;color:'+r.col+';flex:1">'+r.formula+'</div>'+
+      '<div style="font-size:12px;color:var(--muted);flex:1">'+r.eg+'</div>'+
+      '</div>';
+  }).join('');
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="panel-title">Six formulas</div>'+rows+
+    '<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--rule);font-size:13px;color:var(--ink2);font-weight:500">'+
+      'Next: <strong style="color:var(--ink)">Ages 11\u201313</strong> \u2014 ratio, proportion and algebraic graphs.'+
+    '</div></div>';
+}
+
+// ── Step rendering map ────────────────────────────────────
+var RS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4,renderStep5,renderSummary];
+
+function goStep(dir){
+  step=Math.max(0,Math.min(6,step+dir));
+  var dotStep=Math.min(step,4);
+  for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<dotStep?' done':i===dotStep?' active':'');}
+  var niaArr=[
+    'Three powerful tools: <strong>Area</strong> measures flat space, <strong>Volume</strong> measures 3D space, and <strong>Pythagoras</strong> unlocks the right angle.',
+    'Area — counting the squares inside a shape.',
+    'Volume — stacking layers of area.',
+    'Pythagoras — the relationship between sides of every right-angled triangle.',
+    'Four puzzles. Apply the formulas.',
+    'Four questions. Think carefully.',
+    'Six formulas. One reference.',
+  ];
+  document.getElementById('nia').innerHTML=niaArr[Math.min(step,niaArr.length-1)];
+  document.getElementById('btnBack').disabled=(step===0);
+  var bl=['Area','Volume','Pythagoras','Practice','Quiz','Summary','\u21a9 Start again'];
+  document.getElementById('btnNext').textContent=(bl[step]||'Next')+' \u2192';
+  if(step>=6){document.getElementById('btnNext').onclick=function(){goStep(-6);};}
+  else{document.getElementById('btnNext').onclick=function(){goStep(1);};}
+  if(step!==4&&step!==5){
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=(step===0);bb.onclick=function(){goStep(-1);};}
+  }
+  RS[Math.min(step,RS.length-1)]();
+}
+goStep(0);
+</script>
+</body>
+</html>

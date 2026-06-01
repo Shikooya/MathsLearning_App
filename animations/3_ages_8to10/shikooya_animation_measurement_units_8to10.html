@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya — Measurement & Unit Conversions (Ages 8–10)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap');
+  :root{--txt:#1a1a2e;--panel:rgba(255,255,255,0.95);}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Nunito',sans-serif;
+    background:linear-gradient(180deg,#e3f2fd 0%,#bbdefb 100%);
+    min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:16px;}
+  .header{text-align:center;margin-bottom:12px;width:100%;max-width:720px;}
+  .age-badge{display:inline-block;background:linear-gradient(135deg,#1565c0,#0d47a1);
+    color:#fff;font-size:13px;font-weight:900;letter-spacing:.06em;
+    text-transform:uppercase;padding:5px 18px;border-radius:20px;margin-bottom:8px;
+    box-shadow:0 3px 10px rgba(21,101,192,.35);}
+  .header h1{font-family:'Fredoka One',cursive;font-size:clamp(22px,5vw,32px);
+    color:#0d47a1;line-height:1.2;}
+  .header h1 span{color:#f59e0b;}
+  .card{background:var(--panel);border-radius:28px;padding:20px;max-width:720px;width:100%;
+    box-shadow:0 12px 48px rgba(0,0,0,.12);border:3px solid rgba(21,101,192,.2);}
+  .steps{display:flex;gap:8px;justify-content:center;margin-bottom:14px;}
+  .step-dot{width:10px;height:10px;border-radius:50%;background:#ddd;transition:all .3s;}
+  .step-dot.active{background:#f59e0b;transform:scale(1.5);}
+  .step-dot.done{background:#1565c0;}
+  .nia-area{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;min-height:60px;}
+  .nia-avatar{width:52px;height:52px;flex-shrink:0;background:linear-gradient(135deg,#1565c0,#0d47a1);
+    border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;
+    box-shadow:0 4px 12px rgba(21,101,192,.3);animation:bob 2.5s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  .nia-bubble{background:linear-gradient(135deg,#e3f2fd,#e8f5e9);border:2.5px solid #90caf9;
+    border-radius:16px 16px 16px 4px;padding:12px 16px;font-size:clamp(14px,3vw,17px);
+    font-weight:700;color:var(--txt);line-height:1.6;flex:1;}
+  .nia-bubble strong{color:#0d47a1;}
+  .nia-bubble em{color:#f59e0b;font-style:normal;font-weight:900;}
+  .preface{background:linear-gradient(135deg,#e3f2fd,#e8f5e9);border-radius:18px;
+    padding:16px 18px;margin-bottom:16px;border:2.5px solid #90caf9;}
+  .preface-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;
+    font-size:clamp(13px,2.5vw,15px);font-weight:700;color:var(--txt);line-height:1.6;}
+  .preface-row:last-child{margin-bottom:0;}
+  .preface-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+  /* Conversion card */
+  .conv-scene{background:linear-gradient(135deg,#e3f2fd,#fff9c4);border-radius:18px;
+    border:2.5px solid #90caf9;padding:16px;margin-bottom:12px;}
+  /* Unit families */
+  .family-tabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
+  .family-tab{padding:8px 16px;border-radius:20px;border:2px solid #90caf9;background:#fff;
+    font-family:'Fredoka One',cursive;font-size:clamp(13px,3vw,16px);cursor:pointer;
+    color:#0d47a1;transition:all .2s;}
+  .family-tab.active{background:#1565c0;color:#fff;border-color:#1565c0;}
+  .family-tab:hover:not(.active){background:#e3f2fd;}
+  /* Converter */
+  .converter-wrap{display:flex;align-items:center;gap:12px;justify-content:center;
+    flex-wrap:wrap;margin-bottom:14px;}
+  .conv-box{background:#fff;border:2.5px solid #90caf9;border-radius:16px;
+    padding:14px 16px;text-align:center;flex:1;min-width:130px;max-width:200px;}
+  .conv-box-label{font-size:11px;font-weight:700;color:#1565c0;text-transform:uppercase;
+    letter-spacing:.06em;margin-bottom:6px;}
+  .conv-box-val{font-family:'Fredoka One',cursive;font-size:clamp(28px,6vw,40px);
+    color:#0d47a1;line-height:1;}
+  .conv-box-unit{font-family:'Fredoka One',cursive;font-size:clamp(14px,3vw,18px);
+    color:#90caf9;margin-top:2px;}
+  .conv-arrow{font-size:28px;color:#1565c0;flex-shrink:0;}
+  .conv-formula{text-align:center;background:rgba(21,101,192,.06);border-radius:12px;
+    padding:10px 14px;font-family:'Fredoka One',cursive;
+    font-size:clamp(14px,3vw,17px);color:#0d47a1;margin-bottom:10px;}
+  /* Slider */
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:8px;
+    border-radius:4px;background:#bbdefb;outline:none;cursor:pointer;touch-action:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;
+    border-radius:50%;background:#1565c0;border:3px solid #fff;cursor:grab;
+    box-shadow:0 2px 8px rgba(21,101,192,.3);}
+  input[type=range]::-webkit-slider-thumb:active{cursor:grabbing;}
+  input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;
+    background:#1565c0;border:3px solid #fff;cursor:grab;}
+  /* Real world examples */
+  .examples-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:12px;}
+  .example-card{background:#fff;border:2px solid #90caf9;border-radius:12px;
+    padding:8px 12px;text-align:center;flex:1;min-width:100px;max-width:140px;cursor:pointer;
+    transition:all .2s;}
+  .example-card:hover{transform:scale(1.05);border-color:#1565c0;}
+  .example-card.active-ex{border-color:#f59e0b;background:rgba(245,158,11,.08);}
+  .example-emoji{font-size:clamp(24px,5vw,32px);}
+  .example-label{font-family:'Fredoka One',cursive;font-size:clamp(11px,2.5vw,13px);
+    color:#0d47a1;margin-top:3px;}
+  .example-val{font-family:'Fredoka One',cursive;font-size:clamp(12px,2.5vw,14px);
+    color:#f59e0b;}
+  /* Quiz */
+  .quiz-area{background:linear-gradient(135deg,#e3f2fd,#e8f5e9);border-radius:18px;
+    padding:16px 18px;margin-bottom:14px;border:2.5px solid #90caf9;}
+  .quiz-q{font-family:'Fredoka One',cursive;font-size:clamp(16px,4vw,22px);
+    color:var(--txt);margin-bottom:12px;text-align:center;line-height:1.5;}
+  .quiz-options{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .quiz-btn{min-width:90px;min-height:60px;border-radius:14px;border:3px solid #ddd;background:#fff;
+    font-family:'Fredoka One',cursive;font-size:clamp(14px,3vw,18px);cursor:pointer;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);box-shadow:0 3px 8px rgba(0,0,0,.1);
+    color:var(--txt);padding:8px;}
+  .quiz-btn:hover{transform:scale(1.08);border-color:#1565c0;}
+  .quiz-btn.correct{background:linear-gradient(135deg,#66bb6a,#43a047);border-color:#2e7d32;color:#fff;animation:pop .4s ease;}
+  .quiz-btn.wrong{background:linear-gradient(135deg,#ef9a9a,#e57373);border-color:#c62828;color:#fff;animation:shake .3s ease;}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .quiz-result{text-align:center;margin-top:10px;font-family:'Fredoka One',cursive;
+    font-size:clamp(14px,3.5vw,18px);min-height:26px;}
+  .quiz-result.correct{color:#2e7d32;}
+  .quiz-result.wrong{color:#c62828;}
+  .stars{display:flex;justify-content:center;gap:6px;margin-bottom:10px;}
+  .star{font-size:28px;opacity:.25;transition:all .3s;}
+  .star.earned{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+  .controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:4px;}
+  .btn{min-width:64px;min-height:56px;padding:12px 20px;border-radius:16px;border:none;
+    font-family:'Fredoka One',cursive;font-size:clamp(15px,3.5vw,19px);cursor:pointer;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 0 rgba(0,0,0,.18);}
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.18);}
+  .btn-next{background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;flex:1;max-width:220px;}
+  .btn-next:hover{transform:translateY(-2px);}
+  .btn-back{background:linear-gradient(135deg,#90a4ae,#607d8b);color:#fff;}
+  .btn-back:hover{transform:translateY(-2px);}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;transform:none;}
+  .confetti-container{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .confetti-piece{position:absolute;border-radius:2px;animation:confetti-fall 2s ease-in forwards;}
+  @keyframes confetti-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="header">
+  <div><span class="age-badge">Ages 8–10</span></div>
+  <h1>The <span>Converter</span> — Measurement & Units! 📏</h1>
+</div>
+<div class="card">
+  <!-- 5 steps = d0..d4 -->
+  <div class="steps">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia-area">
+    <div class="nia-avatar">🌟</div>
+    <div class="nia-bubble" id="nia">
+      A recipe needs <strong>500 ml</strong> of milk — but your jug only shows litres. A race is <strong>5 km</strong> — but the sign shows metres. Converting between units is one of the most useful maths skills in daily life! 📏
+    </div>
+  </div>
+  <div id="mainArea"></div>
+  <div class="controls">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>← Back</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let's go! →</button>
+  </div>
+</div>
+<div class="confetti-container" id="confetti"></div>
+
+<script>
+var currentStep=0, quizIdx=0, quizCorrect=0;
+var activeFamily=0, sliderVal=100, activeExample=-1;
+
+// ── Unit families ──────────────────────────────────────────
+var FAMILIES=[
+  {
+    name:'Length', icon:'📏',
+    units:['mm','cm','m','km'],
+    base:'cm',
+    conversions:[
+      {from:'cm',to:'mm',factor:10,label:'× 10',formula:'cm × 10 = mm'},
+      {from:'m',to:'cm',factor:100,label:'× 100',formula:'m × 100 = cm'},
+      {from:'km',to:'m',factor:1000,label:'× 1000',formula:'km × 1000 = m'},
+    ],
+    activeConv:0,
+    sliderMax:200,
+    sliderDefault:50,
+    examples:[
+      {emoji:'📱',label:'Phone',val:'14 cm = 140 mm'},
+      {emoji:'🏠',label:'Room',val:'4 m = 400 cm'},
+      {emoji:'🏃',label:'Race',val:'5 km = 5000 m'},
+    ],
+  },
+  {
+    name:'Mass', icon:'⚖️',
+    units:['g','kg','t'],
+    base:'g',
+    conversions:[
+      {from:'g',to:'kg',factor:0.001,label:'÷ 1000',formula:'g ÷ 1000 = kg'},
+      {from:'kg',to:'g',factor:1000,label:'× 1000',formula:'kg × 1000 = g'},
+      {from:'t',to:'kg',factor:1000,label:'× 1000',formula:'tonne × 1000 = kg'},
+    ],
+    activeConv:1,
+    sliderMax:10,
+    sliderDefault:2,
+    examples:[
+      {emoji:'🍎',label:'Apple',val:'150 g = 0.15 kg'},
+      {emoji:'🎒',label:'Backpack',val:'3 kg = 3000 g'},
+      {emoji:'🚗',label:'Car',val:'1.5 t = 1500 kg'},
+    ],
+  },
+  {
+    name:'Volume', icon:'🧴',
+    units:['ml','cl','l'],
+    base:'ml',
+    conversions:[
+      {from:'ml',to:'l',factor:0.001,label:'÷ 1000',formula:'ml ÷ 1000 = l'},
+      {from:'l',to:'ml',factor:1000,label:'× 1000',formula:'l × 1000 = ml'},
+      {from:'cl',to:'ml',factor:10,label:'× 10',formula:'cl × 10 = ml'},
+    ],
+    activeConv:1,
+    sliderMax:5,
+    sliderDefault:1,
+    examples:[
+      {emoji:'🥤',label:'Can',val:'330 ml = 0.33 l'},
+      {emoji:'🍶',label:'Water bottle',val:'500 ml = 0.5 l'},
+      {emoji:'🪣',label:'Bucket',val:'10 l = 10000 ml'},
+    ],
+  },
+  {
+    name:'Time', icon:'⏱️',
+    units:['s','min','h','day'],
+    base:'s',
+    conversions:[
+      {from:'min',to:'s',factor:60,label:'× 60',formula:'minutes × 60 = seconds'},
+      {from:'h',to:'min',factor:60,label:'× 60',formula:'hours × 60 = minutes'},
+      {from:'day',to:'h',factor:24,label:'× 24',formula:'days × 24 = hours'},
+    ],
+    activeConv:0,
+    sliderMax:60,
+    sliderDefault:5,
+    examples:[
+      {emoji:'🎬',label:'Film',val:'90 min = 5400 s'},
+      {emoji:'😴',label:'Sleep',val:'8 h = 480 min'},
+      {emoji:'🗓️',label:'Week',val:'7 days = 168 h'},
+    ],
+  },
+];
+
+// ── Quiz ───────────────────────────────────────────────────
+var QUIZ_QS=[
+  {q:'How many cm in 1 metre?',
+   opts:['10','100','1000','10000'],answer:'100'},
+  {q:'A bag weighs 3 kg. How many grams is that?',
+   opts:['30 g','300 g','3000 g','30000 g'],answer:'3000 g'},
+  {q:'How many ml in 2 litres?',
+   opts:['20 ml','200 ml','2000 ml','20000 ml'],answer:'2000 ml'},
+  {q:'How many seconds in 3 minutes?',
+   opts:['30 s','180 s','300 s','3000 s'],answer:'180 s'},
+];
+
+var NIA=[
+  "A recipe needs <strong>500 ml</strong> of milk — but your jug only shows litres. A race is <strong>5 km</strong> — but the sign shows metres. Converting between units is one of the most useful maths skills in daily life! 📏",
+  "Pick a measurement type and use the <strong>slider</strong> to explore conversions! Watch how the numbers change as you move from one unit to another! 🔄",
+  "Now see how units appear in <strong>real life</strong>! Tap each object to see its measurement — and what it converts to! 🌍",
+  "Quiz time! 🌟 Show what you know about unit conversions!",
+  "Brilliant! 🏆 You can convert between units — one of the most useful everyday maths skills!"
+];
+var BTNS=["Explore conversions! →","See real life! →","Quiz time! →","See the summary! →","🔁 Play Again!"];
+var RENDERS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4];
+
+function dots(s){
+  for(var i=0;i<=4;i++){
+    var d=document.getElementById('d'+i);
+    if(d) d.className='step-dot'+(i<s?' done':i===s?' active':'');
+  }
+}
+function confettiBurst(){
+  var c=document.getElementById('confetti');c.innerHTML='';
+  var cols=['#ffe066','#1565c0','#43a047','#f44336','#f59e0b','#9c27b0'];
+  for(var i=0;i<52;i++){
+    var p=document.createElement('div');p.className='confetti-piece';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[Math.floor(Math.random()*cols.length)]+
+      ';width:'+(8+Math.random()*8)+'px;height:'+(8+Math.random()*8)+'px;'+
+      'border-radius:'+(Math.random()>.5?'50%':'2px')+';'+
+      'animation-delay:'+(Math.random()*.6)+'s;animation-duration:'+(1.5+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){c.innerHTML='';},3000);
+}
+
+function fmt(n){
+  if(n===Math.round(n)) return n.toString();
+  return parseFloat(n.toFixed(4)).toString();
+}
+
+// ── STEP 0 — Preface ──────────────────────────────────────
+function renderStep0(){
+  var slide=0;
+  var SLIDES=[
+    {
+      from:'1 cm', to:'10 mm',
+      fromCol:'#1565c0', toCol:'#e65100',
+      icon:'📏',
+      label:'Length — centimetres to millimetres',
+      fact:'A fingernail is about 1 cm wide — that is 10 mm!',
+      rulerHtml: (function(){
+        var t='<svg viewBox="0 0 340 72" width="100%" style="display:block;max-width:380px;margin:8px auto">';
+        t+='<rect x="4" y="20" width="332" height="32" rx="4" fill="#fff9c4" stroke="#f9a825" stroke-width="2"/>';
+        // cm ticks top
+        for(var i=0;i<=10;i++){
+          var x=4+i*(332/10);
+          var h=i%5===0?12:7;
+          t+='<line x1="'+x+'" y1="20" x2="'+x+'" y2="'+(20+h)+'" stroke="#1565c0" stroke-width="'+(i%5===0?2:1)+'"/>';
+          t+='<text x="'+x+'" y="18" text-anchor="middle" font-size="9" fill="#1565c0" font-family="Fredoka One,cursive">'+i+'</text>';
+        }
+        // cm label
+        t+='<text x="170" y="10" text-anchor="middle" font-size="9" fill="#1565c0" font-family="Fredoka One,cursive">cm</text>';
+        // mm ticks bottom
+        for(var j=0;j<=10;j++){
+          var x2=4+j*(332/10);
+          var h2=j%5===0?12:7;
+          t+='<line x1="'+x2+'" y1="52" x2="'+x2+'" y2="'+(52-h2)+'" stroke="#e65100" stroke-width="'+(j%5===0?2:1)+'"/>';
+          t+='<text x="'+x2+'" y="64" text-anchor="middle" font-size="9" fill="#e65100" font-family="Fredoka One,cursive">'+(j*10)+'</text>';
+        }
+        // mm label
+        t+='<text x="170" y="71" text-anchor="middle" font-size="9" fill="#e65100" font-family="Fredoka One,cursive">mm</text>';
+        // highlight 1cm = 10mm
+        t+='<rect x="4" y="20" width="33.2" height="32" fill="rgba(46,125,50,.12)" rx="2"/>';
+        t+='<line x1="37.2" y1="14" x2="37.2" y2="67" stroke="#2e7d32" stroke-width="1.5" stroke-dasharray="3,2"/>';
+        t+='</svg>';
+        return t;
+      })(),
+    },
+    {
+      from:'1 m', to:'100 cm',
+      fromCol:'#2e7d32', toCol:'#1565c0',
+      icon:'🏃',
+      label:'Length — metres to centimetres',
+      fact:'A door is about 2 metres tall — that is 200 cm!',
+      rulerHtml:'',
+    },
+    {
+      from:'1 kg', to:'1000 g',
+      fromCol:'#6a1b9a', toCol:'#c2185b',
+      icon:'⚖️',
+      label:'Mass — kilograms to grams',
+      fact:'A bag of sugar is 1 kg — that is 1000 g!',
+      rulerHtml:'',
+    },
+    {
+      from:'1 L', to:'1000 ml',
+      fromCol:'#0288d1', toCol:'#00897b',
+      icon:'🧴',
+      label:'Volume — litres to millilitres',
+      fact:'A large water bottle holds 1 L — that is 1000 ml!',
+      rulerHtml:'',
+    },
+    {
+      from:'1 min', to:'60 s',
+      fromCol:'#e65100', toCol:'#f9a825',
+      icon:'⏱️',
+      label:'Time — minutes to seconds',
+      fact:'One TV advert break is about 3 minutes — that is 180 seconds!',
+      rulerHtml:'',
+    },
+  ];
+
+  function renderSlide(){
+    var s=SLIDES[slide];
+    var dots='';
+    for(var i=0;i<SLIDES.length;i++)
+      dots+='<div style="width:8px;height:8px;border-radius:50%;background:'+(i===slide?s.fromCol:'#ddd')+';transition:all .3s;'+(i===slide?'transform:scale(1.4)':'')+'" ></div>';
+
+    var convAnim=
+      '<div style="display:flex;align-items:center;justify-content:center;gap:16px;margin:24px 0;flex-wrap:wrap">'+
+        '<div id="fromBox" style="text-align:center;animation:slideIn .4s ease">'+
+          '<div style="font-family:Fredoka One,cursive;font-size:clamp(44px,10vw,64px);color:'+s.fromCol+';line-height:1;transition:all .4s">'+s.from+'</div>'+
+          '<div style="font-size:12px;font-weight:700;color:#888;margin-top:4px;text-transform:uppercase;letter-spacing:.06em">from</div>'+
+        '</div>'+
+        '<div style="display:flex;flex-direction:column;align-items:center;gap:4px">'+
+          '<div style="font-size:32px;animation:pulse 1.5s ease-in-out infinite">→</div>'+
+          '<div style="font-family:Fredoka One,cursive;font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:.05em">equals</div>'+
+        '</div>'+
+        '<div id="toBox" style="text-align:center;animation:slideIn .5s ease">'+
+          '<div style="font-family:Fredoka One,cursive;font-size:clamp(44px,10vw,64px);color:'+s.toCol+';line-height:1">'+s.to+'</div>'+
+          '<div style="font-size:12px;font-weight:700;color:#888;margin-top:4px;text-transform:uppercase;letter-spacing:.06em">to</div>'+
+        '</div>'+
+      '</div>';
+
+    document.getElementById('mainArea').innerHTML=
+      '<style>'+
+      '@keyframes slideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}'+
+      '@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}'+
+      '</style>'+
+      '<div style="background:rgba(255,255,255,.9);border:2px solid #e0e0e0;border-radius:20px;padding:20px;text-align:center">'+
+        '<div style="font-size:clamp(13px,3vw,15px);font-weight:700;color:#888;margin-bottom:6px">'+s.icon+' '+s.label+'</div>'+
+        convAnim+
+        (s.rulerHtml||'')+
+        '<div style="background:rgba(255,255,255,.8);border-radius:12px;border:1.5px solid #e0e0e0;'+
+          'padding:10px 14px;font-size:clamp(13px,2.5vw,15px);font-weight:700;color:#555;margin-top:8px">'+
+          '💡 '+s.fact+
+        '</div>'+
+        '<div style="display:flex;gap:6px;justify-content:center;margin-top:16px;align-items:center">'+
+          dots+
+        '</div>'+
+        '<div style="display:flex;gap:8px;justify-content:center;margin-top:12px">'+
+          '<button onclick="prevSlide()" style="padding:8px 18px;border-radius:10px;border:2px solid #ddd;background:#fff;font-family:Fredoka One,cursive;font-size:14px;cursor:pointer;color:#555;opacity:'+(slide===0?.3:1)+'" '+(slide===0?'disabled':'')+'>← Back</button>'+
+          '<button onclick="nextSlide()" style="padding:8px 18px;border-radius:10px;border:none;background:'+(slide<SLIDES.length-1?s.fromCol:'#43a047')+';color:#fff;font-family:Fredoka One,cursive;font-size:14px;cursor:pointer">'+
+            (slide<SLIDES.length-1?'Next →':'All done! ✅')+
+          '</button>'+
+        '</div>'+
+      '</div>';
+
+    document.getElementById('nia').innerHTML=
+      '<strong>'+s.from+'</strong> = <em>'+s.to+'</em>! '+s.fact;
+  }
+
+  window.nextSlide=function(){
+    if(slide<SLIDES.length-1){slide++;renderSlide();}
+    else{
+      // All slides done — signal ready to continue
+      document.getElementById('nia').innerHTML='You have seen all the key conversions! Now tap <strong>Explore conversions!</strong> to try them yourself!';
+    }
+  };
+  window.prevSlide=function(){if(slide>0){slide--;renderSlide();}};
+
+  renderSlide();
+}
+
+// ── STEP 1 — Converter ─────────────────────────────────────
+function renderStep1(){
+  activeFamily=0;
+  buildConverter();
+}
+
+function buildConverter(){
+  var fam=FAMILIES[activeFamily];
+  var conv=fam.conversions[fam.activeConv];
+  // Build static shell
+  var tabHtml=FAMILIES.map(function(f,i){
+    return '<button class="family-tab'+(i===activeFamily?' active':'')+'" onclick="switchFamily('+i+')">'+f.icon+' '+f.name+'</button>';
+  }).join('');
+
+  var convTabHtml='<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:12px">';
+  fam.conversions.forEach(function(c,ci){
+    convTabHtml+='<button style="padding:6px 12px;border-radius:10px;border:2px solid '+(ci===fam.activeConv?'#1565c0':'#90caf9')+';'+
+      'background:'+(ci===fam.activeConv?'rgba(21,101,192,.1)':'#fff')+';'+
+      'font-family:Fredoka One,cursive;font-size:13px;cursor:pointer;color:#0d47a1;transition:all .2s" '+
+      'onclick="switchConv('+ci+')">'+c.from+' → '+c.to+'</button>';
+  });
+  convTabHtml+='</div>';
+
+  document.getElementById('mainArea').innerHTML=
+    '<div class="conv-scene">'+
+    '<div class="family-tabs">'+tabHtml+'</div>'+
+    convTabHtml+
+    '<div class="converter-wrap" id="convWrap"></div>'+
+    '<div class="conv-formula" id="convFormula"></div>'+
+    '<div style="padding:0 4px;margin-bottom:6px">'+
+    '<input type="range" min="1" max="'+fam.sliderMax+'" step="1" value="'+fam.sliderDefault+'" id="convSlider">'+
+    '</div>'+
+    '<div style="display:flex;justify-content:space-between;font-family:Fredoka One,cursive;font-size:11px;color:#1565c0;padding:0 2px">'+
+    '<span>1</span><span>'+Math.round(fam.sliderMax/2)+'</span><span>'+fam.sliderMax+'</span>'+
+    '</div>'+
+    '</div>';
+
+  var sl=document.getElementById('convSlider');
+  if(sl) sl.addEventListener('input',function(){updateConv(parseInt(this.value));});
+  updateConv(fam.sliderDefault);
+}
+
+function updateConv(val){
+  sliderVal=val;
+  var fam=FAMILIES[activeFamily];
+  var conv=fam.conversions[fam.activeConv];
+  var result=val*conv.factor;
+
+  var wrap=document.getElementById('convWrap');
+  if(wrap){
+    wrap.innerHTML=
+      '<div class="conv-box">'+
+        '<div class="conv-box-label">You have</div>'+
+        '<div class="conv-box-val">'+fmt(val)+'</div>'+
+        '<div class="conv-box-unit">'+conv.from+'</div>'+
+      '</div>'+
+      '<div class="conv-arrow">→</div>'+
+      '<div class="conv-box">'+
+        '<div class="conv-box-label">Equals</div>'+
+        '<div class="conv-box-val" style="color:#f59e0b">'+fmt(result)+'</div>'+
+        '<div class="conv-box-unit">'+conv.to+'</div>'+
+      '</div>';
+  }
+  var formula=document.getElementById('convFormula');
+  if(formula) formula.textContent=fmt(val)+' '+conv.from+' '+conv.label+' = '+fmt(result)+' '+conv.to;
+
+  var sl=document.getElementById('convSlider');
+  if(sl) sl.value=val;
+
+  var nia=document.getElementById('nia');
+  if(nia) nia.innerHTML=fmt(val)+' <strong>'+conv.from+'</strong> = <em>'+fmt(result)+'</em> <strong>'+conv.to+'</strong>! Formula: '+conv.formula;
+}
+
+function switchFamily(idx){
+  activeFamily=idx;
+  buildConverter();
+  document.getElementById('nia').innerHTML=NIA[1];
+}
+
+function switchConv(idx){
+  FAMILIES[activeFamily].activeConv=idx;
+  buildConverter();
+}
+
+// ── STEP 2 — Real life examples ────────────────────────────
+function renderStep2(){
+  activeExample=-1;
+  buildExamples();
+}
+
+function buildExamples(){
+  var familyHtml=FAMILIES.map(function(fam,fi){
+    var exHtml=fam.examples.map(function(ex,ei){
+      var key=fi+'-'+ei;
+      var isActive=(activeExample===key);
+      return '<div class="example-card'+(isActive?' active-ex':'')+'" onclick="showExample(\''+key+'\',\''+fam.name+'\',\''+ex.val+'\')">'+
+        '<div class="example-emoji">'+ex.emoji+'</div>'+
+        '<div class="example-label">'+ex.label+'</div>'+
+        '<div class="example-val">'+(isActive?ex.val:'tap me!')+'</div>'+
+        '</div>';
+    }).join('');
+    return '<div style="margin-bottom:16px">'+
+      '<div style="font-family:Fredoka One,cursive;font-size:clamp(14px,3vw,17px);color:#0d47a1;margin-bottom:8px">'+fam.icon+' '+fam.name+'</div>'+
+      '<div class="examples-row">'+exHtml+'</div>'+
+      '</div>';
+  }).join('');
+
+  document.getElementById('mainArea').innerHTML=
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(13px,3vw,15px);color:#0d47a1;text-align:center;margin-bottom:12px">Tap each object to see its real-world measurement and conversion!</div>'+
+    '<div class="conv-scene">'+familyHtml+'</div>';
+}
+
+function showExample(key,famName,val){
+  activeExample=key;
+  buildExamples();
+  var parts=val.split('=');
+  document.getElementById('nia').innerHTML=
+    '📐 <strong>'+parts[0].trim()+'</strong> = <em>'+parts[1].trim()+'</em>! Real measurements need real conversions!';
+}
+
+// ── STEP 3 — Quiz ─────────────────────────────────────────
+function renderStep3(){
+  quizIdx=0;quizCorrect=0;
+  document.getElementById('nia').innerHTML=NIA[3];
+  showQuizQ();
+}
+
+function showQuizQ(){
+  if(quizIdx>=QUIZ_QS.length){showQuizEnd();return;}
+  var q=QUIZ_QS[quizIdx];
+  var nia=document.getElementById('nia');
+  if(nia) nia.innerHTML='Look at the question carefully — then pick your answer! 🌟';
+  var stars='';for(var i=0;i<QUIZ_QS.length;i++)stars+='<div class="star'+(i<quizCorrect?' earned':'')+'" >⭐</div>';
+  var opts='';
+  q.opts.forEach(function(o,oi){
+    opts+='<button class="quiz-btn" id="qo'+oi+'" data-val="'+o+'" onclick="answerQIdx('+oi+')">'+o+'</button>';
+  });
+  document.getElementById('mainArea').innerHTML=
+    '<div class="stars">'+stars+'</div>'+
+    '<div class="quiz-area"><div class="quiz-q">'+q.q+'</div>'+
+    '<div class="quiz-options">'+opts+'</div>'+
+    '<div class="quiz-result" id="qRes"></div></div>';
+}
+
+function answerQIdx(idx){
+  var q=QUIZ_QS[quizIdx];
+  var btns=document.querySelectorAll('.quiz-btn');
+  var chosen=btns[idx]?btns[idx].getAttribute('data-val'):'';
+  answerQ(chosen,q.answer);
+}
+
+function answerQ(chosen,correct){
+  var btns=document.querySelectorAll('.quiz-btn,.opt,.ans-tile,.ans-row');
+  btns.forEach(function(b){b.onclick=null;b.style.cursor='default';if(b.disabled!==undefined)b.disabled=true;});
+  var res=document.getElementById('qRes')||document.getElementById('pzRes')||document.getElementById('quizResult');
+  if(chosen===correct){
+
+    btns.forEach(function(b){if(b.getAttribute('data-val')===correct)b.className='quiz-btn correct';});
+    quizCorrect++;
+    if(res){res.textContent='✅ Correct!';res.className='quiz-result correct';}
+    document.getElementById('nia').innerHTML='✅ <strong>Correct!</strong> 📏';
+  
+  } else {
+
+    btns.forEach(function(b){
+      if(b.getAttribute('data-val')===chosen)b.className='quiz-btn wrong';
+      if(b.getAttribute('data-val')===correct)b.className='quiz-btn correct';
+    });
+    if(res){res.textContent='❌ The answer is: '+correct;res.className='quiz-result wrong';}
+    document.getElementById('nia').innerHTML='💛 The answer is <strong>'+correct+'</strong>!';
+  
+  }
+  quizIdx++;
+  var isLast=(quizIdx>=QUIZ_QS.length);
+  if(chosen===correct){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showQuizEnd():showQuizQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showQuizEnd():showQuizQ();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQuizEnd(){
+  var stars='';for(var i=0;i<QUIZ_QS.length;i++)stars+='<div class="star'+(i<quizCorrect?' earned':'')+'" >⭐</div>';
+  var msg=quizCorrect===4?'🏆 PERFECT! You are a conversion expert!':
+          quizCorrect>=3?'🌟 Brilliant!':quizCorrect>=2?'👍 Good work!':'💪 Keep going!';
+  document.getElementById('mainArea').innerHTML=
+    '<div class="stars">'+stars+'</div>'+
+    '<div style="text-align:center;padding:16px;background:linear-gradient(135deg,#e3f2fd,#e8f5e9);border-radius:18px;border:2.5px solid #90caf9">'+
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(17px,4vw,24px);color:#0d47a1;margin-bottom:8px">'+msg+'</div>'+
+    '<div style="font-size:clamp(14px,3vw,17px);font-weight:700;color:#555">You got <strong style="color:#e53935">'+quizCorrect+'</strong> out of <strong>4</strong> correct!</div></div>';
+  if(quizCorrect>=3)confettiBurst();
+  document.getElementById('nia').innerHTML=quizCorrect===4?'🏆 <strong>Perfect!</strong> You know every key conversion! 📏':'🌟 Well done! Remember the key conversions — ×10, ×100, ×1000, ×60!';
+
+  // Start again button
+  var sa=document.createElement('button');
+  sa.textContent='Start again';
+  sa.style.cssText='display:block;margin:16px auto 0;padding:10px 28px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)';
+  sa.onclick=function(){goStep(-4);};
+  var _ep=document.getElementById('mainArea')||document.getElementById('main');
+  if(_ep) _ep.appendChild(sa);
+}
+
+// ── STEP 4 — Summary ──────────────────────────────────────
+function renderStep4(){
+  var tableRows=[
+    ['📏 Length','1 km = 1000 m','1 m = 100 cm','1 cm = 10 mm'],
+    ['⚖️ Mass','1 t = 1000 kg','1 kg = 1000 g','1 g = 1000 mg'],
+    ['🧴 Volume','1 l = 1000 ml','1 cl = 10 ml','—'],
+    ['⏱️ Time','1 day = 24 h','1 h = 60 min','1 min = 60 s'],
+  ];
+  var tableHtml=tableRows.map(function(r){
+    return '<tr>'+r.map(function(c,i){
+      return '<td style="padding:10px 12px;border-bottom:1px solid #e3f2fd;'+
+        (i===0?'font-weight:700;color:#0d47a1;':'color:#1a1a2e;')+
+        'font-size:clamp(12px,2.5vw,14px);font-family:'+(i===0?'Fredoka One,cursive':'Nunito,sans-serif')+
+        ';font-weight:'+(i===0?'400':'700')+'">'+c+'</td>';
+    }).join('')+'</tr>';
+  }).join('');
+
+  document.getElementById('mainArea').innerHTML=
+    '<div style="text-align:center;padding:8px 0 14px">'+
+    '<div style="font-size:56px">🏆</div>'+
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(17px,4vw,24px);color:#0d47a1;margin-top:8px;margin-bottom:14px">You understand unit conversions!</div>'+
+    '</div>'+
+    '<div class="preface">'+
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>To convert <strong>to a smaller unit</strong> — multiply (×). Metres to centimetres: ×100.</div></div>'+
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>To convert <strong>to a larger unit</strong> — divide (÷). Grams to kilograms: ÷1000.</div></div>'+
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>The <strong>key multipliers</strong> to remember: ×10, ×100, ×1000, ×60, ×24.</div></div>'+
+    '<div class="preface-row"><div class="preface-icon">🚀</div><div>Next — <strong>BODMAS</strong>: the order of operations!</div></div>'+
+    '</div>'+
+    '<div style="background:#fff;border:2px solid #90caf9;border-radius:14px;overflow:hidden;margin-top:14px">'+
+    '<table style="width:100%;border-collapse:collapse">'+
+    '<thead><tr style="background:#e3f2fd"><th style="padding:10px 12px;text-align:left;font-family:Fredoka One,cursive;font-size:13px;color:#0d47a1">Type</th>'+
+    '<th style="padding:10px 12px;text-align:left;font-family:Fredoka One,cursive;font-size:13px;color:#0d47a1">Large → Medium</th>'+
+    '<th style="padding:10px 12px;text-align:left;font-family:Fredoka One,cursive;font-size:13px;color:#0d47a1">Medium → Small</th>'+
+    '<th style="padding:10px 12px;text-align:left;font-family:Fredoka One,cursive;font-size:13px;color:#0d47a1">Smallest</th></tr></thead>'+
+    '<tbody>'+tableHtml+'</tbody></table></div>';
+  confettiBurst();
+}
+
+function goStep(dir){
+  currentStep=Math.max(0,Math.min(4,currentStep+dir));
+  dots(currentStep);
+  document.getElementById('nia').innerHTML=NIA[currentStep];
+  document.getElementById('btnBack').disabled=(currentStep===0);
+  document.getElementById('btnNext').textContent=BTNS[currentStep];
+  document.getElementById('btnNext').disabled=false;
+  if(currentStep===4){document.getElementById('btnNext').onclick=function(){goStep(-4);};}
+  else{document.getElementById('btnNext').onclick=function(){goStep(1);};}
+  RENDERS[currentStep]();
+}
+goStep(0);
+</script>
+</body>
+</html>

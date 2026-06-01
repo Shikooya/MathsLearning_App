@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya - Logical Reasoning (Ages 10-12)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
+  :root{--ink:#0f1117;--ink2:#4b5563;--muted:#9ca3af;--bg:#f9f8f4;--card:#fff;
+    --accent:#4f46e5;--accent2:#f59e0b;--green:#059669;--red:#dc2626;
+    --rule:rgba(0,0,0,.06);--sh:0 1px 12px rgba(0,0,0,.06);--r:18px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px;color:var(--ink);}
+  .shell{width:100%;max-width:620px;}
+  .top{text-align:center;margin-bottom:24px;}
+  .badge{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);display:inline-block;margin-bottom:12px;}
+  .top h1{font-family:'DM Serif Display',serif;font-size:clamp(24px,5vw,34px);
+    color:var(--ink);line-height:1.1;margin-bottom:6px;}
+  .top h1 em{font-style:italic;color:var(--accent);}
+  .top p{font-size:13px;color:var(--muted);font-weight:500;}
+  .stepper{display:flex;gap:5px;justify-content:center;margin-bottom:24px;}
+  .step-dot{width:5px;height:5px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .step-dot.active{background:var(--accent2);transform:scale(1.8);}
+  .step-dot.done{background:var(--accent);}
+  .nia{display:flex;gap:12px;align-items:center;background:var(--card);
+    border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px;
+    margin-bottom:20px;box-shadow:var(--sh);min-height:60px;}
+  .nia-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+    animation:bob 3s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .nia-text{font-size:14px;line-height:1.55;color:var(--ink2);flex:1;}
+  .nia-text strong{color:var(--accent);font-weight:700;}
+  .nia-text em{color:var(--accent2);font-style:normal;font-weight:700;}
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);
+    padding:22px;margin-bottom:16px;box-shadow:var(--sh);}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:14px;}
+  .s-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;
+    font-size:13px;color:var(--ink2);line-height:1.6;}
+  .s-row:last-child{margin-bottom:0;}
+  .s-num{width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;
+    font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:1px;}
+  .slide-nav{display:flex;gap:6px;justify-content:center;margin-top:14px;}
+  .sdot{width:6px;height:6px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .sdot.on{background:var(--accent);transform:scale(1.4);}
+  .snav{display:flex;gap:8px;justify-content:center;margin-top:12px;}
+  .sbtn{padding:8px 20px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;
+    font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+  .sbtn.prev{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);}
+  .sbtn.prev:disabled{opacity:.3;cursor:not-allowed;}
+  .sbtn.nxt{background:var(--accent);color:#fff;}
+  .puz-q{font-family:'DM Serif Display',serif;font-size:clamp(16px,3.5vw,21px);
+    text-align:center;line-height:1.4;margin-bottom:16px;color:var(--ink);}
+  .prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .prog-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .prog-pips{display:flex;gap:5px;}
+  .prog-pip{width:8px;height:8px;border-radius:50%;background:var(--rule);border:1.5px solid #d1d5db;transition:all .3s;}
+  .prog-pip.dp{background:var(--accent);border-color:var(--accent);}
+  .prog-pip.cp{background:var(--accent2);border-color:var(--accent2);transform:scale(1.3);}
+  .res{text-align:center;margin-top:10px;font-size:14px;font-weight:700;min-height:20px;}
+  .res.ok{color:var(--green);}
+  .res.no{color:var(--red);}
+  .stars{display:flex;justify-content:center;gap:5px;margin-bottom:16px;}
+  .star{font-size:20px;opacity:.18;transition:all .3s;}
+  .star.on{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .nav{display:flex;gap:10px;margin-top:4px;}
+  .btn{min-height:50px;padding:0 22px;border-radius:14px;border:none;
+    font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;
+    cursor:pointer;transition:all .2s;}
+  .btn:active{transform:scale(.97);}
+  .btn-back{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);min-width:50px;}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-next{background:var(--accent);color:#fff;flex:1;box-shadow:0 4px 14px rgba(79,70,229,.2);}
+  .btn-next:hover{background:#4338ca;transform:translateY(-1px);}
+  .cc{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .cp{position:absolute;border-radius:2px;animation:cf 2s ease-in forwards;}
+  @keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+  /* Elimination name chips */
+  .name-chip{display:inline-flex;align-items:center;justify-content:center;
+    padding:8px 18px;border-radius:10px;font-family:'DM Serif Display',serif;
+    font-size:18px;border:2px solid var(--rule);background:var(--card);
+    transition:all .4s;position:relative;}
+  .name-chip.out{opacity:.25;text-decoration:line-through;background:rgba(220,38,38,.06);
+    border-color:rgba(220,38,38,.2);color:var(--red);}
+  .name-chip.answer{background:rgba(5,150,105,.12);border-color:var(--green);
+    color:var(--green);font-weight:700;}
+  /* Venn diagram */
+  .venn-wrap{display:flex;justify-content:center;margin:10px 0;}
+  /* Logic grid */
+  .lgrid{width:100%;border-collapse:collapse;font-size:13px;}
+  .lgrid th{background:var(--accent);color:#fff;padding:8px 10px;font-size:11px;
+    font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+  .lgrid td{padding:8px 10px;border:1px solid var(--rule);text-align:center;
+    font-size:16px;transition:all .3s;}
+  .lgrid td.yes{background:rgba(5,150,105,.12);color:var(--green);}
+  .lgrid td.no{background:rgba(220,38,38,.06);color:var(--red);}
+  .lgrid td.name{text-align:left;font-weight:600;color:var(--ink);font-size:13px;}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="shell">
+  <div class="top">
+    <div class="badge">Ages 10 - 12</div>
+    <h1>Logical <em>Reasoning</em> — Finding What Must Be True</h1>
+    <p>Using clues to rule out what is impossible — until only the answer remains</p>
+  </div>
+  <div class="stepper">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia">
+    <div class="nia-dot">&#127775;</div>
+    <div class="nia-text" id="nia">
+      Logic is not about guessing. It is about using what you know to <strong>rule out</strong> what cannot be true — until only one answer remains.
+    </div>
+  </div>
+  <div id="main"></div>
+  <div class="nav">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>&#8592;</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let&apos;s go &#8594;</button>
+  </div>
+</div>
+<div class="cc" id="cc"></div>
+<script>
+var step=0,qIdx=0,qScore=0,puzzleLevel=0,puzzleScore=0,puzzleResults=[],levelAnswered=false,qHistory=[];
+var elimStep=0;
+
+var OPT_COLS=['#4f46e5','#0369a1','#059669','#b45309'];
+var OPT_LBLS=['A','B','C','D'];
+
+function renderOpts(opts,idPfx,clickFn,disMap){
+  var allShort=opts.every(function(o){return String(o).length<=6;});
+  var html='';
+  if(allShort){
+    html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">';
+    opts.forEach(function(o,i){
+      var dis=disMap?disMap[i]:'';
+      var bg='#ffffff',bc='#e5e7eb',tc='#0f1117';
+      if(dis==='correct'){bg='rgba(5,150,105,.12)';bc='#059669';tc='#059669';}
+      else if(dis==='wrong'){bg='rgba(220,38,38,.08)';bc='#dc2626';tc='#dc2626';}
+      html+='<button id="'+idPfx+i+'" data-val="'+o+'" '+(clickFn&&!dis?'onclick="'+clickFn+'('+i+')"':'')+
+        ' style="min-height:80px;border-radius:16px;border:2px solid '+bc+';background:'+bg+';'+
+        'cursor:'+(dis?'default':'pointer')+';display:flex;align-items:center;justify-content:center;'+
+        'font-family:DM Serif Display,serif;font-size:clamp(20px,4vw,28px);color:'+tc+';padding:12px;'+
+        'border-left:5px solid '+OPT_COLS[i%OPT_COLS.length]+';'+
+        'transition:all .25s cubic-bezier(.34,1.56,.64,1)">'+o+'</button>';
+    });
+    html+='</div>';
+  } else {
+    html='<div style="display:flex;flex-direction:column;gap:8px;margin:12px 0">';
+    opts.forEach(function(o,i){
+      var dis=disMap?disMap[i]:'';
+      var bg='#ffffff',bc='#e5e7eb',tc='#0f1117',lc=OPT_COLS[i%OPT_COLS.length];
+      if(dis==='correct'){bg='rgba(5,150,105,.12)';bc='#059669';tc='#059669';lc='#059669';}
+      else if(dis==='wrong'){bg='rgba(220,38,38,.08)';bc='#dc2626';tc='#dc2626';lc='#dc2626';}
+      html+='<button id="'+idPfx+i+'" data-val="'+o+'" '+(clickFn&&!dis?'onclick="'+clickFn+'('+i+')"':'')+
+        ' style="min-height:54px;border-radius:14px;border:1.5px solid '+bc+';background:'+bg+';'+
+        'cursor:'+(dis?'default':'pointer')+';display:flex;align-items:center;gap:14px;'+
+        'padding:12px 16px;width:100%;box-sizing:border-box;transition:all .2s">'+
+        '<div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;'+
+        'justify-content:center;font-size:13px;font-weight:700;color:#fff;background:'+lc+'">'+OPT_LBLS[i]+'</div>'+
+        '<div style="font-family:DM Sans,sans-serif;font-size:14px;font-weight:600;color:'+tc+';line-height:1.4;flex:1;text-align:left">'+o+'</div>'+
+        '</button>';
+    });
+    html+='</div>';
+  }
+  return html;
+}
+
+function markOpts(idPfx,chosen,correct){
+  [0,1,2,3].forEach(function(i){
+    var b=document.getElementById(idPfx+i);if(!b)return;
+    var bv=b.getAttribute('data-val');
+    var isAns=Array.isArray(correct)?correct.indexOf(bv)>=0:bv===correct;
+    b.onclick=null;b.style.cursor='default';
+    if(bv===chosen&&isAns){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';b.style.color='#059669';}
+    else if(bv===chosen&&!isAns){b.style.background='rgba(220,38,38,.08)';b.style.borderColor='#dc2626';b.style.color='#dc2626';}
+    else if(isAns){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';}
+  });
+}
+
+// ── Elimination builder ────────────────────────────────────
+// Names: Amy, Ben, Carl, Eva — Carl won the maths prize
+// Clue 1: winner is a boy → eliminates Amy, Eva → Ben, Carl
+// Clue 2: winner's name has more than 3 letters → eliminates Ben → Carl
+var NAMES=['Amy','Ben','Carl','Eva'];
+// elimStep 0: all shown, 1: after clue1 (Amy+Eva out), 2: after clue2 (Ben out = Carl answer)
+function buildElim(es){
+  var states=[
+    {out:[],ans:null,msg:'Four children. One won the maths prize. Apply the clues one by one.'},
+    {out:['Amy','Eva'],ans:null,msg:'Clue 1: The winner is a boy. Girls eliminated: Amy and Eva.'},
+    {out:['Amy','Eva','Ben'],ans:'Carl',msg:'Clue 2: The winner\'s name has more than 3 letters. Ben (3 letters) eliminated. Answer: Carl.'},
+  ];
+  var st=states[Math.min(es,states.length-1)];
+  var chips=NAMES.map(function(n){
+    var cls='name-chip'+(st.ans===n?' answer':st.out.indexOf(n)>=0?' out':'');
+    return '<div class="'+cls+'">'+n+(st.ans===n?' &#10003;':'')+'</div>';
+  }).join('');
+  return '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0">'+chips+'</div>'+
+    '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--ink2);min-height:44px">'+st.msg+'</div>';
+}
+
+// ── Venn diagram SVG ───────────────────────────────────────
+function vennSVG(la,lb,both,total,labA,labB){
+  var only_a=la-both, only_b=lb-both, neither=total-(la+lb-both);
+  var W=280,H=160;
+  var s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="max-width:300px;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg">';
+  s+='<circle cx="100" cy="80" r="65" fill="rgba(79,70,229,.12)" stroke="#4f46e5" stroke-width="2"/>';
+  s+='<circle cx="180" cy="80" r="65" fill="rgba(5,150,105,.12)" stroke="#059669" stroke-width="2"/>';
+  // Labels
+  s+='<text x="68" y="26" text-anchor="middle" font-size="11" fill="#4f46e5" font-family="DM Sans,sans-serif" font-weight="700">'+labA+'</text>';
+  s+='<text x="212" y="26" text-anchor="middle" font-size="11" fill="#059669" font-family="DM Sans,sans-serif" font-weight="700">'+labB+'</text>';
+  // Numbers
+  s+='<text x="68" y="84" text-anchor="middle" font-size="20" fill="#4f46e5" font-family="DM Serif Display,serif" font-weight="700">'+only_a+'</text>';
+  s+='<text x="140" y="84" text-anchor="middle" font-size="20" fill="#374151" font-family="DM Serif Display,serif" font-weight="700">'+both+'</text>';
+  s+='<text x="212" y="84" text-anchor="middle" font-size="20" fill="#059669" font-family="DM Serif Display,serif" font-weight="700">'+only_b+'</text>';
+  // Sub labels
+  s+='<text x="68" y="102" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="DM Sans,sans-serif">only '+labA+'</text>';
+  s+='<text x="140" y="102" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="DM Sans,sans-serif">both</text>';
+  s+='<text x="212" y="102" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="DM Sans,sans-serif">only '+labB+'</text>';
+  if(neither>0){
+    s+='<text x="140" y="148" text-anchor="middle" font-size="13" fill="#9ca3af" font-family="DM Sans,sans-serif" font-weight="600">neither: '+neither+'</text>';
+  }
+  s+='</svg>';
+  return s;
+}
+
+// ── Puzzles ───────────────────────────────────────────────
+var PUZZLES=[
+  {q:'Amy, Ben, Cal each play one sport.\nAmy does not play tennis. Ben plays football. Cal does not play cricket.\nWhat sport does Amy play?',
+   opts:['Tennis','Football','Cricket','Swimming'],ans:'Cricket',
+   explain:'Ben plays football — ruled out for others. Cal does not play cricket, so Cal plays tennis. Amy does not play tennis, so Amy plays cricket.'},
+  {q:'All squares are rectangles.\nShape X is a square.\nIs Shape X a rectangle?',
+   opts:['Yes','No','Maybe','Cannot tell'],ans:'Yes',
+   explain:'If all squares are rectangles, and X is a square, then X must be a rectangle. This is a direct if-then conclusion.'},
+  {q:'20 students: 12 like art, 10 like music, 5 like both.\nHow many like neither?',
+   opts:['2','3','4','5'],ans:'3',
+   explain:'Art only: 7. Music only: 5. Both: 5. Total who like at least one: 7+5+5 = 17. Neither: 20 - 17 = 3.'},
+  {q:'If today is Wednesday, what day will it be in 100 days?',
+   opts:['Monday','Tuesday','Friday','Saturday'],ans:'Friday',
+   explain:'100 / 7 = 14 remainder 2. So 100 days later is 2 days after Wednesday = Friday.'},
+];
+
+var QS=[
+  {q:'All birds have wings. A penguin is a bird.\nDoes a penguin have wings?',
+   opts:['Yes','No','Only if it can fly','Cannot tell'],ans:'Yes'},
+  {q:'In a group of 25: 14 play chess, 11 play draughts, 4 play both.\nHow many play neither?',
+   opts:['2','3','4','5'],ans:'4'},
+  {q:'It is not raining. The match was cancelled.\nDoes that mean the pitch is wet?',
+   opts:['Yes — always','No — cannot conclude','Only if it rained before','Yes — pitch is always wet'],ans:'No — cannot conclude'},
+  {q:'Alice, Bob, Clare each have one pet.\nAlice does not have a dog. Bob has a cat. Clare does not have a fish.\nWhat does Alice have?',
+   opts:['Dog','Cat','Fish','Bird'],ans:'Fish'},
+];
+
+var NIA=[
+  'Logic is not about guessing. It is about using what you know to <strong>rule out</strong> what cannot be true.',
+  'Apply clues one by one. Each clue eliminates possibilities. What remains must be true.',
+  'If A then B — the building block of all logical argument. But reversing it is a trap.',
+  'Venn diagrams show what groups share. Use them to count precisely.',
+  'Four puzzles. Apply elimination, if-then, or Venn diagrams.',
+];
+var BTNS=['Elimination','If-then thinking','Venn diagrams','Practice','Quiz'];
+
+function burst(){
+  var c=document.getElementById('cc');c.innerHTML='';
+  var cols=['#4f46e5','#f59e0b','#059669','#dc2626','#0369a1','#7c3aed'];
+  for(var i=0;i<48;i++){
+    var p=document.createElement('div');p.className='cp';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[i%cols.length]+
+      ';width:'+(5+Math.random()*7)+'px;height:'+(5+Math.random()*7)+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+
+      ';animation-delay:'+(Math.random()*.5)+'s;animation-duration:'+(1.5+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){c.innerHTML='';},3000);
+}
+
+// ── STEP 0: Preface ───────────────────────────────────────
+function renderStep0(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">What is logical reasoning?</div>'+
+        '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:14px;padding:16px;margin-bottom:14px">'+
+          '<div style="font-size:13px;color:var(--ink2);margin-bottom:10px;font-weight:600">&#128373; Four suspects. One clue. Who did it?</div>'+
+          '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">'+
+            ['Amy','Ben','Carl','Eva'].map(function(n){
+              return '<div style="padding:6px 14px;border-radius:8px;border:1.5px solid var(--rule);background:var(--card);font-family:DM Serif Display,serif;font-size:16px">'+n+'</div>';
+            }).join('')+
+          '</div>'+
+          '<div style="font-size:13px;color:var(--ink2);margin-bottom:8px">Clue: <strong style="color:var(--accent)">The winner is a boy.</strong></div>'+
+          '<div style="display:flex;gap:6px;flex-wrap:wrap">'+
+            [{n:'Amy',out:true},{n:'Ben',out:false},{n:'Carl',out:false},{n:'Eva',out:true}].map(function(r){
+              return '<div style="padding:6px 14px;border-radius:8px;border:1.5px solid '+(r.out?'rgba(220,38,38,.2)':'rgba(79,70,229,.3)')+';background:'+(r.out?'rgba(220,38,38,.05)':'rgba(79,70,229,.08)')+';font-family:DM Serif Display,serif;font-size:16px;color:'+(r.out?'var(--red)':'var(--accent)')+';'+(r.out?'text-decoration:line-through;opacity:.5':'')+'>'+r.n+'</div>';
+            }).join('')+
+          '</div>'+
+          '<div style="margin-top:8px;font-size:12px;color:var(--muted)">Amy and Eva eliminated. Ben and Carl remain.</div>'+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px;font-size:13px;color:var(--ink2);font-weight:600;text-align:center">'+
+          'Logic is not about guessing.<br>It is about <strong style="color:var(--accent)">eliminating</strong> what cannot be true.'+
+        '</div></div>',
+      nia:'Every logical problem has exactly <strong>one answer that fits all the clues</strong>. Work through the clues one at a time.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Three tools</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px">'+
+        [
+          {n:'1',icon:'&#10060;',t:'Elimination',d:'Cross out what cannot be true. What remains must be true.',col:'#dc2626'},
+          {n:'2',icon:'&#8594;',t:'If-then thinking',d:'If A is true, then B must be true. Chain the steps.',col:'#4f46e5'},
+          {n:'3',icon:'&#9711;',t:'Venn diagrams',d:'Show what two groups share — and what they do not.',col:'#059669'},
+        ].map(function(r){
+          return '<div style="display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--bg);border:1px solid var(--rule);border-radius:12px">'+
+            '<div style="width:36px;height:36px;border-radius:10px;background:'+r.col+';color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+r.icon+'</div>'+
+            '<div><div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px">'+r.t+'</div>'+
+              '<div style="font-size:12px;color:var(--muted);line-height:1.5">'+r.d+'</div></div>'+
+            '</div>';
+        }).join('')+
+        '</div></div>',
+      nia:'Three tools — elimination, if-then thinking, and Venn diagrams. Each one handles a different type of logical problem.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s0b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s0n()">'+(sl<S.length-1?'Next &#8594;':'Elimination &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+  }
+  window.s0n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s0b=function(){if(sl>0){sl--;show();}};
+  show();
+}
+
+// ── STEP 1: Elimination ───────────────────────────────────
+function renderStep1(){
+  var sl=0;
+  elimStep=0;
+  var S=[
+    {
+      nia:'Apply each clue. Cross out names that cannot fit. <strong>What remains must be the answer.</strong>',
+      render:function(){
+        return '<div style="animation:fi .3s ease">'+
+          '<div class="panel-title">Elimination — step by step</div>'+
+          '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:12px;margin-bottom:10px;text-align:center;font-family:DM Serif Display,serif;font-size:clamp(14px,3vw,17px);color:var(--ink)">'+
+            'One of these four children won the maths prize.<br>Apply the clues to find who.'+
+          '</div>'+
+          '<div id="elimArea">'+buildElim(elimStep)+'</div>'+
+          '<div style="display:flex;flex-direction:column;gap:6px;margin-top:10px">'+
+            '<div style="padding:8px 12px;border-radius:10px;background:'+(elimStep>=1?'rgba(5,150,105,.08)':'var(--bg)')+';border:1px solid '+(elimStep>=1?'rgba(5,150,105,.2)':'var(--rule)')+';font-size:13px;color:'+(elimStep>=1?'var(--green)':'var(--muted)')+'">&#10003; Clue 1: The winner is a boy.</div>'+
+            '<div style="padding:8px 12px;border-radius:10px;background:'+(elimStep>=2?'rgba(5,150,105,.08)':'var(--bg)')+';border:1px solid '+(elimStep>=2?'rgba(5,150,105,.2)':'var(--rule)')+';font-size:13px;color:'+(elimStep>=2?'var(--green)':'var(--muted)')+'">&#10003; Clue 2: The winner\'s name has more than 3 letters.</div>'+
+          '</div>'+
+          '<div class="snav" style="margin-top:10px">'+
+            '<button class="sbtn prev" onclick="elimBack()" '+(elimStep===0?'disabled':'')+'>&#8592; Undo clue</button>'+
+            '<button class="sbtn nxt" id="elimNextBtn" onclick="elimNext()">'+(elimStep>=2?'Logic grid &#8594;':'Apply next clue &#8594;')+'</button>'+
+          '</div>';
+      }
+    },
+    {
+      nia:'A logic grid uses ticks and crosses to track every combination. <strong>One tick per row and column</strong> — the grid solves itself.',
+      render:function(){
+        return '<div style="animation:fi .3s ease">'+
+          '<div class="panel-title">Logic grid — ticks and crosses</div>'+
+          '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:12px;margin-bottom:12px;font-size:13px;color:var(--ink2)">'+
+            '<strong style="color:var(--ink)">Three people, three pets. Each person has one pet.</strong><br>'+
+            'Clue 1: Ali does not have a dog. &nbsp; Clue 2: Bob has a fish. &nbsp; Clue 3: Cal does not have a cat.'+
+          '</div>'+
+          '<table class="lgrid">'+
+            '<tr><th></th><th>Cat</th><th>Dog</th><th>Fish</th></tr>'+
+            '<tr><td class="name">Ali</td><td class="yes">&#10003;</td><td class="no">&#10005;</td><td class="no">&#10005;</td></tr>'+
+            '<tr><td class="name">Bob</td><td class="no">&#10005;</td><td class="no">&#10005;</td><td class="yes">&#10003;</td></tr>'+
+            '<tr><td class="name">Cal</td><td class="no">&#10005;</td><td class="yes">&#10003;</td><td class="no">&#10005;</td></tr>'+
+          '</table>'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:10px;font-size:13px;color:var(--ink2);margin-top:10px">'+
+            'Bob has a fish (clue 2) &#10003;. Cal cannot have a cat (clue 3) &rarr; Cal has a dog &#10003;. Ali cannot have a dog (clue 1) &rarr; <strong style="color:var(--accent)">Ali has a cat &#10003;</strong>.'+
+          '</div>'+
+          '<div class="snav" style="margin-top:10px">'+
+            '<button class="sbtn prev" onclick="s1b()">&#8592; Back</button>'+
+            '<button class="sbtn nxt" onclick="s1n()">If-then thinking &#8594;</button>'+
+          '</div>';
+      }
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].render()+
+      '<div class="slide-nav">'+sdots+'</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.elimNext=function(){
+    if(elimStep<2){
+      elimStep++;
+      var el=document.getElementById('elimArea');
+      if(el)el.innerHTML=buildElim(elimStep);
+      // rebuild clue indicators
+      show();
+    } else {sl=1;show();}
+  };
+  window.elimBack=function(){
+    if(elimStep>0){elimStep--;show();}
+  };
+  window.s1n=function(){goStep(1);};
+  window.s1b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 2: If-then thinking ──────────────────────────────
+function renderStep2(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">If A then B — the syllogism</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">'+
+          '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:14px">'+
+            '<div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">The structure</div>'+
+            '<div style="display:flex;flex-direction:column;gap:6px">'+
+              [
+                {label:'Premise 1',text:'All cats have whiskers.',col:'#4f46e5'},
+                {label:'Premise 2',text:'Milo is a cat.',col:'#0369a1'},
+                {label:'Conclusion',text:'Therefore: Milo has whiskers.',col:'#059669'},
+              ].map(function(r){
+                return '<div style="display:flex;align-items:center;gap:10px">'+
+                  '<div style="font-size:11px;font-weight:700;color:'+r.col+';width:80px;flex-shrink:0">'+r.label+'</div>'+
+                  '<div style="font-family:DM Serif Display,serif;font-size:16px;color:var(--ink)">'+r.text+'</div>'+
+                  '</div>';
+              }).join('')+
+            '</div>'+
+          '</div>'+
+          '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:14px">'+
+            '<div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Another example</div>'+
+            '<div style="display:flex;flex-direction:column;gap:6px">'+
+              [
+                {label:'Premise 1',text:'All prime numbers greater than 2 are odd.',col:'#4f46e5'},
+                {label:'Premise 2',text:'7 is a prime number greater than 2.',col:'#0369a1'},
+                {label:'Conclusion',text:'Therefore: 7 is odd.',col:'#059669'},
+              ].map(function(r){
+                return '<div style="display:flex;align-items:center;gap:10px">'+
+                  '<div style="font-size:11px;font-weight:700;color:'+r.col+';width:80px;flex-shrink:0">'+r.label+'</div>'+
+                  '<div style="font-family:DM Serif Display,serif;font-size:16px;color:var(--ink)">'+r.text+'</div>'+
+                  '</div>';
+              }).join('')+
+            '</div>'+
+          '</div>'+
+        '</div></div>',
+      nia:'<strong>If A then B</strong>. If all cats have whiskers, and Milo is a cat, then Milo must have whiskers. The conclusion follows from the premises — always.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Chains and the reverse logic trap</div>'+
+        '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:14px;margin-bottom:12px">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px">Chaining if-then steps:</div>'+
+          '<div style="display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--ink2)">'+
+            '<div>If it rains &rarr; the pitch is wet.</div>'+
+            '<div>If the pitch is wet &rarr; the match is cancelled.</div>'+
+            '<div style="margin-top:6px;font-weight:600;color:var(--ink)">It is raining. &rarr; Pitch is wet. &rarr; <strong style="color:var(--accent)">Match is cancelled.</strong></div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="background:rgba(220,38,38,.05);border:1.5px solid rgba(220,38,38,.2);border-radius:12px;padding:14px">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:8px">&#9888; The reverse logic trap:</div>'+
+          '<div style="font-size:13px;color:var(--ink2);margin-bottom:8px">The match was cancelled. Does that mean it rained?</div>'+
+          '<div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:6px">&#10005; NOT necessarily.</div>'+
+          '<div style="font-size:13px;color:var(--ink2)">The match could have been cancelled for another reason — a power cut, a team dispute, anything. You cannot reverse an if-then without more information.</div>'+
+        '</div></div>',
+      nia:'Chains of if-then are powerful. But <strong>reversing an if-then is a trap</strong>. "If A then B" does not mean "If B then A".'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s2b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s2n()">'+(sl<S.length-1?'Next &#8594;':'Venn diagrams &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s2n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s2b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 3: Venn diagrams ─────────────────────────────────
+function renderStep3(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">What Venn diagrams show</div>'+
+        '<div class="venn-wrap">'+vennSVG(8,5,3,20,'Football','Tennis')+'</div>'+
+        '<div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">'+
+          '<div class="s-row"><div class="s-num">1</div><div>Football only: 8 - 3 = <strong>5</strong></div></div>'+
+          '<div class="s-row"><div class="s-num">2</div><div>Tennis only: 5 - 3 = <strong>2</strong></div></div>'+
+          '<div class="s-row"><div class="s-num">3</div><div>Both: <strong>3</strong></div></div>'+
+          '<div class="s-row"><div class="s-num">4</div><div>At least one sport: 5 + 2 + 3 = <strong style="color:var(--accent)">10</strong></div></div>'+
+        '</div>'+
+        '<div style="background:rgba(79,70,229,.05);border:1px solid rgba(79,70,229,.15);border-radius:10px;padding:10px;font-size:13px;color:var(--ink2);margin-top:8px">'+
+          'Key formula: A + B - Both = Total who like at least one.'+
+        '</div></div>',
+      nia:'The overlap is the key. Add both circles, then subtract the overlap — otherwise you count the middle group twice.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Finding neither — a worked example</div>'+
+        '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:12px;margin-bottom:12px;font-size:13px;color:var(--ink);font-weight:600;text-align:center">'+
+          'Class of 30. 18 like maths, 15 like science, 8 like both. How many like neither?'+
+        '</div>'+
+        '<div class="venn-wrap">'+vennSVG(18,15,8,30,'Maths','Science')+'</div>'+
+        '<div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">'+
+          '<div class="s-row"><div class="s-num">1</div><div>Maths only: 18 - 8 = <strong>10</strong></div></div>'+
+          '<div class="s-row"><div class="s-num">2</div><div>Science only: 15 - 8 = <strong>7</strong></div></div>'+
+          '<div class="s-row"><div class="s-num">3</div><div>At least one: 10 + 7 + 8 = <strong>25</strong></div></div>'+
+          '<div class="s-row"><div class="s-num">4</div><div>Neither: 30 - 25 = <strong style="color:var(--accent)">5</strong></div></div>'+
+        '</div></div>',
+      nia:'Total minus "at least one" gives you <strong>neither</strong>. Always draw the diagram — it makes the numbers visible.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s3b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s3n()">'+(sl<S.length-1?'Next &#8594;':'Practice &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s3n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s3b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 4: Puzzles ───────────────────────────────────────
+function renderStep4(){puzzleLevel=0;puzzleScore=0;puzzleResults=[];levelAnswered=false;showPuzzle();}
+
+function showPuzzle(){
+  if(puzzleLevel>=PUZZLES.length){showPuzzleDone();return;}
+  var pz=PUZZLES[puzzleLevel];levelAnswered=false;
+  var pips='';for(var i=0;i<PUZZLES.length;i++)pips+='<div class="prog-pip'+(i<puzzleLevel?' dp':i===puzzleLevel?' cp':'')+'" ></div>';
+  var qDisplay=pz.q.replace(/\n/g,'<br>');
+  var hints=['Elimination','If-then thinking','Venn diagram','Pattern + remainder'];
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="prog-row"><span class="prog-label">Puzzle '+(puzzleLevel+1)+' of '+PUZZLES.length+'</span><div class="prog-pips">'+pips+'</div></div>'+
+    '<div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;text-align:center;margin-bottom:8px">Tool: '+hints[puzzleLevel]+'</div>'+
+    '<div class="puz-q">'+qDisplay+'</div>'+
+    renderOpts(pz.opts,'popt','pickPuz',null)+
+    '<div class="res" id="pzRes"></div></div>';
+  document.getElementById('nia').innerHTML='Apply the logical tool. Pick your answer.';
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){
+    if(puzzleLevel>0){puzzleLevel--;if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}levelAnswered=false;showPuzzle();}
+    else{goStep(-1);}
+  };}
+}
+
+function pickPuz(idx){
+  if(levelAnswered)return;levelAnswered=true;
+  var pz=PUZZLES[puzzleLevel];
+  var chosen=document.getElementById('popt'+idx)?document.getElementById('popt'+idx).getAttribute('data-val'):'';
+  var ok=(chosen===pz.ans);
+  puzzleResults[puzzleLevel]=ok;
+  markOpts('popt',chosen,pz.ans);
+  var res=document.getElementById('pzRes');
+  if(ok){puzzleScore++;if(res){res.textContent='Correct. '+pz.explain;res.className='res ok';}document.getElementById('nia').innerHTML='Correct. '+pz.explain;}
+  else{if(res){res.textContent='Not quite. '+pz.explain;res.className='res no';}document.getElementById('nia').innerHTML=pz.explain;}
+  puzzleLevel++;
+  var isLast=(puzzleLevel>=PUZZLES.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showPuzzleDone():showPuzzle();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showPuzzleDone():showPuzzle();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showPuzzleDone(){
+  var perfect=(puzzleScore>=PUZZLES.length);
+  if(perfect)burst();
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){
+    puzzleLevel=PUZZLES.length-1;
+    if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}
+    levelAnswered=false;showPuzzle();
+  };}
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div style="font-size:48px;margin-bottom:14px">'+(perfect?'&#127919;':'&#128077;')+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'All four puzzles correct!':'Practice complete \u2014 '+puzzleScore+' of '+PUZZLES.length+' correct.')+
+    '</div>'+
+    (perfect?'':'<p style="font-size:14px;color:var(--muted)">Tap &#8592; to retry any puzzle.</p>')+
+    '</div>';
+  document.getElementById('nia').innerHTML=perfect?'All four solved correctly. Ready for the quiz.':'Good effort. Use &#8592; to review before the quiz.';
+}
+
+// ── STEP 5: Quiz ──────────────────────────────────────────
+function renderStep5(){qIdx=0;qScore=0;qHistory=[];document.getElementById('nia').innerHTML='Four questions. Think carefully.';showQ();}
+
+function showQ(){
+  if(qIdx>=QS.length){showQEnd();return;}
+  var q=QS[qIdx];
+  var nia=document.getElementById('nia');if(nia)nia.innerHTML='Pick your answer.';
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  var qDisplay=q.q.replace(/\n/g,'<br>');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div class="puz-q">'+qDisplay+'</div>'+
+    renderOpts(q.opts,'qopt','pickQ',null)+
+    '<div class="res" id="qRes"></div></div>';
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){if(qIdx>0&&qHistory.length>0){showQPrev(qIdx-1);}else{goStep(-1);};};}
+}
+
+function showQPrev(idx){
+  if(idx<0||!qHistory[idx])return;
+  var q=QS[idx];var h=qHistory[idx];
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<h.score?' on':'')+'">&#11088;</div>';
+  var disMap={};
+  q.opts.forEach(function(o,i){
+    if(o===h.chosen&&h.wasCorrect)disMap[i]='correct';
+    else if(o===h.chosen&&!h.wasCorrect)disMap[i]='wrong';
+    else if(o===h.correct&&!h.wasCorrect)disMap[i]='correct';
+    else disMap[i]='';
+  });
+  var qDisplay=q.q.replace(/\n/g,'<br>');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:8px">Question '+(idx+1)+' \u2014 reviewed</div>'+
+    '<div class="puz-q">'+qDisplay+'</div>'+
+    renderOpts(q.opts,'qopt',null,disMap)+
+    '<div style="display:flex;gap:8px;justify-content:center;margin-top:14px">'+
+    '<button onclick="showQPrev('+(idx-1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);opacity:'+(idx===0?.3:1)+'" '+(idx===0?'disabled':'')+'>&#8592; Prev</button>'+
+    (idx<qIdx-1?'<button onclick="showQPrev('+(idx+1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted)">Next &#8594;</button>':
+     '<button onclick="showQ()" style="padding:8px 16px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:700;cursor:pointer">Continue quiz &#8594;</button>')+
+    '</div></div>';
+  document.getElementById('nia').innerHTML=(h.wasCorrect?'Correct! ':'Answer was <strong>'+h.correct+'</strong>. ')+'Reviewing question '+(idx+1)+'.';
+}
+
+function pickQ(idx){
+  var q=QS[qIdx];
+  [0,1,2,3].forEach(function(i){var b=document.getElementById('qopt'+i);if(b){b.onclick=null;b.style.cursor='default';}});
+  var chosen=document.getElementById('qopt'+idx)?document.getElementById('qopt'+idx).getAttribute('data-val'):'';
+  var ok=(chosen===q.ans);
+  qHistory[qIdx]={chosen:chosen,correct:q.ans,wasCorrect:ok,score:qScore+(ok?1:0)};
+  markOpts('qopt',chosen,q.ans);
+  var res=document.getElementById('qRes');
+  if(ok){qScore++;if(res){res.textContent='Correct.';res.className='res ok';}document.getElementById('nia').innerHTML='Correct.';}
+  else{if(res){res.textContent='Answer: '+q.ans;res.className='res no';}document.getElementById('nia').innerHTML='Answer: <strong>'+q.ans+'</strong>.';}
+  qIdx++;
+  var isLast=(qIdx>=QS.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showQEnd():showQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showQEnd():showQ();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQEnd(){
+  var perfect=(qScore===QS.length);if(perfect)burst();
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div class="stars" style="margin-bottom:20px">'+stars+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'Perfect.':qScore>=3?'Almost perfect.':qScore>=2?'Good work.':'Keep going.')+
+    '</div>'+
+    '<div style="font-size:14px;color:var(--muted);margin-bottom:20px">'+qScore+' of '+QS.length+' correct</div>'+
+    '<button onclick="goStep(-5)" style="padding:10px 28px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)">Start again</button>'+
+    '</div>';
+  document.getElementById('nia').innerHTML=(perfect?'<strong>Perfect.</strong> ':'')+'Three tools: Elimination, If-then, Venn diagrams. Apply each one where it fits.';
+}
+
+// ── Summary ───────────────────────────────────────────────
+function renderSummary(){
+  var tools=[
+    {n:'1',icon:'&#10060;',t:'Elimination',w:'Clue-based problems with multiple candidates',r:'Cross out what cannot be true. What remains is the answer.',col:'#dc2626'},
+    {n:'2',icon:'&#8594;',t:'If-then thinking',w:'Deduction from premises to conclusion',r:'Premise + Logic = Conclusion. Reversing is not always valid.',col:'#4f46e5'},
+    {n:'3',icon:'&#9711;',t:'Venn diagrams',w:'Counting problems with overlapping groups',r:'At least one = A + B - Both. Neither = Total - (at least one).',col:'#059669'},
+  ];
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="panel-title">Three logical tools</div>'+
+    '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">'+
+    tools.map(function(r){
+      return '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px">'+
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">'+
+          '<div style="width:30px;height:30px;border-radius:8px;background:'+r.col+';color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+r.icon+'</div>'+
+          '<div style="font-size:13px;font-weight:700;color:var(--ink)">'+r.t+'</div>'+
+        '</div>'+
+        '<div style="font-size:12px;color:var(--accent);font-weight:600;padding-left:40px;margin-bottom:2px">Use when: '+r.w+'</div>'+
+        '<div style="font-size:12px;color:var(--muted);padding-left:40px">'+r.r+'</div>'+
+        '</div>';
+    }).join('')+
+    '</div>'+
+    '<div style="padding-top:12px;border-top:1px solid var(--rule);font-size:13px;color:var(--ink2)">'+
+      'Next: <strong style="color:var(--ink)">Analytical Thinking</strong>'+
+    '</div></div>';
+}
+
+var RS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4,renderStep5,renderSummary];
+
+function goStep(dir){
+  step=Math.max(0,Math.min(6,step+dir));
+  var dotStep=Math.min(step,4);
+  for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<dotStep?' done':i===dotStep?' active':'');}
+  var niaArr=[
+    'Logic is not about guessing. It is about using what you know to <strong>rule out</strong> what cannot be true.',
+    'Apply each clue. Cross out names that cannot fit. What remains must be the answer.',
+    'If A then B — the building block of all logical argument. But reversing it is a trap.',
+    'Venn diagrams show what groups share — and what they do not.',
+    'Four puzzles. Apply elimination, if-then, or Venn diagrams.',
+    'Four questions. Think carefully.',
+    'Three tools. One for each type of problem.',
+  ];
+  document.getElementById('nia').innerHTML=niaArr[Math.min(step,niaArr.length-1)];
+  document.getElementById('btnBack').disabled=(step===0);
+  var bl=['Elimination','If-then thinking','Venn diagrams','Practice','Quiz','Summary','Start again'];
+  document.getElementById('btnNext').textContent=(bl[step]||'Next')+' \u2192';
+  if(step>=6){document.getElementById('btnNext').onclick=function(){goStep(-6);};}
+  else{document.getElementById('btnNext').onclick=function(){goStep(1);};}
+  if(step!==4&&step!==5){
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=(step===0);bb.onclick=function(){goStep(-1);};}
+  }
+  RS[Math.min(step,RS.length-1)]();
+}
+goStep(0);
+</script>
+</body>
+</html>

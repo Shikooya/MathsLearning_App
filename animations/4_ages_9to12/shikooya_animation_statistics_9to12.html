@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya — Statistics (Ages 9–12)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
+  :root{
+    --ink:#0f1117;--ink2:#4b5563;--muted:#9ca3af;
+    --bg:#f9f8f4;--card:#ffffff;
+    --accent:#4f46e5;
+    --mean:#7c3aed;--median:#0369a1;--mode:#059669;--range:#dc2626;
+    --green:#059669;--red:#dc2626;
+    --rule:rgba(0,0,0,.06);--sh:0 1px 12px rgba(0,0,0,.06);--r:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px;color:var(--ink);}
+  .shell{width:100%;max-width:600px;}
+
+  /* Header */
+  .top{text-align:center;margin-bottom:24px;}
+  .badge{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);display:inline-block;margin-bottom:12px;}
+  .top h1{font-family:'DM Serif Display',serif;font-size:clamp(26px,5vw,36px);
+    color:var(--ink);line-height:1.1;margin-bottom:6px;}
+  .top h1 em{font-style:italic;color:var(--accent);}
+  .top p{font-size:13px;color:var(--muted);font-weight:500;}
+
+  /* Stepper */
+  .stepper{display:flex;gap:5px;justify-content:center;margin-bottom:24px;}
+  .step-dot{width:5px;height:5px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .step-dot.active{background:var(--accent2, #f59e0b);transform:scale(1.8);}
+  .step-dot.done{background:var(--accent);}
+
+  /* Nia */
+  .nia{display:flex;gap:12px;align-items:center;background:var(--card);
+    border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px;
+    margin-bottom:20px;box-shadow:var(--sh);}
+  .nia-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+    animation:bob 3s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .nia-text{font-size:14px;line-height:1.55;color:var(--ink2);flex:1;}
+  .nia-text strong{color:var(--accent);font-weight:700;}
+  .nia-text em{color:#d97706;font-style:normal;font-weight:700;}
+
+  /* Panel */
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);
+    padding:24px;margin-bottom:16px;box-shadow:var(--sh);}
+
+  /* Data dots */
+  .dots-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px 0;}
+  .dot{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;
+    justify-content:center;font-family:'DM Serif Display',serif;font-size:19px;
+    color:#fff;transition:all .35s cubic-bezier(.34,1.56,.64,1);}
+  .dot.hl{transform:scale(1.22);}
+  .dot.dim{opacity:.25;transform:scale(.88);}
+
+  /* Big number */
+  .big-num{font-family:'DM Serif Display',serif;font-size:clamp(52px,12vw,80px);
+    line-height:1;text-align:center;margin:8px 0;transition:color .3s;}
+  .big-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    text-align:center;color:var(--muted);margin-bottom:4px;}
+  .big-sub{font-size:13px;color:var(--ink2);text-align:center;margin-top:6px;font-weight:500;}
+
+  /* Measure tabs */
+  .m-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;}
+  .m-tab{padding:14px 0;border-radius:12px;border:1.5px solid var(--rule);
+    background:var(--bg);font-family:'DM Sans',sans-serif;font-size:14px;
+    font-weight:700;cursor:pointer;color:var(--muted);text-align:center;
+    transition:all .2s;}
+  .m-tab:hover{border-color:#d1d5db;color:var(--ink);}
+  .m-tab.on{color:#fff;border-color:transparent;}
+
+  /* Bar chart */
+  .bars{display:flex;align-items:flex-end;gap:5px;height:100px;margin:16px 0 4px;}
+  .bar-c{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;}
+  .bar{width:100%;border-radius:5px 5px 0 0;transition:all .4s cubic-bezier(.34,1.56,.64,1);min-height:4px;}
+  .bar-v{font-size:10px;font-weight:700;color:var(--ink2);}
+  .bar-l{font-size:9px;color:var(--muted);font-weight:600;}
+
+  /* Working steps */
+  .working{background:var(--bg);border-radius:12px;padding:14px 16px;margin-top:14px;}
+  .working-step{font-size:13px;color:var(--ink2);line-height:1.7;font-weight:500;}
+  .working-step strong{color:var(--ink);}
+
+  /* Dataset pills */
+  .ds-pills{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+  .ds-pill{padding:6px 14px;border-radius:20px;border:1.5px solid var(--rule);
+    background:var(--bg);font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);
+    transition:all .2s;}
+  .ds-pill.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+
+  /* Summary grid */
+  .sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
+  .sum-card{border-radius:14px;padding:16px;border:1px solid var(--rule);}
+  .sum-card .letter{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:4px;}
+  .sum-card .val{font-family:'DM Serif Display',serif;font-size:28px;margin:4px 0;}
+  .sum-card .rule{font-size:12px;color:var(--muted);font-weight:500;}
+
+  /* Quiz */
+  .quiz-q{font-family:'DM Serif Display',serif;font-size:clamp(20px,4vw,26px);
+    text-align:center;line-height:1.3;margin-bottom:20px;color:var(--ink);}
+  .q-opts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+  .q-opt{min-width:80px;min-height:52px;border-radius:12px;border:1.5px solid var(--rule);
+    background:var(--bg);font-family:'DM Sans',sans-serif;font-size:clamp(14px,3vw,16px);
+    font-weight:600;cursor:pointer;color:var(--ink);padding:8px 14px;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);}
+  .q-opt:hover{border-color:var(--accent);transform:translateY(-1px);}
+  .q-opt.correct{background:rgba(5,150,105,.1);border-color:var(--green);color:var(--green);animation:pop .4s ease;}
+  .q-opt.wrong{background:rgba(220,38,38,.06);border-color:var(--red);color:var(--red);animation:shake .3s ease;}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  .q-result{text-align:center;margin-top:12px;font-size:14px;font-weight:700;min-height:20px;}
+  .q-result.correct{color:var(--green);}
+  .q-result.wrong{color:var(--red);}
+  .stars{display:flex;justify-content:center;gap:5px;margin-bottom:18px;}
+  .star{font-size:20px;opacity:.18;transition:all .3s;}
+  .star.on{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+
+  /* Nav */
+  .nav{display:flex;gap:10px;margin-top:4px;}
+  .btn{min-height:50px;padding:0 22px;border-radius:14px;border:none;
+    font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;
+    cursor:pointer;transition:all .2s;}
+  .btn:active{transform:scale(.97);}
+  .btn-back{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);min-width:50px;}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-next{background:var(--accent);color:#fff;flex:1;box-shadow:0 4px 14px rgba(79,70,229,.2);}
+  .btn-next:hover{background:#0d6b63;transform:translateY(-1px);}
+
+  /* Slide nav */
+  .slide-nav{display:flex;gap:8px;justify-content:center;margin-top:16px;}
+  .slide-dot{width:6px;height:6px;border-radius:50%;background:#d1d5db;transition:all .3s;cursor:pointer;}
+  .slide-dot.on{background:var(--accent);transform:scale(1.4);}
+
+  /* Confetti */
+  .cc{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .cp{position:absolute;border-radius:2px;animation:cf 2s ease-in forwards;}
+  @keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+  @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="shell">
+  <div class="top">
+    <div class="badge">Ages 9 – 12</div>
+    <h1>Making Sense of <em>Data</em></h1>
+    <p>Mean · Median · Mode · Range</p>
+  </div>
+  <div class="stepper">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia">
+    <div class="nia-dot">🌟</div>
+    <div class="nia-text" id="nia">Seven friends read <strong>3, 7, 5, 7, 2, 8, 7</strong> books. Four tools help us describe any set of numbers.</div>
+  </div>
+  <div id="main"></div>
+  <div class="nav">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>←</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let's go →</button>
+  </div>
+</div>
+<div class="cc" id="cc"></div>
+<script>
+var s
+var step=0,qIdx=0,qScore=0,ds=0,measure='mean';
+
+var DC=['#7c3aed','#0369a1','#059669','#dc2626','#d97706','#0891b2','#db2777','#65a30d','#9333ea','#0f766e'];
+
+var DS=[
+  {e:'📚',n:'Books',raw:[3,7,5,7,2,8,7]},
+  {e:'📝',n:'Scores',raw:[6,8,7,9,8,10,8,6,7,8]},
+  {e:'🏃',n:'Steps',raw:[5,8,6,8,7,9,8,6,10,8]},
+];
+
+var MS=[
+  {k:'mean',  col:'var(--mean)',   label:'Mean',   desc:'Total ÷ count'},
+  {k:'median',col:'var(--median)', label:'Median', desc:'Middle when sorted'},
+  {k:'mode',  col:'var(--mode)',   label:'Mode',   desc:'Most frequent'},
+  {k:'range', col:'var(--range)',  label:'Range',  desc:'Max - Min'},
+];
+
+var QS=[
+  {q:'Mean of  4, 6, 8, 6, 6',opts:['5','6','7','8'],ans:'6'},
+  {q:'Median of  2, 5, 7, 9, 12',opts:['5','7','9','6'],ans:'7'},
+  {q:'Mode of  3, 5, 3, 7, 3, 5',opts:['5','3','7','4'],ans:'3'},
+  {q:'Range of  4, 11, 7, 2, 9',opts:['7','9','11','4'],ans:'9'},
+];
+
+var NIA=[
+  'Seven friends read <strong>3, 7, 5, 7, 2, 8, 7</strong> books. Four tools help us describe any set of numbers.',
+  'Tap a measure. See it calculated. Switch datasets to test your intuition.',
+  'Quiz time. One question per measure.',
+  'Quiz time. One question per measure.',
+  'Four measures. Four different views of the same data.',
+];
+
+var BTNS=['Explore →','Quiz →','Summary →','🔁 Play again','🔁 Play again'];
+
+function calc(arr){
+  var s=arr.slice().sort(function(a,b){return a-b;});
+  var n=arr.length, tot=arr.reduce(function(a,b){return a+b;},0);
+  var mean=Math.round(tot/n*100)/100;
+  var med=n%2?s[Math.floor(n/2)]:(s[n/2-1]+s[n/2])/2;
+  var freq={};arr.forEach(function(v){freq[v]=(freq[v]||0)+1;});
+  var mxf=Math.max.apply(null,Object.values(freq));
+  var modes=Object.keys(freq).filter(function(k){return freq[k]===mxf;}).map(Number);
+  return{sorted:s,tot:tot,n:n,mean:mean,median:med,modes:modes,mxf:mxf,freq:freq,
+    min:s[0],max:s[n-1],range:s[n-1]-s[0]};
+}
+
+function dots(raw,hlVals,sorted){
+  var arr=sorted?raw.slice().sort(function(a,b){return a-b;}):raw;
+  return arr.map(function(v,i){
+    var isHl=hlVals&&hlVals.indexOf(v)>=0;
+    return '<div class="dot'+(isHl?' hl':' dim')+'" style="background:'+DC[i%DC.length]+'">'+v+'</div>';
+  }).join('');
+}
+
+function bars(raw,hlVals){
+  var mx=Math.max.apply(null,raw);
+  return raw.map(function(v,i){
+    var h=Math.round(v/mx*100);
+    var isHl=hlVals&&hlVals.indexOf(v)>=0;
+    return '<div class="bar-c">'+
+      '<div class="bar-v">'+v+'</div>'+
+      '<div class="bar" style="height:'+h+'%;background:'+(isHl?DC[i%DC.length]:'#e5e7eb')+'"></div>'+
+      '<div class="bar-l">'+(i+1)+'</div></div>';
+  }).join('');
+}
+
+// ── STEP 0: Intro slides ──────────────────────────────────
+function renderStep0(){
+  var sl=0;
+  var raw=[3,7,5,7,2,8,7];
+  var st=calc(raw);
+
+  var SLIDES=[
+    // Slide 1: just the four measures as big numbers
+    function(){
+      return '<div style="animation:fi .3s ease">'+
+        '<div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:20px">Four measures — one dataset</div>'+
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+
+        MS.map(function(m){
+          var v=m.k==='mean'?st.mean:m.k==='median'?st.median:m.k==='mode'?st.modes.join(', '):st.range;
+          return '<div style="text-align:center;padding:20px 12px;background:var(--bg);border:1px solid var(--rule);border-radius:14px">'+
+            '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">'+m.label+'</div>'+
+            '<div style="font-family:DM Serif Display,serif;font-size:clamp(36px,8vw,52px);color:'+m.col+';line-height:1">'+v+'</div>'+
+            '<div style="font-size:11px;color:var(--muted);margin-top:6px">'+m.desc+'</div>'+
+            '</div>';
+        }).join('')+
+        '</div></div>';
+    },
+    // Slide 2: when to use which
+    function(){
+      var items=[
+        {col:'var(--mean)',  name:'Mean',   use:'Even data, no outliers.',      eg:'Class test average'},
+        {col:'var(--median)',name:'Median', use:'Outliers skew the mean.',      eg:'House prices'},
+        {col:'var(--mode)',  name:'Mode',   use:'Most popular value.',          eg:'Best-selling shoe size'},
+        {col:'var(--range)', name:'Range',  use:'How spread out is the data?',  eg:'Daily temperature swing'},
+      ];
+      return '<div style="animation:fi .3s ease">'+
+        '<div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:20px">When to use which</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px">'+
+        items.map(function(it){
+          return '<div style="display:flex;align-items:center;gap:14px;padding:12px 14px;background:var(--bg);border:1px solid var(--rule);border-radius:12px">'+
+            '<div style="font-family:DM Serif Display,serif;font-size:18px;color:'+it.col+';min-width:54px">'+it.name+'</div>'+
+            '<div style="flex:1">'+
+              '<div style="font-size:13px;font-weight:600;color:var(--ink)">'+it.use+'</div>'+
+              '<div style="font-size:11px;color:var(--muted);margin-top:1px">e.g. '+it.eg+'</div>'+
+            '</div></div>';
+        }).join('')+
+        '</div></div>';
+    },
+  ];
+
+  function show(){
+    var sdots='<div class="slide-nav">'+SLIDES.map(function(_,i){
+      return '<div class="slide-dot'+(i===sl?' on':'')+'" onclick="void(0)"></div>';
+    }).join('')+'</div>';
+    document.getElementById('main').innerHTML=
+      '<div class="panel">'+SLIDES[sl]()+sdots+
+        '<div style="display:flex;gap:8px;justify-content:center;margin-top:14px">'+
+          '<button onclick="s0b()" style="padding:8px 18px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);opacity:'+(sl===0?.3:1)+'" '+(sl===0?'disabled':'')+'>← Back</button>'+
+          '<button onclick="s0n()" style="padding:8px 22px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:700;cursor:pointer">'+
+            (sl<SLIDES.length-1?'Next →':'Explore →')+
+          '</button>'+
+        '</div>'+
+      '</div>';
+    var msgs=[
+      'Four measures — four answers. Each one tells a different part of the story.',
+      '<strong>Mean</strong> for even data. <strong>Median</strong> when outliers exist. <strong>Mode</strong> for popularity. <strong>Range</strong> for spread.',
+    ];
+    document.getElementById('nia').innerHTML=msgs[sl]||msgs[0];
+  }
+  window.s0n=function(){if(sl<SLIDES.length-1){sl++;show();}else{goStep(1);}};
+  window.s0b=function(){if(sl>0){sl--;show();}};
+  show();
+}
+
+// ── STEP 1: Explorer ──────────────────────────────────────
+function renderStep1(){
+  ds=0; measure='mean'; buildExplorer();
+}
+
+function buildExplorer(){
+  var d=DS[ds]; var st=calc(d.raw);
+  var m=MS.filter(function(x){return x.k===measure;})[0];
+
+  // what to highlight
+  var hlVals=[];
+  var workingHTML='';
+  var bigVal='';
+
+  if(measure==='mean'){
+    hlVals=d.raw.slice();
+    bigVal=st.mean;
+    workingHTML='<span class="working-step">'+d.raw.join(' + ')+' = <strong>'+st.tot+'</strong> &nbsp;·&nbsp; '+st.tot+' ÷ '+st.n+' = <strong>'+st.mean+'</strong></span>';
+  } else if(measure==='median'){
+    hlVals=[st.median];
+    bigVal=st.median;
+    var mi=Math.floor(st.n/2);
+    workingHTML='<span class="working-step">Sorted: '+st.sorted.map(function(v,i){
+      var isMid=(st.n%2===1&&i===mi)||(st.n%2===0&&(i===st.n/2-1||i===st.n/2));
+      return isMid?'<strong style="color:var(--median)">['+v+']</strong>':v;
+    }).join(', ')+'</span>';
+  } else if(measure==='mode'){
+    hlVals=st.modes;
+    bigVal=st.modes.join(', ');
+    workingHTML='<span class="working-step">'+
+      Object.keys(st.freq).sort(function(a,b){return st.freq[b]-st.freq[a];}).slice(0,5).map(function(k){
+        return '<strong style="color:'+(st.modes.indexOf(Number(k))>=0?'var(--mode)':'var(--ink2)')+'">'+k+' &times;'+st.freq[k]+'</strong>';
+      }).join(' &nbsp; ')+'</span>';
+  } else {
+    hlVals=[st.min,st.max];
+    bigVal=st.range;
+    workingHTML='<span class="working-step"><strong>'+st.max+'</strong> &minus; <strong>'+st.min+'</strong> = <strong>'+st.range+'</strong></span>';
+  }
+
+  var dspills=DS.map(function(x,i){
+    return '<button class="ds-pill'+(i===ds?' on':'')+'" onclick="switchDS('+i+')">'+x.e+' '+x.n+'</button>';
+  }).join('');
+
+  var mtabs=MS.map(function(mx){
+    var on=mx.k===measure;
+    return '<button class="m-tab'+(on?' on':'')+'" style="'+(on?'background:'+mx.col+';':'')+'border-color:'+(on?mx.col:'var(--rule)')+'" onclick="switchM(\''+mx.k+'\')">'+mx.label+'</button>';
+  }).join('');
+
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="ds-pills">'+dspills+'</div>'+
+    mtabs+
+    '<div class="bars" style="animation:fi .3s ease">'+bars(d.raw,hlVals)+'</div>'+
+    '<div class="dots-row" style="animation:fi .35s ease">'+dots(d.raw,hlVals,measure==='median')+'</div>'+
+    '<div class="big-label" style="color:'+m.col+'">'+m.label+'</div>'+
+    '<div class="big-num" style="color:'+m.col+'">'+bigVal+'</div>'+
+    '<div class="working">'+workingHTML+'</div>'+
+    '</div>';
+
+  var msgs={
+    mean:'<strong>Mean</strong> — the fair share. If everyone pooled their count and split it equally.',
+    median:'<strong>Median</strong> — the middle. Half above, half below. Ignores extreme values.',
+    mode:'<strong>Mode</strong> — the most common. What appeared most often?',
+    range:'<strong>Range</strong> — the spread. How far from smallest to largest?',
+  };
+  document.getElementById('nia').innerHTML=msgs[measure];
+}
+
+function switchDS(i){ds=i;buildExplorer();}
+function switchM(m){measure=m;buildExplorer();}
+
+// ── STEP 2: Quiz ─────────────────────────────────────────
+function renderStep2(){
+  qIdx=0;qScore=0;
+  document.getElementById('nia').innerHTML=NIA[2];
+  // Disable main nav during quiz — prevents restarting mid-quiz
+  var nb=document.getElementById('btnNext');
+  if(nb){nb.disabled=true;nb.style.opacity='0.3';}
+  showQ();
+}
+
+function showQ(){
+  if(qIdx>=QS.length){showQEnd();return;}
+  var q=QS[qIdx];
+  var nia=document.getElementById('nia');
+  if(nia) nia.innerHTML='Pick your answer.';
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  var opts=q.opts.map(function(o,oi){
+    return '<button class="q-opt" id="qo'+oi+'" data-val="'+o+'" onclick="pickQ('+oi+')">'+o+'</button>';
+  }).join('');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div class="quiz-q">'+q.q+'</div>'+
+    '<div class="q-opts">'+opts+'</div>'+
+    '<div class="q-result" id="qRes"></div></div>';
+}
+
+function pickQ(idx){
+
+  var q=QS[qIdx];
+  var btns=document.querySelectorAll('.q-opt');
+  btns.forEach(function(b){b.disabled=true;});
+  var chosen=btns[idx]?btns[idx].getAttribute('data-val'):'';
+  var res=document.getElementById('q-result')||document.getElementById('qRes');
+  if(chosen===q.ans){
+    btns[idx].className='q-opt correct';
+    qScore++;
+    if(res){res.textContent='Correct.';res.className='q-result correct';}
+    document.getElementById('nia').innerHTML='Correct.';
+  } else {
+    btns[idx].className='q-opt wrong';
+    btns.forEach(function(b){if(b.getAttribute('data-val')===q.ans)b.className='q-opt correct';});
+    if(res){res.textContent='Answer: '+q.ans;res.className='q-result wrong';}
+    document.getElementById('nia').innerHTML='The answer is <strong>'+q.ans+'</strong>.';
+  }
+    qIdx++;
+  var isLast=(qIdx>=QS.length);
+  if(chosen===q.ans){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showQEnd():showQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showQEnd():showQ();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQEnd(){
+  // Re-enable main nav now quiz is complete
+  var nb=document.getElementById('btnNext');
+  if(nb){nb.disabled=false;nb.style.opacity='1';}
+  var perfect=qScore===4;
+  if(perfect)burst();
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div class="stars" style="margin-bottom:20px">'+stars+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,30px);margin-bottom:8px">'+
+      (perfect?'Perfect.':qScore>=3?'Almost perfect.':qScore>=2?'Good work.':'Keep going.')+
+    '</div>'+
+    '<div style="font-size:14px;color:var(--muted)">'+qScore+' of 4 correct</div>'+
+    '<div style="text-align:center;margin-top:16px">'+
+    '<button onclick="goStep(-3)" style="padding:10px 28px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)">Start again</button>'+
+    '</div>'+
+    '</div>';
+  document.getElementById('nia').innerHTML=(perfect?'<strong>Perfect.</strong> ':'')+'Mean = total ÷ count &nbsp;·&nbsp; Median = middle sorted &nbsp;·&nbsp; Mode = most frequent &nbsp;·&nbsp; Range = max - min.';
+}
+
+// ── STEP 3: Summary ───────────────────────────────────────
+function renderStep3(){
+  var d=DS[0]; var st=calc(d.raw);
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:16px">'+d.e+' '+d.raw.join(', ')+' &nbsp;·&nbsp; sorted: '+st.sorted.join(', ')+'</div>'+
+    '<div class="sum-grid">'+
+    MS.map(function(m){
+      var v=m.k==='mean'?st.mean:m.k==='median'?st.median:m.k==='mode'?st.modes.join(', '):st.range;
+      return '<div class="sum-card" style="background:rgba(0,0,0,.02)">'+
+        '<div class="letter" style="color:'+m.col+'">'+m.label+'</div>'+
+        '<div class="val" style="color:'+m.col+'">'+v+'</div>'+
+        '<div class="rule">'+m.desc+'</div>'+
+        '</div>';
+    }).join('')+
+    '</div>'+
+    '<div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--rule);font-size:13px;color:var(--ink2);font-weight:500;line-height:1.9">'+
+      '<strong style="color:var(--ink)">Next →</strong> Ages 10–12: Fractions, Algebra and Geometry.'+
+    '</div>'+
+    '</div>';
+  burst();
+}
+
+function renderStep4(){renderStep3();}
+
+// ── Helpers ───────────────────────────────────────────────
+function dd(s){for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<s?' done':i===s?' active':'');}}
+
+function burst(){
+  var c=document.getElementById('cc');c.innerHTML='';
+  var cols=['#7c3aed','#0369a1','#059669','#dc2626','#d97706','#0f766e'];
+  for(var i=0;i<44;i++){
+    var p=document.createElement('div');p.className='cp';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[Math.floor(Math.random()*cols.length)]+
+      ';width:'+(5+Math.random()*7)+'px;height:'+(5+Math.random()*7)+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+
+      ';animation-delay:'+(Math.random()*.5)+'s;animation-duration:'+(1.5+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){c.innerHTML='';},3000);
+}
+
+var RS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4];
+
+function goStep(dir){
+  step=Math.max(0,Math.min(4,step+dir));
+  dd(step);
+  document.getElementById('nia').innerHTML=NIA[Math.min(step,NIA.length-1)];
+  document.getElementById('btnBack').disabled=(step===0);
+  var bl=['Let\'s go →','Explore →','Quiz →','Summary →','🔁 Play again'];
+  document.getElementById('btnNext').textContent=bl[step]||'🔁 Play again';
+  if(step>=3){document.getElementById('btnNext').onclick=function(){goStep(-3);};}
+  else{document.getElementById('btnNext').onclick=function(){goStep(1);};}
+  RS[Math.min(step,RS.length-1)]();
+}
+goStep(0);
+</script>
+</body>
+</html>

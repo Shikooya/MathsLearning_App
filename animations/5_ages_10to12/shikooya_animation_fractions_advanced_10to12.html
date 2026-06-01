@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya - Fractions Advanced (Ages 10-12)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
+  :root{--ink:#0f1117;--ink2:#4b5563;--muted:#9ca3af;--bg:#f9f8f4;--card:#fff;
+    --accent:#4f46e5;--accent2:#f59e0b;--green:#059669;--red:#dc2626;
+    --rule:rgba(0,0,0,.06);--sh:0 1px 12px rgba(0,0,0,.06);--r:18px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px;color:var(--ink);}
+  .shell{width:100%;max-width:600px;}
+  .top{text-align:center;margin-bottom:24px;}
+  .badge{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);display:inline-block;margin-bottom:12px;}
+  .top h1{font-family:'DM Serif Display',serif;font-size:clamp(24px,5vw,34px);
+    color:var(--ink);line-height:1.1;margin-bottom:6px;}
+  .top h1 em{font-style:italic;color:var(--accent);}
+  .top p{font-size:13px;color:var(--muted);font-weight:500;}
+  .stepper{display:flex;gap:5px;justify-content:center;margin-bottom:24px;}
+  .step-dot{width:5px;height:5px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .step-dot.active{background:var(--accent2);transform:scale(1.8);}
+  .step-dot.done{background:var(--accent);}
+  .nia{display:flex;gap:12px;align-items:center;background:var(--card);
+    border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px;
+    margin-bottom:20px;box-shadow:var(--sh);min-height:60px;}
+  .nia-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+    animation:bob 3s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .nia-text{font-size:14px;line-height:1.55;color:var(--ink2);flex:1;}
+  .nia-text strong{color:var(--accent);font-weight:700;}
+  .nia-text em{color:var(--accent2);font-style:normal;font-weight:700;}
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);
+    padding:24px;margin-bottom:16px;box-shadow:var(--sh);}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:16px;}
+  /* Pizza SVG animations */
+  .pizza-row{display:flex;gap:16px;justify-content:center;align-items:flex-start;
+    flex-wrap:wrap;margin:16px 0;}
+  .pizza-col{display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .pizza-label{font-family:'DM Serif Display',serif;font-size:clamp(18px,4vw,24px);
+    color:var(--accent);text-align:center;}
+  .pizza-sub{font-size:12px;color:var(--muted);text-align:center;font-weight:500;}
+  /* Frac display */
+  .frac{display:inline-flex;flex-direction:column;align-items:center;
+    font-family:'DM Serif Display',serif;vertical-align:middle;line-height:1;}
+  .frac .num{border-bottom:2.5px solid currentColor;padding:0 5px 2px;}
+  .frac .den{padding:2px 5px 0;}
+  .frac-lg{font-size:clamp(28px,6vw,42px);}
+  .frac-md{font-size:clamp(20px,4vw,28px);}
+  /* Step nav inside panel */
+  .step-nav{display:flex;gap:8px;justify-content:center;margin-top:16px;}
+  .snbtn{padding:8px 20px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;
+    font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+  .snbtn.prev{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);}
+  .snbtn.prev:disabled{opacity:.3;cursor:not-allowed;}
+  .snbtn.nxt{background:var(--accent);color:#fff;box-shadow:0 3px 10px rgba(180,83,9,.2);}
+  /* Op tabs */
+  .op-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:20px;}
+  .op-tab{padding:10px 0;border-radius:10px;border:1.5px solid var(--rule);
+    background:var(--bg);font-size:13px;font-weight:700;cursor:pointer;
+    color:var(--muted);text-align:center;transition:all .2s;}
+  .op-tab.on{color:#fff;border-color:transparent;}
+  /* Puzzle / quiz */
+  .puz-eq{font-family:'DM Serif Display',serif;font-size:clamp(20px,4.5vw,28px);
+    text-align:center;margin-bottom:16px;color:var(--ink);}
+  .puz-opts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+  .puz-opt{min-width:80px;min-height:52px;border-radius:12px;border:1.5px solid var(--rule);
+    background:var(--bg);font-family:'DM Serif Display',serif;font-size:clamp(16px,3.5vw,22px);
+    cursor:pointer;color:var(--ink);padding:8px 12px;transition:all .2s cubic-bezier(.34,1.56,.64,1);}
+  .puz-opt:hover{border-color:var(--accent);transform:translateY(-1px);}
+  .puz-opt.correct{background:rgba(5,150,105,.1);border-color:var(--green);color:var(--green);animation:pop .4s ease;}
+  .puz-opt.wrong{background:rgba(220,38,38,.06);border-color:var(--red);color:var(--red);animation:shake .3s ease;}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  .puz-result{text-align:center;margin-top:10px;font-size:14px;font-weight:700;min-height:20px;}
+  .puz-result.ok{color:var(--green);}
+  .puz-result.no{color:var(--red);}
+  .prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .prog-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .prog-pips{display:flex;gap:5px;}
+  .prog-pip{width:8px;height:8px;border-radius:50%;background:var(--rule);border:1.5px solid #d1d5db;transition:all .3s;}
+  .prog-pip.dp{background:var(--accent);border-color:var(--accent);}
+  .prog-pip.cp{background:var(--accent2);border-color:var(--accent2);transform:scale(1.3);}
+  .quiz-q{font-family:'DM Serif Display',serif;font-size:clamp(18px,4vw,24px);
+    text-align:center;line-height:1.3;margin-bottom:20px;color:var(--ink);}
+  .q-opts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+  .q-opt{min-width:80px;min-height:52px;border-radius:12px;border:1.5px solid var(--rule);
+    background:var(--bg);font-family:'DM Serif Display',serif;font-size:clamp(15px,3.5vw,20px);
+    cursor:pointer;color:var(--ink);padding:8px 14px;transition:all .2s cubic-bezier(.34,1.56,.64,1);}
+  .q-opt:hover{border-color:var(--accent);transform:translateY(-1px);}
+  .q-opt.correct{background:rgba(5,150,105,.1);border-color:var(--green);color:var(--green);animation:pop .4s ease;}
+  .q-opt.wrong{background:rgba(220,38,38,.06);border-color:var(--red);color:var(--red);animation:shake .3s ease;}
+  .q-result{text-align:center;margin-top:12px;font-size:14px;font-weight:700;min-height:20px;}
+  .q-result.correct{color:var(--green);}
+  .q-result.wrong{color:var(--red);}
+  .stars{display:flex;justify-content:center;gap:5px;margin-bottom:18px;}
+  .star{font-size:20px;opacity:.18;transition:all .3s;}
+  .star.on{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+  .slide-nav{display:flex;gap:6px;justify-content:center;margin-top:16px;}
+  .sdot{width:6px;height:6px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .sdot.on{background:var(--accent);transform:scale(1.4);}
+  .nav{display:flex;gap:10px;margin-top:4px;}
+  .btn{min-height:50px;padding:0 22px;border-radius:14px;border:none;
+    font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;
+    cursor:pointer;transition:all .2s;}
+  .btn:active{transform:scale(.97);}
+  .btn-back{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);min-width:50px;}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-next{background:var(--accent);color:#fff;flex:1;box-shadow:0 4px 14px rgba(180,83,9,.2);}
+  .btn-next:hover{background:#92400e;transform:translateY(-1px);}
+  .cc{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .cp{position:absolute;border-radius:2px;animation:cf 2s ease-in forwards;}
+  @keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+  @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes grow{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}
+  @keyframes highlight-pulse{0%,100%{box-shadow:0 0 0 0 rgba(180,83,9,0)}50%{box-shadow:0 0 0 6px rgba(180,83,9,.25)}}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="shell">
+  <div class="top">
+    <div class="badge">Ages 10 - 12</div>
+    <h1><em>Fractions</em> - Why the Rules Work</h1>
+    <p>Understanding before calculating</p>
+  </div>
+  <div class="stepper">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia">
+    <div class="nia-dot">&#127775;</div>
+    <div class="nia-text" id="nia">
+      Before we calculate with fractions, we need to understand <strong>why</strong> the rules work. A pizza will show us everything.
+    </div>
+  </div>
+  <div id="main"></div>
+  <div class="nav">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>&#8592;</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let&apos;s go &#8594;</button>
+  </div>
+</div>
+<div class="cc" id="cc"></div>
+<script>
+var step=0,qIdx=0,qScore=0,puzzleScore=0,puzzleResults=[],op='add',puzzleLevel=0,levelAnswered=false,qHistory=[];
+
+// ── Pizza SVG builder ──────────────────────────────────────
+// draws a circle divided into n equal slices, first f slices filled with col
+function pizzaSVG(n,filled,col,size,labelSlices,animDelay){
+  size=size||120;
+  var cx=size/2, cy=size/2, r=size/2-4;
+  var s='<svg viewBox="0 0 '+size+' '+size+'" width="'+size+'" height="'+size+'" xmlns="http://www.w3.org/2000/svg">';
+  // background circle
+  s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="#f5f5f4" stroke="#e5e7eb" stroke-width="1.5"/>';
+  for(var i=0;i<n;i++){
+    var a1=(i/n)*2*Math.PI - Math.PI/2;
+    var a2=((i+1)/n)*2*Math.PI - Math.PI/2;
+    var x1=cx+r*Math.cos(a1); var y1=cy+r*Math.sin(a1);
+    var x2=cx+r*Math.cos(a2); var y2=cy+r*Math.sin(a2);
+    var large=n===1?1:0;
+    var fillCol=i<filled?col:'#e5e7eb';
+    var delay=animDelay!==undefined?(animDelay+i*0.06)+'s':'0s';
+    s+='<path d="M '+cx+' '+cy+' L '+x1.toFixed(2)+' '+y1.toFixed(2)+
+       ' A '+r+' '+r+' 0 '+large+' 1 '+x2.toFixed(2)+' '+y2.toFixed(2)+' Z"'+
+       ' fill="'+fillCol+'" stroke="white" stroke-width="1.5"'+
+       ' style="animation:grow .4s ease '+delay+' both"/>';
+    // label in centre of slice if requested
+    if(labelSlices&&i<filled){
+      var am=(a1+a2)/2;
+      var lx=cx+(r*0.6)*Math.cos(am); var ly=cy+(r*0.6)*Math.sin(am);
+      s+='<text x="'+lx.toFixed(1)+'" y="'+(ly+4).toFixed(1)+'" text-anchor="middle" font-size="10" fill="white" font-family="DM Sans,sans-serif" font-weight="700">1/'+n+'</text>';
+    }
+  }
+  // crust ring
+  s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#d97706" stroke-width="2.5" opacity="0.4"/>';
+  s+='</svg>';
+  return s;
+}
+
+function frac(n,d,cls){
+  cls=cls||'frac-md';
+  if(d===1) return '<span style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,32px)">'+n+'</span>';
+  return '<span class="frac '+cls+'"><span class="num">'+n+'</span><span class="den">'+d+'</span></span>';
+}
+
+function fracStr(s){
+  if(typeof s==='string'&&s.indexOf('/')>=0){var p=s.split('/');return '<span class="frac"><span class="num">'+p[0]+'</span><span class="den">'+p[1]+'</span></span>';}
+  return ''+s;
+}
+
+// ── Operation stories (step-by-step animated slides) ──────
+var OPS={
+  add:{
+    label:'Adding fractions',
+    col:'#7c3aed',
+    slides:[
+      {
+        nia:'We have <strong>1/4 of a pizza</strong> and <strong>1/8 of a pizza</strong>. Can we just add them?',
+        render:function(){
+          return '<div class="panel-title">The problem</div>'+
+            '<div class="pizza-row">'+
+              '<div class="pizza-col">'+pizzaSVG(4,1,'#7c3aed',110,true,0)+'<div class="pizza-label">'+frac(1,4)+'</div><div class="pizza-sub">1 slice of 4</div></div>'+
+              '<div style="font-family:DM Serif Display,serif;font-size:36px;color:var(--muted);align-self:center">+</div>'+
+              '<div class="pizza-col">'+pizzaSVG(8,1,'#0369a1',110,true,0.1)+'<div class="pizza-label">'+frac(1,8)+'</div><div class="pizza-sub">1 slice of 8</div></div>'+
+            '</div>'+
+            '<div style="background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);border-radius:12px;padding:12px;text-align:center;font-size:13px;color:var(--red);font-weight:600">'+
+              'The slices are different sizes. We cannot simply count them together.'+
+            '</div>';
+        }
+      },
+      {
+        nia:'We need to <strong>recut the 1/4 slice</strong> into the same size as the 1/8 slices. 1/4 = 2/8.',
+        render:function(){
+          return '<div class="panel-title">Recut into equal pieces</div>'+
+            '<div class="pizza-row">'+
+              '<div class="pizza-col">'+
+                '<div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:6px">Before</div>'+
+                pizzaSVG(4,1,'#7c3aed',100,true,0)+
+                '<div class="pizza-label">'+frac(1,4)+'</div>'+
+              '</div>'+
+              '<div style="font-family:DM Serif Display,serif;font-size:28px;color:var(--accent);align-self:center">&#8594;</div>'+
+              '<div class="pizza-col">'+
+                '<div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:6px">Recut into eighths</div>'+
+                pizzaSVG(8,2,'#7c3aed',100,true,0.1)+
+                '<div class="pizza-label">'+frac(2,8)+'</div>'+
+              '</div>'+
+            '</div>'+
+            '<div style="background:rgba(124,58,237,.06);border:1px solid rgba(79,70,229,.2);border-radius:12px;padding:12px;text-align:center;font-size:14px;color:var(--ink2);font-weight:600">'+
+              frac(1,4)+' &nbsp;=&nbsp; '+frac(2,8)+' &nbsp;&nbsp; Same amount of pizza, equal-sized pieces'+
+            '</div>';
+        }
+      },
+      {
+        nia:'Now the pieces are the same size. <strong>2/8 + 1/8 = 3/8.</strong> Adding is just counting equal pieces!',
+        render:function(){
+          return '<div class="panel-title">Now we can add</div>'+
+            '<div class="pizza-row">'+
+              '<div class="pizza-col">'+pizzaSVG(8,2,'#7c3aed',100,true,0)+'<div class="pizza-label">'+frac(2,8)+'</div></div>'+
+              '<div style="font-family:DM Serif Display,serif;font-size:28px;color:var(--muted);align-self:center">+</div>'+
+              '<div class="pizza-col">'+pizzaSVG(8,1,'#0369a1',100,true,0.1)+'<div class="pizza-label">'+frac(1,8)+'</div></div>'+
+              '<div style="font-family:DM Serif Display,serif;font-size:28px;color:var(--muted);align-self:center">=</div>'+
+              '<div class="pizza-col">'+pizzaSVG(8,3,'#059669',100,true,0.2)+'<div class="pizza-label" style="color:var(--green)">'+frac(3,8)+'</div></div>'+
+            '</div>'+
+            '<div style="background:rgba(5,150,105,.06);border:1px solid rgba(79,70,229,.2);border-radius:12px;padding:12px;text-align:center">'+
+              '<div style="font-size:13px;color:var(--ink2);margin-bottom:6px;font-weight:500">The rule: make both denominators the same, then add numerators</div>'+
+              '<div style="font-family:DM Serif Display,serif;font-size:24px;color:var(--green)">'+frac(1,4)+' + '+frac(1,8)+' = '+frac(2,8)+' + '+frac(1,8)+' = '+frac(3,8)+'</div>'+
+            '</div>';
+        }
+      },
+      {
+        nia:'One more example: <strong>1/2 + 1/3</strong>. Neither divides evenly into the other. We need <em>sixths</em>.',
+        render:function(){
+          return '<div class="panel-title">1/2 + 1/3 - using sixths</div>'+
+            '<div class="pizza-row">'+
+              '<div class="pizza-col"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px">1/2 = 3/6</div>'+pizzaSVG(6,3,'#7c3aed',100,true,0)+'<div class="pizza-label">'+frac(3,6)+'</div></div>'+
+              '<div style="font-family:DM Serif Display,serif;font-size:28px;color:var(--muted);align-self:center">+</div>'+
+              '<div class="pizza-col"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px">1/3 = 2/6</div>'+pizzaSVG(6,2,'#0369a1',100,true,0.1)+'<div class="pizza-label">'+frac(2,6)+'</div></div>'+
+              '<div style="font-family:DM Serif Display,serif;font-size:28px;color:var(--muted);align-self:center">=</div>'+
+              '<div class="pizza-col"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px">5/6</div>'+pizzaSVG(6,5,'#059669',100,true,0.2)+'<div class="pizza-label" style="color:var(--green)">'+frac(5,6)+'</div></div>'+
+            '</div>'+
+            '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px;font-size:13px;color:var(--ink2);font-weight:500;line-height:1.8">'+
+              '6 is the smallest number both 2 and 3 divide into.<br>'+
+              frac(1,2)+' = '+frac(3,6)+' &nbsp;&nbsp; '+frac(1,3)+' = '+frac(2,6)+' &nbsp;&nbsp; Total: '+frac(5,6)+
+            '</div>';
+        }
+      },
+    ]
+  },
+  sub:{
+    label:'Subtracting fractions',
+    col:'#0369a1',
+    slides:[
+      {
+        nia:'Subtraction works the same way. <strong>3/4 - 1/3</strong> of a pizza. The slices are different sizes again.',
+        render:function(){
+          return '<div class="panel-title">3/4 minus 1/3</div>'+
+            '<div class="pizza-row">'+
+              '<div class="pizza-col">'+pizzaSVG(4,3,'#7c3aed',110,true,0)+'<div class="pizza-label">'+frac(3,4)+'</div></div>'+
+              '<div style="font-family:DM Serif Display,serif;font-size:36px;color:var(--muted);align-self:center">-</div>'+
+              '<div class="pizza-col">'+pizzaSVG(3,1,'#dc2626',110,true,0.1)+'<div class="pizza-label">'+frac(1,3)+'</div></div>'+
+            '</div>'+
+            '<div style="background:rgba(3,105,161,.06);border:1px solid rgba(79,70,229,.2);border-radius:12px;padding:12px;text-align:center;font-size:13px;color:var(--ink2);font-weight:600">'+
+              'Quarters and thirds are different sizes. We recut both into <strong>twelfths</strong> - the smallest size both divide into.'+
+            '</div>';
+        }
+      },
+      {
+        nia:'Recut both into twelfths: <strong>3/4 = 9/12</strong> and <strong>1/3 = 4/12</strong>. Now subtract.',
+        render:function(){
+          return '<div class="panel-title">Recut into twelfths, then subtract</div>'+
+            '<div class="pizza-row">'+
+              '<div class="pizza-col"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px">3/4 = 9/12</div>'+pizzaSVG(12,9,'#7c3aed',100,false,0)+'<div class="pizza-label">'+frac(9,12)+'</div></div>'+
+              '<div style="font-family:DM Serif Display,serif;font-size:28px;color:var(--muted);align-self:center">-</div>'+
+              '<div class="pizza-col"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px">1/3 = 4/12</div>'+pizzaSVG(12,4,'#dc2626',100,false,0.08)+'<div class="pizza-label">'+frac(4,12)+'</div></div>'+
+              '<div style="font-family:DM Serif Display,serif;font-size:28px;color:var(--muted);align-self:center">=</div>'+
+              '<div class="pizza-col"><div style="font-size:11px;color:var(--green);font-weight:600;margin-bottom:4px">5/12</div>'+pizzaSVG(12,5,'#059669',100,false,0.16)+'<div class="pizza-label" style="color:var(--green)">'+frac(5,12)+'</div></div>'+
+            '</div>'+
+            '<div style="background:rgba(5,150,105,.06);border:1px solid rgba(79,70,229,.2);border-radius:12px;padding:12px;text-align:center;font-family:DM Serif Display,serif;font-size:22px;color:var(--green)">'+
+              frac(3,4)+' - '+frac(1,3)+' = '+frac(9,12)+' - '+frac(4,12)+' = '+frac(5,12)+
+            '</div>';
+        }
+      },
+    ]
+  },
+  mul:{
+    label:'Multiplying fractions',
+    col:'#059669',
+    slides:[
+      {
+        nia:'Multiplying fractions means taking <strong>a fraction of a fraction</strong>. Half of a third of a pizza.',
+        render:function(){
+          return '<div class="panel-title">What is 1/2 of 1/3?</div>'+
+            '<div class="pizza-row">'+
+              '<div class="pizza-col">'+
+                '<div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px">Start with 1/3</div>'+
+                pizzaSVG(3,1,'#0369a1',120,true,0)+
+                '<div class="pizza-label">'+frac(1,3)+'</div>'+
+              '</div>'+
+              '<div style="font-family:DM Serif Display,serif;font-size:28px;color:var(--accent);align-self:center">&#8594;</div>'+
+              '<div class="pizza-col">'+
+                '<div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px">Take half of that slice</div>'+
+                pizzaSVG(6,1,'#059669',120,true,0.1)+
+                '<div class="pizza-label" style="color:var(--green)">'+frac(1,6)+'</div>'+
+              '</div>'+
+            '</div>'+
+            '<div style="background:rgba(5,150,105,.06);border:1px solid rgba(79,70,229,.2);border-radius:12px;padding:12px;text-align:center;font-size:13px;color:var(--ink2);font-weight:600">'+
+              'Half of a third = one sixth. No common denominator needed - just multiply across.'+
+            '</div>';
+        }
+      },
+      {
+        nia:'The rule: <strong>multiply numerators together, denominators together</strong>. Then simplify.',
+        render:function(){
+          return '<div class="panel-title">The multiplication rule</div>'+
+            '<div style="text-align:center;padding:20px 0;font-family:DM Serif Display,serif;font-size:clamp(24px,5vw,36px);animation:fi .3s ease">'+
+              frac(1,2,'frac-lg')+
+              '<span style="color:var(--accent);margin:0 12px">x</span>'+
+              frac(1,3,'frac-lg')+
+              '<span style="color:var(--muted);margin:0 12px">=</span>'+
+              '<span style="color:var(--green)">'+frac('1x1','2x3','frac-lg')+'</span>'+
+              '<span style="color:var(--muted);margin:0 12px">=</span>'+
+              '<span style="color:var(--green)">'+frac(1,6,'frac-lg')+'</span>'+
+            '</div>'+
+            '<div style="display:flex;flex-direction:column;gap:8px">'+
+              '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:12px;font-size:13px;color:var(--ink2);font-weight:500">'+
+                '<strong style="color:var(--ink)">2/3 x 3/4:</strong> &nbsp; (2x3)/(3x4) = 6/12 = <strong style="color:var(--green)">1/2</strong>'+
+              '</div>'+
+              '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:12px;font-size:13px;color:var(--ink2);font-weight:500">'+
+                '<strong style="color:var(--ink)">3/5 x 2/7:</strong> &nbsp; (3x2)/(5x7) = 6/35 &nbsp; (already simplified)'+
+              '</div>'+
+            '</div>';
+        }
+      },
+    ]
+  },
+  div:{
+    label:'Dividing fractions',
+    col:'#b45309',
+    slides:[
+      {
+        nia:'Division asks: <strong>how many times does one fraction fit into another?</strong> How many 1/4 slices fit into 3/4 of a pizza?',
+        render:function(){
+          return '<div class="panel-title">How many 1/4 slices fit into 3/4?</div>'+
+            '<div class="pizza-row">'+
+              '<div class="pizza-col">'+
+                '<div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px">We have 3/4</div>'+
+                pizzaSVG(4,3,'#b45309',120,true,0)+
+                '<div class="pizza-label">'+frac(3,4)+'</div>'+
+              '</div>'+
+              '<div style="font-family:DM Serif Display,serif;font-size:28px;color:var(--muted);align-self:center">&#247;</div>'+
+              '<div class="pizza-col">'+
+                '<div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px">Each portion = 1/4</div>'+
+                pizzaSVG(4,1,'#f59e0b',120,true,0.1)+
+                '<div class="pizza-label">'+frac(1,4)+'</div>'+
+              '</div>'+
+            '</div>'+
+            '<div style="background:rgba(180,83,9,.06);border:1px solid rgba(180,83,9,.2);border-radius:12px;padding:12px;text-align:center;font-size:14px;color:var(--ink2);font-weight:600">'+
+              'Count the 1/4 slices in 3/4 ... there are <strong style="color:var(--accent);font-size:20px">3</strong> of them.'+
+            '</div>';
+        }
+      },
+      {
+        nia:'The shortcut: <strong>Keep</strong> the first fraction, <strong>flip</strong> the second, then <strong>multiply</strong>. This always gives the right answer.',
+        render:function(){
+          return '<div class="panel-title">Keep - Flip - Multiply</div>'+
+            '<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">'+
+              '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px;display:flex;align-items:center;gap:14px">'+
+                '<div style="width:32px;height:32px;border-radius:8px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>'+
+                '<div><div style="font-size:12px;font-weight:700;color:var(--ink)">Keep</div><div style="font-size:13px;color:var(--ink2)">Keep the first fraction as it is</div></div>'+
+                '<div style="font-family:DM Serif Display,serif;font-size:22px;color:var(--accent);margin-left:auto">'+frac(3,4)+'</div>'+
+              '</div>'+
+              '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px;display:flex;align-items:center;gap:14px">'+
+                '<div style="width:32px;height:32px;border-radius:8px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>'+
+                '<div><div style="font-size:12px;font-weight:700;color:var(--ink)">Flip</div><div style="font-size:13px;color:var(--ink2)">Flip the second fraction upside down</div></div>'+
+                '<div style="font-family:DM Serif Display,serif;font-size:22px;color:var(--accent);margin-left:auto">'+frac(1,4)+' &#8594; '+frac(4,1)+'</div>'+
+              '</div>'+
+              '<div style="background:rgba(5,150,105,.06);border:1px solid rgba(79,70,229,.2);border-radius:12px;padding:14px;display:flex;align-items:center;gap:14px">'+
+                '<div style="width:32px;height:32px;border-radius:8px;background:var(--green);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>'+
+                '<div><div style="font-size:12px;font-weight:700;color:var(--ink)">Multiply</div><div style="font-size:13px;color:var(--ink2)">Multiply the two fractions</div></div>'+
+                '<div style="font-family:DM Serif Display,serif;font-size:22px;color:var(--green);margin-left:auto">'+frac(3,4)+' x '+frac(4,1)+' = <strong>3</strong></div>'+
+              '</div>'+
+            '</div>';
+        }
+      },
+    ]
+  },
+};
+
+var PUZZLES=[
+  {q:'What is 1/2 + 1/4?',opts:['2/6','3/4','1/4','2/4'],ans:'3/4',
+   explain:'Recut 1/2 into 2/4. Then 2/4 + 1/4 = 3/4.'},
+  {q:'What is 3/4 - 1/4?',opts:['2/4','2/8','1/2','3/8'],ans:['2/4','1/2'],
+   explain:'3/4 - 1/4 = 2/4. And 2/4 = 1/2 — both are correct!'},
+  {q:'What is 1/3 x 1/2?',opts:['2/5','1/5','1/6','2/6'],ans:'1/6',
+   explain:'1x1=1, 3x2=6. So 1/6.'},
+  {q:'What is 3/4 divided by 1/4?',opts:['1','2','3','4'],ans:'3',
+   explain:'Keep 3/4, flip 1/4 to 4/1. Multiply: 3/4 x 4/1 = 12/4 = 3.'},
+];
+
+var QS=[
+  {q:'Why do we need a common denominator to add fractions?',
+   opts:['It is the rule','Slices must be the same size','To make numbers bigger','To simplify'],
+   ans:'Slices must be the same size'},
+  {q:'What is 1/4 + 1/8?',opts:['2/12','3/8','2/8','1/8'],ans:'3/8'},
+  {q:'To divide fractions, you Keep the first, then...',
+   opts:['Subtract the second','Add the second','Flip and multiply','Square the second'],
+   ans:'Flip and multiply'},
+  {q:'What is 2/3 x 3/4?',opts:['5/7','6/7','1/2','5/12'],ans:'1/2'},
+];
+
+var NIA=[
+  'Before we calculate with fractions, we need to understand <strong>why</strong> the rules work.',
+  'Tap each operation to see the story behind the rule.',
+  'Apply what you have seen. One puzzle per operation.',
+  'Four questions. Think back to the pizza.',
+  'You understand fractions - not just the rules, but the reasons.',
+];
+var BTNS=["Let's go","Explore operations","Practice","Quiz","Summary"];
+
+function dots(s){for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<s?' done':i===s?' active':'');}}
+
+function burst(){
+  var c=document.getElementById('cc');c.innerHTML='';
+  var cols=['#b45309','#7c3aed','#059669','#dc2626','#0369a1','#f59e0b'];
+  for(var i=0;i<44;i++){
+    var p=document.createElement('div');p.className='cp';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[i%cols.length]+
+      ';width:'+(5+Math.random()*7)+'px;height:'+(5+Math.random()*7)+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+
+      ';animation-delay:'+(Math.random()*.5)+'s;animation-duration:'+(1.5+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){c.innerHTML='';},3000);
+}
+
+// ── STEP 0: Intro slide ────────────────────────────────────
+function renderStep0(){
+  var sl=0;
+  var S0=[
+    {
+      html:'<div style="text-align:center;padding:20px 0;animation:fi .3s ease">'+
+        '<div style="font-size:72px;margin-bottom:20px;animation:grow .5s ease both">&#127829;</div>'+
+        '<div style="font-family:DM Serif Display,serif;font-size:clamp(20px,4vw,26px);margin-bottom:12px">A pizza will teach us everything.</div>'+
+        '<div style="font-size:14px;color:var(--ink2);line-height:1.8;max-width:420px;margin:0 auto">'+
+          'Adding fractions with different denominators is like adding slices of <strong style="color:var(--accent)">different sizes</strong>.<br><br>'+
+          'We need to recut them into equal pieces first. Then adding is obvious.'+
+        '</div></div>',
+      nia:'We will build each rule from real understanding - not memory.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:16px">What you already know</div>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">'+
+          '<div style="flex:1;min-width:130px;background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:16px;text-align:center">'+
+            '<div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Mixed number</div>'+
+            '<div style="font-family:DM Serif Display,serif;font-size:34px;color:var(--accent)">2 <span class="frac frac-lg"><span class="num">3</span><span class="den">4</span></span></div>'+
+            '<div style="font-size:11px;color:var(--muted);margin-top:8px">Whole + fraction</div>'+
+          '</div>'+
+          '<div style="flex:1;min-width:130px;background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:16px;text-align:center">'+
+            '<div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Improper fraction</div>'+
+            '<div style="font-family:DM Serif Display,serif;font-size:34px;color:var(--accent)"><span class="frac frac-lg"><span class="num">11</span><span class="den">4</span></span></div>'+
+            '<div style="font-size:11px;color:var(--muted);margin-top:8px">Numerator bigger than denominator</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px;font-size:13px;color:var(--ink2);line-height:1.9;font-weight:500">'+
+          'Mixed to improper: &nbsp; 2&#190; = (2x4)+3 / 4 = <strong>11/4</strong><br>'+
+          'Improper to mixed: &nbsp; 11/4 = 2 remainder 3 = <strong>2&#190;</strong>'+
+        '</div></div>',
+      nia:'<strong>Mixed numbers</strong> and <strong>improper fractions</strong> are the same value written differently. Convert before operating.'
+    },
+  ];
+  function showS0(){
+    var sdots=S0.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML=
+      '<div class="panel">'+S0[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div style="display:flex;gap:8px;justify-content:center;margin-top:14px">'+
+        '<button onclick="s0b()" style="padding:8px 18px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);opacity:'+(sl===0?.3:1)+'" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button onclick="s0n()" style="padding:8px 22px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:700;cursor:pointer">'+(sl<S0.length-1?'Next &#8594;':'Explore &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S0[sl].nia;
+  }
+  window.s0n=function(){if(sl<S0.length-1){sl++;showS0();}else{goStep(1);}};
+  window.s0b=function(){if(sl>0){sl--;showS0();}};
+  showS0();
+}
+
+// ── STEP 1: Operation explorer ─────────────────────────────
+var opSlide=0;
+function renderStep1(){op='add';opSlide=0;buildExplorer();}
+
+function buildExplorer(){
+  var opData=OPS[op];
+  var slides=opData.slides;
+  var sl=opSlide;
+
+  var tabs=['add','sub','mul','div'].map(function(k){
+    var o=OPS[k];
+    var isOn=k===op;
+    var sym=k==='mul'?'x':k==='div'?'&#247;':k==='add'?'+':'-';
+    return '<button class="op-tab'+(isOn?' on':'')+'" data-op="'+k+'" style="'+(isOn?'background:'+o.col+';':'')+'">'
+      +sym+' '+o.label.split(' ')[0]+'</button>';
+  }).join('');
+
+  var sdots=slides.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="op-tabs">'+tabs+'</div>'+
+    '<div style="animation:fi .3s ease">'+
+    '<div class="panel-title">'+opData.label+' - step '+(sl+1)+' of '+slides.length+'</div>'+
+    slides[sl].render()+
+    '</div>'+
+    '<div class="slide-nav">'+sdots+'</div>'+
+    '<div class="step-nav">'+
+      '<button class="snbtn prev" onclick="opBack()" '+(sl===0&&op==='add'?'disabled':'')+'>&#8592;</button>'+
+      '<button class="snbtn nxt" onclick="opNext()">'+(sl<slides.length-1?'Next &#8594;':op==='div'?'Practice &#8594;':'Next operation &#8594;')+'</button>'+
+    '</div>'+
+    '</div>';
+
+  document.getElementById('nia').innerHTML=slides[sl].nia;
+
+  // Wire tabs
+  document.querySelectorAll('.op-tab').forEach(function(btn){
+    btn.addEventListener('click',function(){op=this.getAttribute('data-op');opSlide=0;buildExplorer();});
+  });
+}
+
+function opNext(){
+  var slides=OPS[op].slides;
+  if(opSlide<slides.length-1){opSlide++;buildExplorer();}
+  else{
+    var order=['add','sub','mul','div'];
+    var idx=order.indexOf(op);
+    if(idx<order.length-1){op=order[idx+1];opSlide=0;buildExplorer();}
+    else{goStep(1);}
+  }
+}
+function opBack(){
+  if(opSlide>0){opSlide--;buildExplorer();}
+  else{
+    var order=['add','sub','mul','div'];
+    var idx=order.indexOf(op);
+    if(idx>0){op=order[idx-1];opSlide=OPS[op].slides.length-1;buildExplorer();}
+  }
+}
+
+// ── STEP 2: Puzzles ────────────────────────────────────────
+function renderStep2(){puzzleLevel=0;puzzleScore=0;puzzleResults=[];levelAnswered=false;showPuzzle();}
+
+function showPuzzle(){
+  if(puzzleLevel>=PUZZLES.length){showPuzzleDone();return;}
+  var pz=PUZZLES[puzzleLevel];levelAnswered=false;
+  // Update back button state for current puzzle level
+  var bb=document.getElementById('btnBack');
+  if(bb){
+    bb.disabled=false;
+    bb.onclick=function(){
+      if(puzzleLevel>0){
+        puzzleLevel--;
+        // Roll back score if this puzzle was previously answered correctly
+        if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}
+        levelAnswered=false;showPuzzle();
+      } else{goStep(-1);}
+    };
+  }
+  var pips='';for(var i=0;i<PUZZLES.length;i++)pips+='<div class="prog-pip'+(i<puzzleLevel?' dp':i===puzzleLevel?' cp':'')+'" ></div>';
+  var opts=pz.opts.map(function(o,oi){return '<button class="puz-opt" id="pb'+oi+'" data-val="'+o+'" onclick="pickPuz('+oi+')">'+fracStr(o)+'</button>';}).join('');
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="prog-row"><span class="prog-label">Puzzle '+(puzzleLevel+1)+' of '+PUZZLES.length+'</span><div class="prog-pips">'+pips+'</div></div>'+
+    '<div class="puz-eq">'+pz.q+'</div>'+
+    '<div class="puz-opts">'+opts+'</div>'+
+    '<div class="puz-result" id="pzRes"></div></div>';
+  document.getElementById('nia').innerHTML='Think about the pizza. Apply the method.';
+}
+
+function pickPuz(idx){
+  if(levelAnswered)return;levelAnswered=true;
+  var pz=PUZZLES[puzzleLevel];
+  var btns=document.querySelectorAll('.puz-opt');
+  var chosen=btns[idx]?btns[idx].getAttribute('data-val'):'';
+  var res=document.getElementById('pzRes');
+  var ok=Array.isArray(pz.ans)?pz.ans.indexOf(chosen)>=0:(chosen===pz.ans);
+  puzzleResults[puzzleLevel]=ok;
+  // If array ans, also highlight all correct options
+  if(ok){btns[idx].className='puz-opt correct';puzzleScore++;
+  if(Array.isArray(pz.ans)){btns.forEach(function(b){if(pz.ans.indexOf(b.getAttribute('data-val'))>=0)b.className='puz-opt correct';});}if(res){res.textContent='Correct. '+pz.explain;res.className='puz-result ok';}document.getElementById('nia').innerHTML='Correct. '+pz.explain;}
+  else{btns[idx].className='puz-opt wrong';btns.forEach(function(b){var bv=b.getAttribute('data-val');var isAns=Array.isArray(pz.ans)?pz.ans.indexOf(bv)>=0:bv===pz.ans;if(isAns)b.className='puz-opt correct';});if(res){res.textContent='Not quite. '+pz.explain;res.className='puz-result no';}document.getElementById('nia').innerHTML=pz.explain;}
+  puzzleLevel++;
+  var isLast=(puzzleLevel>=PUZZLES.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showPuzzleDone():showPuzzle();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showPuzzleDone():showPuzzle();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showPuzzleDone(){
+  var perfect=(puzzleScore>=PUZZLES.length);
+  if(perfect)burst();
+  // Back button goes back to last puzzle
+  var bb=document.getElementById('btnBack');
+  if(bb){
+    bb.disabled=false;
+    bb.onclick=function(){
+      puzzleLevel=PUZZLES.length-1;
+      if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}
+      levelAnswered=false;showPuzzle();
+    };
+  }
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div style="font-size:48px;margin-bottom:14px">'+(perfect?'&#127919;':'&#128077;')+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,30px);margin-bottom:8px">'+
+      (perfect?'All four puzzles correct!':'Practice complete — '+puzzleScore+' of '+PUZZLES.length+' correct.')+
+    '</div>'+
+    (perfect?'':'<p style="font-size:14px;color:var(--muted)">Tap &#8592; to try any puzzle again.</p>')+
+    '</div>';
+  document.getElementById('nia').innerHTML=perfect?'All four operations applied correctly. Ready for the quiz.':'Good effort. Review any puzzle using &#8592; before moving to the quiz.';
+}
+
+// ── STEP 3: Quiz ───────────────────────────────────────────
+function renderStep3(){qIdx=0;qScore=0;qHistory=[];document.getElementById('nia').innerHTML=NIA[3];showQ();}
+
+
+function showQPrev(idx){
+  if(idx<0||!qHistory[idx])return;
+  var q=QS[idx];
+  var h=qHistory[idx];
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<h.score?' on':'')+'">&#11088;</div>';
+  var opts=q.opts.map(function(o,oi){
+    var cls='q-opt';
+    if(o===h.chosen&&h.wasCorrect) cls='q-opt correct';
+    else if(o===h.chosen&&!h.wasCorrect) cls='q-opt wrong';
+    else if(o===h.correct&&!h.wasCorrect) cls='q-opt correct';
+    return '<button class="'+cls+'" disabled data-val="'+o+'">'+fracStr(o)+'</button>';
+  }).join('');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:8px">Question '+(idx+1)+' of '+QS.length+' (reviewed)</div>'+
+    '<div class="quiz-q">'+q.q+'</div>'+
+    '<div class="q-opts">'+opts+'</div>'+
+    '<div style="text-align:center;margin-top:12px">'+
+      '<button onclick="showQPrev('+(idx-1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);margin-right:8px;opacity:'+(idx===0?.3:1)+'" '+(idx===0?'disabled':'')+'>&#8592; Prev</button>'+
+      (idx<qIdx-1?'<button onclick="showQPrev('+(idx+1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted)">Next &#8594;</button>':
+       '<button onclick="showQ()" style="padding:8px 16px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:700;cursor:pointer">Continue quiz &#8594;</button>')+
+    '</div></div>';
+  document.getElementById('nia').innerHTML=(h.wasCorrect?'Correct! ':'The answer was <strong>'+h.correct+'</strong>. ')+
+    'Reviewing question '+(idx+1)+'.';
+}
+function showQ(){
+  if(qIdx>=QS.length){showQEnd();return;}
+  var q=QS[qIdx];
+  var nia=document.getElementById('nia');if(nia)nia.innerHTML='Pick your answer.';
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  var opts=q.opts.map(function(o,oi){return '<button class="q-opt" id="qo'+oi+'" data-val="'+o+'" onclick="pickQ('+oi+')">'+fracStr(o)+'</button>';}).join('');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div><div class="quiz-q">'+q.q+'</div>'+
+    '<div class="q-opts">'+opts+'</div><div class="q-result" id="qRes"></div></div>';
+}
+
+function pickQ(idx){
+  var q=QS[qIdx];
+  var btns=document.querySelectorAll('.q-opt');btns.forEach(function(b){b.disabled=true;});
+  var chosen=btns[idx]?btns[idx].getAttribute('data-val'):'';
+  qHistory[qIdx]={chosen:chosen,correct:q.ans,wasCorrect:chosen===q.ans,score:qScore+(chosen===q.ans?1:0)};
+  var res=document.getElementById('qRes');
+  var ok=(chosen===q.ans);
+  if(ok){btns[idx].className='q-opt correct';qScore++;if(res){res.textContent='Correct.';res.className='q-result correct';}document.getElementById('nia').innerHTML='Correct.';}
+  else{btns[idx].className='q-opt wrong';btns.forEach(function(b){if(b.getAttribute('data-val')===q.ans)b.className='q-opt correct';});if(res){res.textContent='Answer: '+q.ans;res.className='q-result wrong';}document.getElementById('nia').innerHTML='Answer: <strong>'+q.ans+'</strong>.';}
+  qIdx++;
+  var isLast=(qIdx>=QS.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showQEnd():showQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showQEnd():showQ();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQEnd(){
+  var perfect=qScore===4;if(perfect)burst();
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div class="stars" style="margin-bottom:20px">'+stars+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,30px);margin-bottom:8px">'+
+      (perfect?'Perfect.':qScore>=3?'Almost perfect.':qScore>=2?'Good work.':'Keep going.')+
+    '</div>'+
+    '<div style="font-size:14px;color:var(--muted);margin-bottom:20px">'+qScore+' of 4 correct</div>'+
+    '<button onclick="goStep(-3)" style="padding:10px 28px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)">Start again</button>'+
+    '</div>';
+  document.getElementById('nia').innerHTML=(perfect?'<strong>Perfect.</strong> ':'')+'Add/Sub: equal pieces first. Multiply: top x top, bottom x bottom. Divide: Keep, Flip, Multiply.';
+}
+
+// ── STEP 4: Summary ────────────────────────────────────────
+function renderStep4(){
+  var rows=[
+    {sym:'+',col:'#7c3aed',name:'Add / Subtract',rule:'Make denominators equal first. Then add or subtract numerators.',eg:'1/4 + 1/8 = 2/8 + 1/8 = 3/8'},
+    {sym:'x',col:'#059669',name:'Multiply',rule:'Top x top. Bottom x bottom. Then simplify.',eg:'2/3 x 3/4 = 6/12 = 1/2'},
+    {sym:'/',col:'#b45309',name:'Divide',rule:'Keep the first. Flip the second. Multiply.',eg:'3/4 / 1/4 = 3/4 x 4/1 = 3'},
+  ].map(function(r){
+    return '<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--rule)">'+
+      '<div style="width:32px;height:32px;border-radius:9px;background:'+r.col+';color:#fff;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">'+r.sym+'</div>'+
+      '<div><div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px">'+r.name+'</div>'+
+        '<div style="font-size:12px;color:var(--muted);margin-bottom:4px">'+r.rule+'</div>'+
+        '<div style="font-size:12px;color:'+r.col+';font-weight:600">'+r.eg+'</div>'+
+      '</div></div>';
+  }).join('');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="panel-title">The three rules - and why they work</div>'+rows+
+    '<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--rule);font-size:13px;color:var(--ink2);font-weight:500">'+
+      'Next: <strong style="color:var(--ink)">Algebra</strong> - expanding brackets and solving equations.'+
+    '</div></div>';
+  burst();
+}
+
+var RS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4];
+
+function goStep(dir){
+  step=Math.max(0,Math.min(4,step+dir));
+  dots(step);
+  document.getElementById('nia').innerHTML=NIA[Math.min(step,NIA.length-1)];
+  document.getElementById('btnBack').disabled=(step===0);
+  // Override back button for quiz and puzzle steps
+  var backBtn=document.getElementById('btnBack');
+  if(step===3){
+    backBtn.disabled=false;
+    backBtn.onclick=function(){
+      if(qIdx>0&&qHistory.length>0){showQPrev(qIdx-1);}
+      else{goStep(-1);}
+    };
+  } else if(step===2){
+    backBtn.disabled=(puzzleLevel===0);
+    backBtn.onclick=function(){
+      if(puzzleLevel>0){puzzleLevel--;levelAnswered=false;showPuzzle();}
+      else{goStep(-1);}
+    };
+  } else {
+    backBtn.onclick=function(){goStep(-1);};
+  }
+  var bl=['Let\'s go','Explore','Practice','Quiz','Summary'];
+  document.getElementById('btnNext').textContent=(bl[step]||'Next')+' \u2192';
+  if(step>=4){document.getElementById('btnNext').onclick=function(){goStep(-4);};}
+  else{document.getElementById('btnNext').onclick=function(){goStep(1);};}
+  RS[Math.min(step,RS.length-1)]();
+}
+goStep(0);
+</script>
+</body>
+</html>

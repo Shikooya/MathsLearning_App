@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya — Percentages (Ages 8–10)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap');
+  :root{--txt:#1a1a2e;--panel:rgba(255,255,255,0.95);}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Nunito',sans-serif;
+    background:linear-gradient(180deg,#fff3e0 0%,#ffe0b2 100%);
+    min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:16px;}
+  .header{text-align:center;margin-bottom:12px;width:100%;max-width:720px;}
+  .age-badge{display:inline-block;background:linear-gradient(135deg,#e65100,#bf360c);
+    color:#fff;font-size:13px;font-weight:900;letter-spacing:.06em;
+    text-transform:uppercase;padding:5px 18px;border-radius:20px;margin-bottom:8px;
+    box-shadow:0 3px 10px rgba(230,81,0,.35);}
+  .header h1{font-family:'Fredoka One',cursive;font-size:clamp(22px,5vw,32px);
+    color:#bf360c;line-height:1.2;}
+  .header h1 span{color:#2e7d32;}
+  .card{background:var(--panel);border-radius:28px;padding:20px;max-width:720px;width:100%;
+    box-shadow:0 12px 48px rgba(0,0,0,.12);border:3px solid rgba(230,81,0,.2);}
+  .steps{display:flex;gap:8px;justify-content:center;margin-bottom:14px;}
+  .step-dot{width:10px;height:10px;border-radius:50%;background:#ddd;transition:all .3s;}
+  .step-dot.active{background:#f59e0b;transform:scale(1.5);}
+  .step-dot.done{background:#e65100;}
+  .nia-area{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;min-height:60px;}
+  .nia-avatar{width:52px;height:52px;flex-shrink:0;background:linear-gradient(135deg,#e65100,#bf360c);
+    border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;
+    box-shadow:0 4px 12px rgba(230,81,0,.3);animation:bob 2.5s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  .nia-bubble{background:linear-gradient(135deg,#fff3e0,#fce4ec);border:2.5px solid #ffcc80;
+    border-radius:16px 16px 16px 4px;padding:12px 16px;font-size:clamp(14px,3vw,17px);
+    font-weight:700;color:var(--txt);line-height:1.6;flex:1;}
+  .nia-bubble strong{color:#bf360c;}
+  .nia-bubble em{color:#2e7d32;font-style:normal;font-weight:900;}
+  .preface{background:linear-gradient(135deg,#fff3e0,#e8f5e9);border-radius:18px;
+    padding:16px 18px;margin-bottom:16px;border:2.5px solid #ffcc80;}
+  .preface-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;
+    font-size:clamp(13px,2.5vw,15px);font-weight:700;color:var(--txt);line-height:1.6;}
+  .preface-row:last-child{margin-bottom:0;}
+  .preface-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+  /* 100-grid */
+  .grid-wrap{background:linear-gradient(135deg,#fff3e0,#fce4ec);border-radius:18px;
+    border:2.5px solid #ffcc80;padding:14px;margin-bottom:12px;}
+  .hundred-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;
+    max-width:340px;margin:0 auto;}
+  .grid-cell{aspect-ratio:1;border-radius:3px;background:#e0e0e0;
+    transition:all .2s;cursor:pointer;border:1px solid rgba(255,255,255,.5);}
+  .grid-cell.filled{background:#e65100;}
+  .grid-cell.filled-green{background:#2e7d32;}
+  .grid-cell.filled-blue{background:#1976d2;}
+  /* Percent display */
+  .pct-big{font-family:'Fredoka One',cursive;font-size:clamp(48px,10vw,72px);
+    color:#bf360c;text-align:center;line-height:1;margin:8px 0;}
+  .pct-desc{font-family:'Fredoka One',cursive;font-size:clamp(14px,3vw,18px);
+    color:#555;text-align:center;margin-bottom:8px;}
+  /* Sale scene */
+  .sale-scene{background:linear-gradient(135deg,#fff3e0,#e8f5e9);border-radius:18px;
+    border:2.5px solid #ffcc80;padding:14px;margin-bottom:12px;}
+  .sale-items{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:10px;}
+  .sale-item{background:#fff;border:2.5px solid #ffcc80;border-radius:14px;
+    padding:10px 12px;text-align:center;min-width:110px;flex:1;max-width:150px;}
+  .sale-emoji{font-size:clamp(28px,6vw,38px);}
+  .sale-orig{font-family:'Fredoka One',cursive;font-size:clamp(13px,3vw,16px);
+    color:#888;text-decoration:line-through;}
+  .sale-pct{font-family:'Fredoka One',cursive;font-size:clamp(14px,3vw,17px);
+    color:#e65100;background:rgba(230,81,0,.1);border-radius:8px;padding:2px 8px;margin:2px 0;}
+  .sale-new{font-family:'Fredoka One',cursive;font-size:clamp(16px,4vw,22px);color:#2e7d32;}
+  .sale-saving{font-size:11px;font-weight:700;color:#e65100;}
+  /* Slider */
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:10px;
+    border-radius:5px;background:#ffcc80;outline:none;cursor:pointer;touch-action:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;
+    border-radius:50%;background:#e65100;border:3px solid #fff;cursor:grab;
+    box-shadow:0 2px 8px rgba(0,0,0,.25);}
+  input[type=range]::-webkit-slider-thumb:active{cursor:grabbing;transform:scale(1.15);}
+  input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;
+    background:#e65100;border:3px solid #fff;cursor:grab;}
+  /* Quiz */
+  .quiz-area{background:linear-gradient(135deg,#fff3e0,#fce4ec);border-radius:18px;
+    padding:16px 18px;margin-bottom:14px;border:2.5px solid #ffcc80;}
+  .quiz-q{font-family:'Fredoka One',cursive;font-size:clamp(16px,4vw,22px);
+    color:var(--txt);margin-bottom:12px;text-align:center;line-height:1.5;}
+  .quiz-options{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .quiz-btn{min-width:90px;min-height:60px;border-radius:14px;border:3px solid #ddd;background:#fff;
+    font-family:'Fredoka One',cursive;font-size:clamp(14px,3vw,18px);cursor:pointer;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);box-shadow:0 3px 8px rgba(0,0,0,.1);
+    color:var(--txt);padding:8px;}
+  .quiz-btn:hover{transform:scale(1.08);border-color:#e65100;}
+  .quiz-btn.correct{background:linear-gradient(135deg,#66bb6a,#43a047);border-color:#2e7d32;color:#fff;animation:pop .4s ease;}
+  .quiz-btn.wrong{background:linear-gradient(135deg,#ef9a9a,#e57373);border-color:#c62828;color:#fff;animation:shake .3s ease;}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .quiz-result{text-align:center;margin-top:10px;font-family:'Fredoka One',cursive;
+    font-size:clamp(14px,3.5vw,18px);min-height:26px;}
+  .quiz-result.correct{color:#2e7d32;}
+  .quiz-result.wrong{color:#c62828;}
+  .stars{display:flex;justify-content:center;gap:6px;margin-bottom:10px;}
+  .star{font-size:28px;opacity:.25;transition:all .3s;}
+  .star.earned{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+  .controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:4px;}
+  .btn{min-width:64px;min-height:56px;padding:12px 20px;border-radius:16px;border:none;
+    font-family:'Fredoka One',cursive;font-size:clamp(15px,3.5vw,19px);cursor:pointer;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 0 rgba(0,0,0,.18);}
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.18);}
+  .btn-next{background:linear-gradient(135deg,#e65100,#bf360c);color:#fff;flex:1;max-width:220px;}
+  .btn-next:hover{transform:translateY(-2px);}
+  .btn-back{background:linear-gradient(135deg,#90a4ae,#607d8b);color:#fff;}
+  .btn-back:hover{transform:translateY(-2px);}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;transform:none;}
+  .confetti-container{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .confetti-piece{position:absolute;border-radius:2px;animation:confetti-fall 2s ease-in forwards;}
+  @keyframes confetti-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="header">
+  <div><span class="age-badge">Ages 8–10</span></div>
+  <h1>The <span>Sale</span> at Priya's Shop! — Percentages %</h1>
+</div>
+<div class="card">
+  <!-- 5 steps = d0..d4 -->
+  <div class="steps">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia-area">
+    <div class="nia-avatar">🌟</div>
+    <div class="nia-bubble" id="nia">
+      Priya has a <strong>SALE</strong> — everything 25% off! But what does 25% actually mean? Today we find out — and learn how to work out any percentage! 🏷️
+    </div>
+  </div>
+  <div id="mainArea"></div>
+  <div class="controls">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>← Back</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let's go! →</button>
+  </div>
+</div>
+<div class="confetti-container" id="confetti"></div>
+
+<script>
+var currentStep=0, quizIdx=0, quizCorrect=0;
+var gridPct=25; // current percentage shown in grid
+var sliderPct=25;
+
+// ── Sale items ─────────────────────────────────────────────
+var SALE_ITEMS=[
+  {name:'Trainers',emoji:'👟',orig:40,pct:25},
+  {name:'Backpack',emoji:'🎒',orig:20,pct:50},
+  {name:'Book',emoji:'📚',orig:8,pct:10},
+  {name:'Jacket',emoji:'🧥',orig:60,pct:20},
+];
+
+// ── Quiz ───────────────────────────────────────────────────
+var QUIZ_QS=[
+  {q:'What does 50% mean?',
+   opts:['50 out of 10','50 out of 100','5 out of 100','500 out of 100'],
+   answer:'50 out of 100'},
+  {q:'What is 10% of £80?',
+   opts:['£80','£8','£18','£0.80'],
+   answer:'£8'},
+  {q:'A jacket costs £60. It is 50% off. What is the sale price?',
+   opts:['£50','£10','£30','£6'],
+   answer:'£30'},
+  {q:'Which is the biggest discount?',
+   opts:['10% off','25% off','50% off','5% off'],
+   answer:'50% off'},
+];
+
+var NIA=[
+  "Priya has a <strong>SALE</strong> — everything 25% off! But what does 25% actually mean? Today we find out — and learn how to work out any percentage! 🏷️",
+  "The word <strong>percent</strong> means <em>out of 100</em>! Use the slider to explore — watch the grid fill up as the percentage changes! 🟧",
+  "Now let us visit Priya's sale! See how the percentage discount changes the price — and how to calculate the new price! 🛍️",
+  "Quiz time! 🌟 Show what you know about percentages!",
+  "Brilliant! 🏆 You understand percentages — one of the most useful maths skills in everyday life!"
+];
+var BTNS=[
+  "Explore percentages! →",
+  "Visit the sale! →",
+  "Quiz time! →",
+  "See the summary! →",
+  "🔁 Play Again!"
+];
+var RENDERS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4];
+
+function dots(s){
+  for(var i=0;i<=4;i++){
+    var d=document.getElementById('d'+i);
+    if(d) d.className='step-dot'+(i<s?' done':i===s?' active':'');
+  }
+}
+function confettiBurst(){
+  var c=document.getElementById('confetti');c.innerHTML='';
+  var cols=['#ffe066','#e65100','#2e7d32','#1976d2','#f59e0b','#9c27b0'];
+  for(var i=0;i<52;i++){
+    var p=document.createElement('div');p.className='confetti-piece';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[Math.floor(Math.random()*cols.length)]+
+      ';width:'+(8+Math.random()*8)+'px;height:'+(8+Math.random()*8)+'px;'+
+      'border-radius:'+(Math.random()>.5?'50%':'2px')+';'+
+      'animation-delay:'+(Math.random()*.6)+'s;animation-duration:'+(1.5+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){c.innerHTML='';},3000);
+}
+
+// ── STEP 0 — Preface ──────────────────────────────────────
+function renderStep0(){
+  // Show real-world percentage examples
+  var examples=[
+    {icon:'🏷️',text:'25% off sale prices'},
+    {icon:'🗳️',text:'60% of people voted yes'},
+    {icon:'📱',text:'Battery at 15%'},
+    {icon:'🎯',text:'Scored 85% in a test'},
+    {icon:'🏦',text:'5% interest on savings'},
+  ];
+  var exHtml=examples.map(function(e){
+    return '<div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.85);'+
+      'border:2px solid #ffcc80;border-radius:12px;padding:8px 12px;flex:1;min-width:140px">'+
+      '<span style="font-size:22px">'+e.icon+'</span>'+
+      '<span style="font-family:Fredoka One,cursive;font-size:clamp(12px,2.5vw,15px);color:#bf360c">'+e.text+'</span></div>';
+  }).join('');
+  document.getElementById('mainArea').innerHTML=
+    '<div class="preface">'+
+    '<div class="preface-row"><div class="preface-icon">📘</div><div><strong>What you will learn:</strong> What percentage means, how to read and compare percentages, and how to calculate a percentage of an amount.</div></div>'+
+    '<div class="preface-row"><div class="preface-icon">🌍</div><div><strong>Why it matters:</strong> Percentages are everywhere — sale prices, test scores, phone batteries, statistics. Understanding them helps you make sense of the world around you.</div></div>'+
+    '<div class="preface-row"><div class="preface-icon">🎯</div><div><strong>By the end:</strong> You will understand what % means, be able to find common percentages (10%, 25%, 50%) and calculate sale prices!</div></div>'+
+    '</div>'+
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(13px,3vw,15px);color:#bf360c;text-align:center;margin-bottom:10px">You see percentages every day!</div>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">'+exHtml+'</div>';
+}
+
+// ── STEP 1 — Grid explorer ─────────────────────────────────
+function renderStep1(){
+  sliderPct=25;
+  // Build static shell
+  var cells='';
+  for(var i=0;i<100;i++) cells+='<div class="grid-cell" id="gc'+i+'"></div>';
+  document.getElementById('mainArea').innerHTML=
+    '<div class="grid-wrap">'+
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(13px,3vw,15px);color:#bf360c;text-align:center;margin-bottom:8px">Each small square = 1% (one out of 100)</div>'+
+    '<div class="hundred-grid" id="theGrid">'+cells+'</div>'+
+    '</div>'+
+    '<div class="pct-big" id="pctBig">25%</div>'+
+    '<div class="pct-desc" id="pctDesc">25 out of every 100 squares are filled — that is 25%!</div>'+
+    '<div style="padding:0 4px;margin-bottom:8px">'+
+    '<input type="range" min="0" max="100" value="25" id="pctSlider" style="margin-bottom:4px">'+
+    '<div style="display:flex;justify-content:space-between;font-family:Fredoka One,cursive;font-size:11px;color:#e65100;padding:0 2px">'+
+    '<span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>'+
+    '</div>'+
+    '</div>'+
+    '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:4px" id="quickBtns">'+
+    [10,25,50,75,100].map(function(p){
+      return '<button onclick="setGridPct('+p+')" style="padding:8px 14px;border-radius:12px;border:2.5px solid #ffcc80;background:#fff;font-family:Fredoka One,cursive;font-size:clamp(13px,3vw,16px);cursor:pointer;color:#bf360c;transition:all .2s">'+p+'%</button>';
+    }).join('')+
+    '</div>';
+  // Wire slider
+  var sl=document.getElementById('pctSlider');
+  if(sl) sl.addEventListener('input',function(){setGridPct(parseInt(this.value));});
+  // Initial render
+  updateGrid(25);
+}
+
+function updateGrid(pct){
+  sliderPct=pct;
+  // Update cells
+  for(var i=0;i<100;i++){
+    var cell=document.getElementById('gc'+i);
+    if(cell) cell.className='grid-cell'+(i<pct?' filled':'');
+  }
+  // Update label
+  var big=document.getElementById('pctBig');
+  if(big) big.textContent=pct+'%';
+  var desc=document.getElementById('pctDesc');
+  if(desc){
+    var msg='';
+    if(pct===0) msg='0 squares filled — 0% means none!';
+    else if(pct===10) msg='10 squares filled — 10% means 1 in every 10!';
+    else if(pct===25) msg='25 squares filled — 25% means 1 in every 4! (one quarter)';
+    else if(pct===50) msg='50 squares filled — 50% means exactly half!';
+    else if(pct===75) msg='75 squares filled — 75% means 3 in every 4! (three quarters)';
+    else if(pct===100) msg='All 100 squares filled — 100% means the whole thing!';
+    else msg=pct+' out of every 100 squares are filled — that is '+pct+'%!';
+    desc.textContent=msg;
+  }
+  // Update slider to match quick buttons
+  var sl=document.getElementById('pctSlider');
+  if(sl) sl.value=pct;
+  // Update nia
+  var nia=document.getElementById('nia');
+  if(nia){
+    var niamsg=pct===0?'0% means none at all!':
+      pct===10?'10% means 1 in every 10 — divide by 10 to find 10% of anything!':
+      pct===25?'25% means 1 in every 4 — the same as one quarter!':
+      pct===50?'50% means exactly half — the most common percentage you will see!':
+      pct===75?'75% means 3 in every 4 — three quarters!':
+      pct===100?'100% means the whole thing — nothing missing!':
+      pct+'% means '+pct+' out of every 100!';
+    nia.innerHTML='<strong>'+pct+'%</strong> — '+niamsg;
+  }
+}
+
+function setGridPct(pct){updateGrid(pct);}
+
+// ── STEP 2 — Sale ──────────────────────────────────────────
+function renderStep2(){
+  var itemsHtml=SALE_ITEMS.map(function(item){
+    var saving=Math.round(item.orig*item.pct/100*100)/100;
+    var newPrice=Math.round((item.orig-saving)*100)/100;
+    var steps='To find '+item.pct+'% of £'+item.orig+': ';
+    if(item.pct===10) steps+='÷ 10 = £'+saving.toFixed(2)+' off';
+    else if(item.pct===50) steps+='÷ 2 = £'+saving.toFixed(2)+' off';
+    else if(item.pct===25) steps+='÷ 4 = £'+saving.toFixed(2)+' off';
+    else if(item.pct===20) steps+='÷ 5 = £'+saving.toFixed(2)+' off';
+    else steps+='× '+item.pct+'/100 = £'+saving.toFixed(2)+' off';
+    return '<div class="sale-item">'+
+      '<div class="sale-emoji">'+item.emoji+'</div>'+
+      '<div style="font-family:Fredoka One,cursive;font-size:13px;color:#555;margin:2px 0">'+item.name+'</div>'+
+      '<div class="sale-orig">£'+item.orig.toFixed(2)+'</div>'+
+      '<div class="sale-pct">'+item.pct+'% OFF</div>'+
+      '<div class="sale-new">£'+newPrice.toFixed(2)+'</div>'+
+      '<div class="sale-saving">Save £'+saving.toFixed(2)+'</div>'+
+      '<div style="font-size:10px;font-weight:700;color:#888;margin-top:4px;line-height:1.4">'+steps+'</div>'+
+      '</div>';
+  }).join('');
+
+  document.getElementById('mainArea').innerHTML=
+    '<div class="sale-scene">'+
+    '<div style="background:#bf360c;color:#fff;border-radius:12px;padding:8px 14px;text-align:center;'+
+    'font-family:Fredoka One,cursive;font-size:clamp(16px,4vw,22px);margin-bottom:12px">'+
+    '🏷️ PRIYA\'S BIG SALE! 🏷️</div>'+
+    '<div class="sale-items">'+itemsHtml+'</div>'+
+    '</div>'+
+    '<div style="background:rgba(255,255,255,.85);border:2.5px solid #ffcc80;border-radius:14px;padding:12px 14px">'+
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(14px,3vw,17px);color:#bf360c;margin-bottom:8px;text-align:center">How to find any percentage 📐</div>'+
+    '<div style="font-size:clamp(13px,2.5vw,15px);font-weight:700;color:#555;line-height:1.9">'+
+    '🔑 <strong>10%</strong> of anything → divide by 10<br>'+
+    '🔑 <strong>50%</strong> of anything → divide by 2<br>'+
+    '🔑 <strong>25%</strong> of anything → divide by 4<br>'+
+    '🔑 <strong>20%</strong> of anything → divide by 5<br>'+
+    '🔑 <strong>Any %</strong> → multiply by the % then divide by 100'+
+    '</div></div>';
+}
+
+// ── STEP 3 — Quiz ─────────────────────────────────────────
+function renderStep3(){
+  quizIdx=0;quizCorrect=0;
+  document.getElementById('nia').innerHTML=NIA[3];
+  showQuizQ();
+}
+
+function showQuizQ(){
+  if(quizIdx>=QUIZ_QS.length){showQuizEnd();return;}
+  var q=QUIZ_QS[quizIdx];
+  var nia=document.getElementById('nia');
+  if(nia) nia.innerHTML='Look at the question carefully — then pick your answer! 🌟';
+  var stars='';for(var i=0;i<QUIZ_QS.length;i++)stars+='<div class="star'+(i<quizCorrect?' earned':'')+'" >⭐</div>';
+  var opts='';
+  q.opts.forEach(function(o){
+    opts+='<button class="quiz-btn" onclick="answerQ(\''+o.replace(/'/g,"\\'")+'\',\''+q.answer.replace(/'/g,"\\'")+'\')">'+o+'</button>';
+  });
+  document.getElementById('mainArea').innerHTML=
+    '<div class="stars">'+stars+'</div>'+
+    '<div class="quiz-area"><div class="quiz-q">'+q.q+'</div>'+
+    '<div class="quiz-options">'+opts+'</div>'+
+    '<div class="quiz-result" id="qRes"></div></div>';
+}
+
+function answerQ(chosen,correct){
+  var btns=document.querySelectorAll('.quiz-btn,.opt,.ans-tile,.ans-row');
+  btns.forEach(function(b){b.onclick=null;b.style.cursor='default';if(b.disabled!==undefined)b.disabled=true;});
+  var res=document.getElementById('qRes')||document.getElementById('pzRes')||document.getElementById('quizResult');
+  if(chosen===correct){
+
+    btns.forEach(function(b){if(b.textContent.trim()===correct)b.className='quiz-btn correct';});
+    quizCorrect++;
+    if(res){res.textContent='✅ Correct!';res.className='quiz-result correct';}
+    document.getElementById('nia').innerHTML='✅ <strong>Correct!</strong> 🏷️';
+  
+  } else {
+
+    btns.forEach(function(b){
+      if(b.textContent.trim()===chosen)b.className='quiz-btn wrong';
+      if(b.textContent.trim()===correct)b.className='quiz-btn correct';
+    });
+    if(res){res.textContent='❌ The answer is: '+correct;res.className='quiz-result wrong';}
+    document.getElementById('nia').innerHTML='💛 The answer is <strong>'+correct+'</strong>!';
+  
+  }
+  quizIdx++;
+  var isLast=(quizIdx>=QUIZ_QS.length);
+  if(chosen===correct){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showQuizEnd():showQuizQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showQuizEnd():showQuizQ();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQuizEnd(){
+  var stars='';for(var i=0;i<QUIZ_QS.length;i++)stars+='<div class="star'+(i<quizCorrect?' earned':'')+'" >⭐</div>';
+  var msg=quizCorrect===4?'🏆 PERFECT! You are a percentage pro!':
+          quizCorrect>=3?'🌟 Brilliant! Almost perfect!':
+          quizCorrect>=2?'👍 Good work!':'💪 Keep going!';
+  document.getElementById('mainArea').innerHTML=
+    '<div class="stars">'+stars+'</div>'+
+    '<div style="text-align:center;padding:16px;background:linear-gradient(135deg,#fff3e0,#fce4ec);border-radius:18px;border:2.5px solid #ffcc80">'+
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(17px,4vw,24px);color:#bf360c;margin-bottom:8px">'+msg+'</div>'+
+    '<div style="font-size:clamp(14px,3vw,17px);font-weight:700;color:#555">You got <strong style="color:#e53935">'+quizCorrect+'</strong> out of <strong>4</strong> correct!</div></div>';
+  if(quizCorrect>=3)confettiBurst();
+  document.getElementById('nia').innerHTML=quizCorrect===4?'🏆 <strong>Perfect!</strong> You know your percentages inside out! %':'🌟 Well done! Remember — percent means out of 100!';
+
+  // Start again button
+  var sa=document.createElement('button');
+  sa.textContent='Start again';
+  sa.style.cssText='display:block;margin:16px auto 0;padding:10px 28px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)';
+  sa.onclick=function(){goStep(-4);};
+  var _ep=document.getElementById('mainArea')||document.getElementById('main');
+  if(_ep) _ep.appendChild(sa);
+}
+
+// ── STEP 4 — Summary ──────────────────────────────────────
+function renderStep4(){
+  var keyPcts=[
+    {pct:10,label:'Divide by 10',eg:'10% of £50 = £5'},
+    {pct:25,label:'Divide by 4',eg:'25% of £80 = £20'},
+    {pct:50,label:'Divide by 2',eg:'50% of £60 = £30'},
+    {pct:75,label:'× 3 then ÷ 4',eg:'75% of £40 = £30'},
+    {pct:100,label:'The whole amount',eg:'100% of £25 = £25'},
+  ];
+  var kHtml=keyPcts.map(function(k){
+    // Mini grid showing percentage
+    var cells='';
+    for(var i=0;i<100;i++) cells+='<div style="width:6px;height:6px;border-radius:1px;background:'+(i<k.pct?'#e65100':'#e0e0e0')+';display:inline-block;margin:0.5px"></div>';
+    return '<div style="background:#fff;border:2px solid #ffcc80;border-radius:12px;padding:10px 12px;flex:1;min-width:120px;max-width:160px;text-align:center">'+
+      '<div style="font-family:Fredoka One,cursive;font-size:clamp(20px,5vw,28px);color:#bf360c">'+k.pct+'%</div>'+
+      '<div style="font-size:11px;font-weight:700;color:#e65100;margin-bottom:4px">'+k.label+'</div>'+
+      '<div style="line-height:0;margin-bottom:6px">'+cells+'</div>'+
+      '<div style="font-size:11px;font-weight:700;color:#555">'+k.eg+'</div>'+
+      '</div>';
+  }).join('');
+  document.getElementById('mainArea').innerHTML=
+    '<div style="text-align:center;padding:8px 0 14px">'+
+    '<div style="font-size:56px">🏆</div>'+
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(17px,4vw,24px);color:#bf360c;margin-top:8px;margin-bottom:14px">You understand percentages!</div>'+
+    '</div>'+
+    '<div class="preface">'+
+    '<div class="preface-row"><div class="preface-icon">✅</div><div><strong>Percent</strong> means <em>out of 100</em>. 35% means 35 out of every 100.</div></div>'+
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>To find a percentage of an amount: <strong>multiply by the percentage then divide by 100</strong>.</div></div>'+
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>Quick tricks: 10% = ÷10, 50% = ÷2, 25% = ÷4, 20% = ÷5.</div></div>'+
+    '<div class="preface-row"><div class="preface-icon">🚀</div><div>Next — we will explore <strong>ratio and proportion</strong>: comparing amounts!</div></div>'+
+    '</div>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px">'+kHtml+'</div>';
+  confettiBurst();
+}
+
+function goStep(dir){
+  currentStep=Math.max(0,Math.min(4,currentStep+dir));
+  dots(currentStep);
+  document.getElementById('nia').innerHTML=NIA[currentStep];
+  document.getElementById('btnBack').disabled=(currentStep===0);
+  document.getElementById('btnNext').textContent=BTNS[currentStep];
+  document.getElementById('btnNext').disabled=false;
+  if(currentStep===4){document.getElementById('btnNext').onclick=function(){goStep(-4);};}
+  else{document.getElementById('btnNext').onclick=function(){goStep(1);};}
+  RENDERS[currentStep]();
+}
+goStep(0);
+</script>
+</body>
+</html>

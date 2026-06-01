@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya - Puzzle Solving (Ages 10-12)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
+  :root{--ink:#0f1117;--ink2:#4b5563;--muted:#9ca3af;--bg:#f9f8f4;--card:#fff;
+    --accent:#4f46e5;--accent2:#f59e0b;--green:#059669;--red:#dc2626;
+    --rule:rgba(0,0,0,.06);--sh:0 1px 12px rgba(0,0,0,.06);--r:18px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px;color:var(--ink);}
+  .shell{width:100%;max-width:620px;}
+  .top{text-align:center;margin-bottom:24px;}
+  .badge{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);display:inline-block;margin-bottom:12px;}
+  .top h1{font-family:'DM Serif Display',serif;font-size:clamp(24px,5vw,34px);
+    color:var(--ink);line-height:1.1;margin-bottom:6px;}
+  .top h1 em{font-style:italic;color:var(--accent);}
+  .top p{font-size:13px;color:var(--muted);font-weight:500;}
+  .stepper{display:flex;gap:5px;justify-content:center;margin-bottom:24px;}
+  .step-dot{width:5px;height:5px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .step-dot.active{background:var(--accent2);transform:scale(1.8);}
+  .step-dot.done{background:var(--accent);}
+  .nia{display:flex;gap:12px;align-items:center;background:var(--card);
+    border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px;
+    margin-bottom:20px;box-shadow:var(--sh);min-height:60px;}
+  .nia-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+    animation:bob 3s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .nia-text{font-size:14px;line-height:1.55;color:var(--ink2);flex:1;}
+  .nia-text strong{color:var(--accent);font-weight:700;}
+  .nia-text em{color:var(--accent2);font-style:normal;font-weight:700;}
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);
+    padding:22px;margin-bottom:16px;box-shadow:var(--sh);}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:14px;}
+  .s-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;
+    font-size:13px;color:var(--ink2);line-height:1.6;}
+  .s-row:last-child{margin-bottom:0;}
+  .s-num{width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;
+    font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:1px;}
+  .slide-nav{display:flex;gap:6px;justify-content:center;margin-top:14px;}
+  .sdot{width:6px;height:6px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .sdot.on{background:var(--accent);transform:scale(1.4);}
+  .snav{display:flex;gap:8px;justify-content:center;margin-top:12px;}
+  .sbtn{padding:8px 20px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;
+    font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+  .sbtn.prev{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);}
+  .sbtn.prev:disabled{opacity:.3;cursor:not-allowed;}
+  .sbtn.nxt{background:var(--accent);color:#fff;}
+  .puz-q{font-family:'DM Serif Display',serif;font-size:clamp(16px,3.5vw,21px);
+    text-align:center;line-height:1.4;margin-bottom:16px;color:var(--ink);}
+  .prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .prog-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .prog-pips{display:flex;gap:5px;}
+  .prog-pip{width:8px;height:8px;border-radius:50%;background:var(--rule);border:1.5px solid #d1d5db;transition:all .3s;}
+  .prog-pip.dp{background:var(--accent);border-color:var(--accent);}
+  .prog-pip.cp{background:var(--accent2);border-color:var(--accent2);transform:scale(1.3);}
+  .res{text-align:center;margin-top:10px;font-size:14px;font-weight:700;min-height:20px;}
+  .res.ok{color:var(--green);}
+  .res.no{color:var(--red);}
+  .stars{display:flex;justify-content:center;gap:5px;margin-bottom:16px;}
+  .star{font-size:20px;opacity:.18;transition:all .3s;}
+  .star.on{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .nav{display:flex;gap:10px;margin-top:4px;}
+  .btn{min-height:50px;padding:0 22px;border-radius:14px;border:none;
+    font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;
+    cursor:pointer;transition:all .2s;}
+  .btn:active{transform:scale(.97);}
+  .btn-back{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);min-width:50px;}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-next{background:var(--accent);color:#fff;flex:1;box-shadow:0 4px 14px rgba(79,70,229,.2);}
+  .btn-next:hover{background:#4338ca;transform:translateY(-1px);}
+  .cc{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .cp{position:absolute;border-radius:2px;animation:cf 2s ease-in forwards;}
+  @keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="shell">
+  <div class="top">
+    <div class="badge">Ages 10 - 12</div>
+    <h1>Puzzle <em>Solving</em> — Thinking Your Way Through</h1>
+    <p>A toolkit for breaking down any problem you have never seen before</p>
+  </div>
+  <div class="stepper">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia">
+    <div class="nia-dot">&#127775;</div>
+    <div class="nia-text" id="nia">
+      A puzzle is a problem where the answer is <strong>not obvious</strong>. You cannot just apply a formula — you have to <em>think</em>.
+    </div>
+  </div>
+  <div id="main"></div>
+  <div class="nav">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>&#8592;</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let&apos;s go &#8594;</button>
+  </div>
+</div>
+<div class="cc" id="cc"></div>
+<script>
+var step=0,qIdx=0,qScore=0,puzzleLevel=0,puzzleScore=0,puzzleResults=[],levelAnswered=false,qHistory=[];
+var handshakeStep=0;
+
+var OPT_COLS=['#4f46e5','#0369a1','#059669','#b45309'];
+var OPT_LBLS=['A','B','C','D'];
+
+function renderOpts(opts,idPfx,clickFn,disMap){
+  var allShort=opts.every(function(o){return String(o).length<=6;});
+  var html='';
+  if(allShort){
+    html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">';
+    opts.forEach(function(o,i){
+      var dis=disMap?disMap[i]:'';
+      var bg='#ffffff',bc='#e5e7eb',tc='#0f1117';
+      if(dis==='correct'){bg='rgba(5,150,105,.12)';bc='#059669';tc='#059669';}
+      else if(dis==='wrong'){bg='rgba(220,38,38,.08)';bc='#dc2626';tc='#dc2626';}
+      html+='<button id="'+idPfx+i+'" data-val="'+o+'" '+(clickFn&&!dis?'onclick="'+clickFn+'('+i+')"':'')+
+        ' style="min-height:80px;border-radius:16px;border:2px solid '+bc+';background:'+bg+';'+
+        'cursor:'+(dis?'default':'pointer')+';display:flex;align-items:center;justify-content:center;'+
+        'font-family:DM Serif Display,serif;font-size:clamp(20px,4vw,28px);color:'+tc+';padding:12px;'+
+        'border-left:5px solid '+OPT_COLS[i%OPT_COLS.length]+';'+
+        'transition:all .25s cubic-bezier(.34,1.56,.64,1)">'+o+'</button>';
+    });
+    html+='</div>';
+  } else {
+    html='<div style="display:flex;flex-direction:column;gap:8px;margin:12px 0">';
+    opts.forEach(function(o,i){
+      var dis=disMap?disMap[i]:'';
+      var bg='#ffffff',bc='#e5e7eb',tc='#0f1117',lc=OPT_COLS[i%OPT_COLS.length];
+      if(dis==='correct'){bg='rgba(5,150,105,.12)';bc='#059669';tc='#059669';lc='#059669';}
+      else if(dis==='wrong'){bg='rgba(220,38,38,.08)';bc='#dc2626';tc='#dc2626';lc='#dc2626';}
+      html+='<button id="'+idPfx+i+'" data-val="'+o+'" '+(clickFn&&!dis?'onclick="'+clickFn+'('+i+')"':'')+
+        ' style="min-height:54px;border-radius:14px;border:1.5px solid '+bc+';background:'+bg+';'+
+        'cursor:'+(dis?'default':'pointer')+';display:flex;align-items:center;gap:14px;'+
+        'padding:12px 16px;width:100%;box-sizing:border-box;transition:all .2s">'+
+        '<div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;'+
+        'justify-content:center;font-size:13px;font-weight:700;color:#fff;background:'+lc+'">'+OPT_LBLS[i]+'</div>'+
+        '<div style="font-family:DM Sans,sans-serif;font-size:14px;font-weight:600;color:'+tc+';line-height:1.4;flex:1;text-align:left">'+o+'</div>'+
+        '</button>';
+    });
+    html+='</div>';
+  }
+  return html;
+}
+
+function markOpts(idPfx,chosen,correct){
+  [0,1,2,3].forEach(function(i){
+    var b=document.getElementById(idPfx+i);if(!b)return;
+    var bv=b.getAttribute('data-val');
+    var isAns=Array.isArray(correct)?correct.indexOf(bv)>=0:bv===correct;
+    b.onclick=null;b.style.cursor='default';
+    if(bv===chosen&&isAns){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';b.style.color='#059669';}
+    else if(bv===chosen&&!isAns){b.style.background='rgba(220,38,38,.08)';b.style.borderColor='#dc2626';b.style.color='#dc2626';}
+    else if(isAns){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';}
+  });
+}
+
+// ── Handshake SVG ─────────────────────────────────────────
+function handshakeSVG(showLines){
+  var W=220,H=180,cx=110,cy=90,r=65;
+  var n=5;
+  var pts=[];
+  for(var i=0;i<n;i++){
+    var angle=-Math.PI/2+(2*Math.PI*i/n);
+    pts.push([Math.round(cx+r*Math.cos(angle)),Math.round(cy+r*Math.sin(angle))]);
+  }
+  var s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="max-width:240px;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg">';
+  // Lines
+  var lineCount=0;
+  var colors=['#4f46e5','#0369a1','#059669','#b45309','#7c3aed','#dc2626','#0891b2','#d97706','#059669','#4f46e5'];
+  for(var a=0;a<n;a++){
+    for(var b=a+1;b<n;b++){
+      if(lineCount<showLines){
+        s+='<line x1="'+pts[a][0]+'" y1="'+pts[a][1]+'" x2="'+pts[b][0]+'" y2="'+pts[b][1]+'" stroke="'+colors[lineCount%colors.length]+'" stroke-width="1.8" opacity="0.7"/>';
+        lineCount++;
+      }
+    }
+  }
+  // Dots
+  for(var i=0;i<n;i++){
+    s+='<circle cx="'+pts[i][0]+'" cy="'+pts[i][1]+'" r="10" fill="var(--accent)" stroke="white" stroke-width="2"/>';
+    s+='<text x="'+pts[i][0]+'" y="'+(pts[i][1]+4)+'" text-anchor="middle" font-size="11" fill="white" font-family="DM Sans,sans-serif" font-weight="700">'+(i+1)+'</text>';
+  }
+  s+='<text x="'+cx+'" y="'+(cy+6)+'" text-anchor="middle" font-size="14" fill="var(--accent)" font-family="DM Serif Display,serif" font-weight="700">'+showLines+' lines</text>';
+  s+='</svg>';
+  return s;
+}
+
+// ── Frog table builder ────────────────────────────────────
+function frogTable(target){
+  var rows='<table style="width:100%;border-collapse:collapse;font-size:13px;margin:10px 0">'+
+    '<tr style="background:var(--accent);color:#fff">'+
+    '<th style="padding:7px 10px;text-align:left">Day</th>'+
+    '<th style="padding:7px 10px;text-align:center">End of day</th>'+
+    '<th style="padding:7px 10px;text-align:center">End of night</th></tr>';
+  var pos=0;var day=0;var done=false;
+  while(!done&&day<10){
+    day++;
+    var eod=pos+3;
+    if(eod>=target){
+      rows+='<tr style="background:rgba(5,150,105,.12)">'+
+        '<td style="padding:7px 10px;font-weight:700;color:var(--green)">Day '+day+'</td>'+
+        '<td style="padding:7px 10px;text-align:center;font-weight:700;color:var(--green)">'+eod+'m &#10003;</td>'+
+        '<td style="padding:7px 10px;text-align:center;color:var(--muted)">&#8212;</td></tr>';
+      done=true;
+    } else {
+      var eon=eod-1;
+      rows+='<tr style="'+(day%2===0?'background:rgba(79,70,229,.03)':'')+'">'+
+        '<td style="padding:7px 10px">Day '+day+'</td>'+
+        '<td style="padding:7px 10px;text-align:center">'+eod+'m</td>'+
+        '<td style="padding:7px 10px;text-align:center;color:var(--muted)">'+eon+'m</td></tr>';
+      pos=eon;
+    }
+  }
+  rows+='</table>';
+  return rows;
+}
+
+var PUZZLES=[
+  {q:'A number is doubled, then 4 is added, giving 18.\nWhat is the number?',
+   opts:['5','6','7','8'],ans:'7',
+   explain:'Work backwards: 18 - 4 = 14. 14 / 2 = 7. Check: 7 x 2 + 4 = 18. ✓'},
+  {q:'How many squares are on a 3 x 3 grid?\n(Count all sizes — 1x1, 2x2, 3x3)',
+   opts:['9','12','14','16'],ans:'14',
+   explain:'1x1 squares: 9. 2x2 squares: 4. 3x3 squares: 1. Total: 9 + 4 + 1 = 14.'},
+  {q:'What is the sum of the first 5 odd numbers?\n1 + 3 + 5 + 7 + 9',
+   opts:['20','25','30','35'],ans:'25',
+   explain:'Pattern: sum of first n odd numbers = n². First 5 odd numbers: 5² = 25. Check: 1+3+5+7+9 = 25. ✓'},
+  {q:'A frog climbs 3m each day but slips 1m each night.\nHow many days to reach 8m?',
+   opts:['3','4','5','6'],ans:'4',
+   explain:'Day 1: 3m, night: 2m. Day 2: 5m, night: 4m. Day 3: 7m, night: 6m. Day 4: reaches 9m. Answer: 4 days.'},
+];
+
+var QS=[
+  {q:'I think of a number, multiply by 3, subtract 5, and get 16. What is the number?',
+   opts:['5','6','7','8'],ans:'7'},
+  {q:'How many handshakes in a group of 4 people?',
+   opts:['4','5','6','8'],ans:'6'},
+  {q:'What is the units digit of 7\u2074?\n(7, 49, 343, 2401 — units: 7, 9, 3, 1)',
+   opts:['1','3','7','9'],ans:'1'},
+  {q:'Three consecutive numbers add up to 45.\nWhat is the middle number?',
+   opts:['13','14','15','16'],ans:'15'},
+];
+
+var NIA=[
+  'A puzzle is a problem where the answer is <strong>not obvious</strong>. Good solvers have a toolkit.',
+  'Two strategies: draw a picture and make a table.',
+  'Three more strategies: work backwards, try a simpler case, look for a pattern.',
+  'Four puzzles. Use your toolkit.',
+  'Four questions. Think before picking.',
+];
+var BTNS=['Strategies 1 and 2','Strategies 3, 4 and 5','Practice','Quiz','Summary'];
+
+function burst(){
+  var c=document.getElementById('cc');c.innerHTML='';
+  var cols=['#4f46e5','#f59e0b','#059669','#dc2626','#0369a1','#7c3aed'];
+  for(var i=0;i<48;i++){
+    var p=document.createElement('div');p.className='cp';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[i%cols.length]+
+      ';width:'+(5+Math.random()*7)+'px;height:'+(5+Math.random()*7)+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+
+      ';animation-delay:'+(Math.random()*.5)+'s;animation-duration:'+(1.5+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){c.innerHTML='';},3000);
+}
+
+// ── STEP 0: Preface ───────────────────────────────────────
+function renderStep0(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Four types of maths puzzle</div>'+
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">'+
+        [
+          {icon:'&#128290;',t:'Number puzzles',d:'Find the unknown using logic and arithmetic'},
+          {icon:'&#9974;',t:'Logic puzzles',d:'Use clues to rule out possibilities'},
+          {icon:'&#128200;',t:'Pattern puzzles',d:'Spot and extend a sequence or rule'},
+          {icon:'&#8617;',t:'Working backwards',d:'Start from the answer and reverse the steps'},
+        ].map(function(r){
+          return '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px">'+
+            '<div style="font-size:24px;margin-bottom:5px">'+r.icon+'</div>'+
+            '<div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px">'+r.t+'</div>'+
+            '<div style="font-size:12px;color:var(--muted);line-height:1.4">'+r.d+'</div>'+
+            '</div>';
+        }).join('')+
+        '</div>'+
+        '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:12px;font-size:13px;color:var(--ink2);font-weight:500;text-align:center">'+
+          'Good puzzle solvers do not guess randomly. They have a <strong style="color:var(--accent)">toolkit of strategies</strong>.'+
+        '</div></div>',
+      nia:'Puzzles come in many forms. The key is not to panic — every puzzle can be approached with a strategy.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">The five-strategy toolkit</div>'+
+        '<div style="display:flex;flex-direction:column;gap:6px">'+
+        [
+          {n:'1',t:'Draw a picture',d:'When it involves position, arrangement or counting'},
+          {n:'2',t:'Make a table',d:'When there is a repeating or growing pattern'},
+          {n:'3',t:'Work backwards',d:'When you know the result but not the start'},
+          {n:'4',t:'Try a simpler case',d:'When the full problem is too big — shrink it first'},
+          {n:'5',t:'Look for a pattern',d:'When a sequence or rule might be hiding'},
+        ].map(function(r){
+          return '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 12px;background:var(--bg);border:1px solid var(--rule);border-radius:10px">'+
+            '<div style="width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+r.n+'</div>'+
+            '<div><div style="font-size:13px;font-weight:700;color:var(--ink)">'+r.t+'</div>'+
+              '<div style="font-size:12px;color:var(--muted)">'+r.d+'</div></div>'+
+            '</div>';
+        }).join('')+
+        '</div></div>',
+      nia:'Five strategies — each one a different way of attacking a puzzle. We will see all five in action.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s0b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s0n()">'+(sl<S.length-1?'Next &#8594;':'Strategies &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+  }
+  window.s0n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s0b=function(){if(sl>0){sl--;show();}};
+  show();
+}
+
+// ── STEP 1: Strategies 1 and 2 ────────────────────────────
+function renderStep1(){
+  var sl=0;
+  handshakeStep=0;
+  var S=[
+    {
+      nia:'<strong>Strategy 1 — Draw a picture.</strong> When a puzzle involves arrangement or counting — sketch it. The picture does the thinking for you.',
+      render:function(){
+        return '<div style="animation:fi .3s ease">'+
+          '<div class="panel-title">Strategy 1 — Draw a picture</div>'+
+          '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:12px;margin-bottom:12px;text-align:center;font-family:DM Serif Display,serif;font-size:clamp(14px,3vw,17px);color:var(--ink)">'+
+            '5 people each shake hands with every other person once.<br>How many handshakes in total?'+
+          '</div>'+
+          '<div id="hsViz">'+handshakeSVG(handshakeStep)+'</div>'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:10px;font-size:13px;color:var(--ink2);margin:8px 0">'+
+            'Person 1 shakes 4 hands. Person 2 shakes 3 more. Person 3: 2 more. Person 4: 1 more.<br>'+
+            '<strong style="color:var(--accent)">Total: 4 + 3 + 2 + 1 = 10 handshakes</strong>'+
+          '</div>'+
+          '<div class="snav">'+
+            '<button class="sbtn prev" onclick="hsBack()" '+(handshakeStep===0?'disabled':'')+'>&#8592; Remove</button>'+
+            '<button class="sbtn nxt" id="hsNextBtn" onclick="hsNext()">'+(handshakeStep>=10?'Strategy 2 &#8594;':'Add handshake &#8594;')+'</button>'+
+          '</div>';
+      }
+    },
+    {
+      nia:'<strong>Strategy 2 — Make a table.</strong> When a puzzle has a repeating pattern — organise it row by row. The answer jumps out.',
+      render:function(){
+        return '<div style="animation:fi .3s ease">'+
+          '<div class="panel-title">Strategy 2 — Make a table</div>'+
+          '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:12px;margin-bottom:10px;text-align:center;font-family:DM Serif Display,serif;font-size:clamp(14px,3vw,17px);color:var(--ink)">'+
+            'A frog climbs 3m up a wall each day but slips 1m each night.<br>How many days to climb 10m?'+
+          '</div>'+
+          frogTable(10)+
+          '<div style="background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.2);border-radius:10px;padding:10px;font-size:13px;color:var(--ink2)">'+
+            'The table shows the answer clearly: <strong style="color:var(--green)">5 days</strong>. Without the table it is easy to make mistakes.'+
+          '</div>'+
+          '<div class="snav">'+
+            '<button class="sbtn prev" onclick="s1b()">&#8592; Back</button>'+
+            '<button class="sbtn nxt" onclick="s1n()">Strategies 3, 4, 5 &#8594;</button>'+
+          '</div>';
+      }
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].render()+
+      '<div class="slide-nav">'+sdots+'</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.hsNext=function(){
+    if(handshakeStep<10){
+      handshakeStep++;
+      var el=document.getElementById('hsViz');
+      if(el)el.innerHTML=handshakeSVG(handshakeStep);
+      var btn=document.getElementById('hsNextBtn');
+      if(btn)btn.textContent=handshakeStep>=10?'Strategy 2 \u2192':'Add handshake \u2192';
+    } else {sl=1;show();}
+  };
+  window.hsBack=function(){
+    if(handshakeStep>0){
+      handshakeStep--;
+      var el=document.getElementById('hsViz');
+      if(el)el.innerHTML=handshakeSVG(handshakeStep);
+      var btn=document.getElementById('hsNextBtn');
+      if(btn)btn.textContent='Add handshake \u2192';
+    }
+  };
+  window.s1n=function(){goStep(1);};
+  window.s1b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 2: Strategies 3, 4 and 5 ────────────────────────
+function renderStep2(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Strategy 3 — Work backwards</div>'+
+        '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:12px;margin-bottom:12px;text-align:center;font-family:DM Serif Display,serif;font-size:clamp(14px,3vw,17px);color:var(--ink)">'+
+          'I think of a number, double it, add 6, and get 20.<br>What is the number?'+
+        '</div>'+
+        '<div style="display:flex;align-items:center;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:12px">'+
+          ['Start?','x 2','+ 6','= 20'].map(function(s,i){
+            return '<div style="background:'+(i===3?'rgba(5,150,105,.12)':'var(--bg)')+';border:1.5px solid '+(i===3?'var(--green)':'var(--rule)')+';border-radius:10px;padding:8px 14px;font-family:DM Serif Display,serif;font-size:18px;color:'+(i===3?'var(--green)':'var(--ink)')+'">'+s+'</div>'+
+            (i<3?'<div style="font-size:18px;color:var(--muted)">\u2192</div>':'');
+          }).join('')+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px">Reverse every step:</div>'+
+          '<div class="s-row"><div class="s-num">1</div><div>20 - 6 = <strong>14</strong> &nbsp; (undo the +6)</div></div>'+
+          '<div class="s-row"><div class="s-num">2</div><div>14 / 2 = <strong style="color:var(--accent)">7</strong> &nbsp; (undo the x2)</div></div>'+
+          '<div class="s-row"><div class="s-num">3</div><div>Check: 7 x 2 + 6 = 20 &#10003;</div></div>'+
+        '</div></div>',
+      nia:'<strong>Work backwards</strong> — start from the answer and reverse every step. Undo multiplication with division, undo addition with subtraction.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Strategies 4 and 5</div>'+
+        '<div style="display:flex;flex-direction:column;gap:10px">'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px">'+
+            '<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px">Strategy 4 — Try a simpler case</div>'+
+            '<div style="font-size:13px;color:var(--ink2);margin-bottom:8px">Handshakes with 5 people feels big. Start smaller:</div>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+              [{n:2,h:1},{n:3,h:3},{n:4,h:6},{n:5,h:10}].map(function(r){
+                return '<div style="text-align:center;padding:8px 12px;background:var(--card);border:1px solid var(--rule);border-radius:10px">'+
+                  '<div style="font-size:11px;color:var(--muted);font-weight:600">'+r.n+' people</div>'+
+                  '<div style="font-family:DM Serif Display,serif;font-size:20px;color:var(--accent)">'+r.h+'</div>'+
+                  '</div>';
+              }).join('')+
+            '</div>'+
+            '<div style="margin-top:8px;font-size:12px;color:var(--muted)">Pattern: 1, 3, 6, 10 &mdash; each time add one more than before.</div>'+
+          '</div>'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px">'+
+            '<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px">Strategy 5 — Look for a pattern</div>'+
+            '<div style="font-size:13px;color:var(--ink2);margin-bottom:8px">Sum of first n odd numbers:</div>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+              [{n:1,s:1},{n:2,s:4},{n:3,s:9},{n:4,s:16},{n:5,s:25}].map(function(r){
+                return '<div style="text-align:center;padding:8px 10px;background:var(--card);border:1px solid var(--rule);border-radius:10px">'+
+                  '<div style="font-size:11px;color:var(--muted);font-weight:600">n='+r.n+'</div>'+
+                  '<div style="font-family:DM Serif Display,serif;font-size:20px;color:var(--accent)">'+r.s+'</div>'+
+                  '</div>';
+              }).join('')+
+            '</div>'+
+            '<div style="margin-top:8px;font-size:13px;color:var(--ink2)">Pattern: always <strong style="color:var(--accent)">n&sup2;</strong>. First 10 odd numbers = 10&sup2; = 100.</div>'+
+          '</div>'+
+        '</div></div>',
+      nia:'<strong>Try a simpler case</strong> to find the pattern, then apply it to the full problem. <strong>Look for a pattern</strong> — mathematics loves to repeat itself.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s2b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s2n()">'+(sl<S.length-1?'Next &#8594;':'Practice &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s2n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s2b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 3: Puzzles ───────────────────────────────────────
+function renderStep3(){puzzleLevel=0;puzzleScore=0;puzzleResults=[];levelAnswered=false;showPuzzle();}
+
+function showPuzzle(){
+  if(puzzleLevel>=PUZZLES.length){showPuzzleDone();return;}
+  var pz=PUZZLES[puzzleLevel];levelAnswered=false;
+  var pips='';for(var i=0;i<PUZZLES.length;i++)pips+='<div class="prog-pip'+(i<puzzleLevel?' dp':i===puzzleLevel?' cp':'')+'" ></div>';
+  var qDisplay=pz.q.replace(/\n/g,'<br>');
+  // Strategy hint
+  var hints=['Work backwards','Draw a picture — count all sizes','Look for a pattern (n\u00b2)','Make a table'];
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="prog-row"><span class="prog-label">Puzzle '+(puzzleLevel+1)+' of '+PUZZLES.length+'</span><div class="prog-pips">'+pips+'</div></div>'+
+    '<div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;text-align:center;margin-bottom:8px">Hint: '+hints[puzzleLevel]+'</div>'+
+    '<div class="puz-q">'+qDisplay+'</div>'+
+    renderOpts(pz.opts,'popt','pickPuz',null)+
+    '<div class="res" id="pzRes"></div></div>';
+  document.getElementById('nia').innerHTML='Which strategy fits? Pick your answer.';
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){
+    if(puzzleLevel>0){puzzleLevel--;if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}levelAnswered=false;showPuzzle();}
+    else{goStep(-1);}
+  };}
+}
+
+function pickPuz(idx){
+  if(levelAnswered)return;levelAnswered=true;
+  var pz=PUZZLES[puzzleLevel];
+  var chosen=document.getElementById('popt'+idx)?document.getElementById('popt'+idx).getAttribute('data-val'):'';
+  var ok=(chosen===pz.ans);
+  puzzleResults[puzzleLevel]=ok;
+  markOpts('popt',chosen,pz.ans);
+  var res=document.getElementById('pzRes');
+  if(ok){puzzleScore++;if(res){res.textContent='Correct. '+pz.explain;res.className='res ok';}document.getElementById('nia').innerHTML='Correct. '+pz.explain;}
+  else{if(res){res.textContent='Not quite. '+pz.explain;res.className='res no';}document.getElementById('nia').innerHTML=pz.explain;}
+  puzzleLevel++;
+  var isLast=(puzzleLevel>=PUZZLES.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showPuzzleDone():showPuzzle();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showPuzzleDone():showPuzzle();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showPuzzleDone(){
+  var perfect=(puzzleScore>=PUZZLES.length);
+  if(perfect)burst();
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){
+    puzzleLevel=PUZZLES.length-1;
+    if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}
+    levelAnswered=false;showPuzzle();
+  };}
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div style="font-size:48px;margin-bottom:14px">'+(perfect?'&#127919;':'&#128077;')+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'All four puzzles correct!':'Practice complete \u2014 '+puzzleScore+' of '+PUZZLES.length+' correct.')+
+    '</div>'+
+    (perfect?'':'<p style="font-size:14px;color:var(--muted)">Tap &#8592; to retry any puzzle.</p>')+
+    '</div>';
+  document.getElementById('nia').innerHTML=perfect?'All four puzzles solved. Ready for the quiz.':'Good effort. Use &#8592; to review before the quiz.';
+}
+
+// ── STEP 4: Quiz ──────────────────────────────────────────
+function renderStep4(){qIdx=0;qScore=0;qHistory=[];document.getElementById('nia').innerHTML=NIA[4];showQ();}
+
+function showQ(){
+  if(qIdx>=QS.length){showQEnd();return;}
+  var q=QS[qIdx];
+  var nia=document.getElementById('nia');if(nia)nia.innerHTML='Pick your answer.';
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  var qDisplay=q.q.replace(/\n/g,'<br>');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div class="puz-q">'+qDisplay+'</div>'+
+    renderOpts(q.opts,'qopt','pickQ',null)+
+    '<div class="res" id="qRes"></div></div>';
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){if(qIdx>0&&qHistory.length>0){showQPrev(qIdx-1);}else{goStep(-1);};};}
+}
+
+function showQPrev(idx){
+  if(idx<0||!qHistory[idx])return;
+  var q=QS[idx];var h=qHistory[idx];
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<h.score?' on':'')+'">&#11088;</div>';
+  var disMap={};
+  q.opts.forEach(function(o,i){
+    if(o===h.chosen&&h.wasCorrect)disMap[i]='correct';
+    else if(o===h.chosen&&!h.wasCorrect)disMap[i]='wrong';
+    else if(o===h.correct&&!h.wasCorrect)disMap[i]='correct';
+    else disMap[i]='';
+  });
+  var qDisplay=q.q.replace(/\n/g,'<br>');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:8px">Question '+(idx+1)+' \u2014 reviewed</div>'+
+    '<div class="puz-q">'+qDisplay+'</div>'+
+    renderOpts(q.opts,'qopt',null,disMap)+
+    '<div style="display:flex;gap:8px;justify-content:center;margin-top:14px">'+
+    '<button onclick="showQPrev('+(idx-1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);opacity:'+(idx===0?.3:1)+'" '+(idx===0?'disabled':'')+'>&#8592; Prev</button>'+
+    (idx<qIdx-1?'<button onclick="showQPrev('+(idx+1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted)">Next &#8594;</button>':
+     '<button onclick="showQ()" style="padding:8px 16px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:700;cursor:pointer">Continue quiz &#8594;</button>')+
+    '</div></div>';
+  document.getElementById('nia').innerHTML=(h.wasCorrect?'Correct! ':'Answer was <strong>'+h.correct+'</strong>. ')+'Reviewing question '+(idx+1)+'.';
+}
+
+function pickQ(idx){
+  var q=QS[qIdx];
+  [0,1,2,3].forEach(function(i){var b=document.getElementById('qopt'+i);if(b){b.onclick=null;b.style.cursor='default';}});
+  var chosen=document.getElementById('qopt'+idx)?document.getElementById('qopt'+idx).getAttribute('data-val'):'';
+  var ok=(chosen===q.ans);
+  qHistory[qIdx]={chosen:chosen,correct:q.ans,wasCorrect:ok,score:qScore+(ok?1:0)};
+  markOpts('qopt',chosen,q.ans);
+  var res=document.getElementById('qRes');
+  if(ok){qScore++;if(res){res.textContent='Correct.';res.className='res ok';}document.getElementById('nia').innerHTML='Correct.';}
+  else{if(res){res.textContent='Answer: '+q.ans;res.className='res no';}document.getElementById('nia').innerHTML='Answer: <strong>'+q.ans+'</strong>.';}
+  qIdx++;
+  var isLast=(qIdx>=QS.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showQEnd():showQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showQEnd():showQ();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQEnd(){
+  var perfect=(qScore===QS.length);if(perfect)burst();
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div class="stars" style="margin-bottom:20px">'+stars+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'Perfect.':qScore>=3?'Almost perfect.':qScore>=2?'Good work.':'Keep going.')+
+    '</div>'+
+    '<div style="font-size:14px;color:var(--muted);margin-bottom:20px">'+qScore+' of '+QS.length+' correct</div>'+
+    '<button onclick="goStep(-4)" style="padding:10px 28px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)">Start again</button>'+
+    '</div>';
+  document.getElementById('nia').innerHTML=(perfect?'<strong>Perfect.</strong> ':'')+'Five strategies: draw a picture, make a table, work backwards, try a simpler case, look for a pattern.';
+}
+
+// ── Summary ───────────────────────────────────────────────
+function renderStep4summary(){
+  var strategies=[
+    {n:'1',t:'Draw a picture',w:'When it involves position, arrangement or counting',e:'Handshakes: draw dots and lines'},
+    {n:'2',t:'Make a table',w:'When there is a repeating or growing pattern',e:'Frog wall: track day by day'},
+    {n:'3',t:'Work backwards',w:'When you know the result but not the start',e:'Unknown number: reverse every step'},
+    {n:'4',t:'Try a simpler case',w:'When the full problem is too large',e:'Start with 2 people, then 3, then 4'},
+    {n:'5',t:'Look for a pattern',w:'When a sequence or rule might be hiding',e:'Sum of odd numbers = n\u00b2'},
+  ];
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="panel-title">The five-strategy toolkit</div>'+
+    '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">'+
+    strategies.map(function(r){
+      return '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px">'+
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">'+
+          '<div style="width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+r.n+'</div>'+
+          '<div style="font-size:13px;font-weight:700;color:var(--ink)">'+r.t+'</div>'+
+        '</div>'+
+        '<div style="font-size:12px;color:var(--accent);font-weight:600;padding-left:34px;margin-bottom:2px">Use when: '+r.w+'</div>'+
+        '<div style="font-size:12px;color:var(--muted);padding-left:34px">e.g. '+r.e+'</div>'+
+        '</div>';
+    }).join('')+
+    '</div>'+
+    '<div style="padding-top:12px;border-top:1px solid var(--rule);font-size:13px;color:var(--ink2)">'+
+      'Next: <strong style="color:var(--ink)">Logical Reasoning</strong>'+
+    '</div></div>';
+}
+
+var RS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4,renderStep4summary];
+
+function goStep(dir){
+  step=Math.max(0,Math.min(5,step+dir));
+  var dotStep=Math.min(step,4);
+  for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<dotStep?' done':i===dotStep?' active':'');}
+  document.getElementById('nia').innerHTML=NIA[Math.min(step,NIA.length-1)];
+  document.getElementById('btnBack').disabled=(step===0);
+  var bl=['Strategies 1 & 2','Strategies 3, 4 & 5','Practice','Quiz','Summary','Start again'];
+  document.getElementById('btnNext').textContent=(bl[step]||'Next')+' \u2192';
+  if(step>=5){document.getElementById('btnNext').onclick=function(){goStep(-5);};}
+  else{document.getElementById('btnNext').onclick=function(){goStep(1);};}
+  if(step!==3&&step!==4){
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=(step===0);bb.onclick=function(){goStep(-1);};}
+  }
+  RS[Math.min(step,RS.length-1)]();
+}
+goStep(0);
+</script>
+</body>
+</html>

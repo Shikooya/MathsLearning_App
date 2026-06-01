@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya - Analytical Thinking (Ages 9-12)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
+  :root{--ink:#0f1117;--ink2:#4b5563;--muted:#9ca3af;--bg:#f9f8f4;--card:#fff;
+    --accent:#4f46e5;--accent2:#f59e0b;--green:#059669;--red:#dc2626;
+    --rule:rgba(0,0,0,.06);--sh:0 1px 12px rgba(0,0,0,.06);--r:18px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px;color:var(--ink);}
+  .shell{width:100%;max-width:620px;}
+  .top{text-align:center;margin-bottom:24px;}
+  .badge{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);display:inline-block;margin-bottom:12px;}
+  .top h1{font-family:'DM Serif Display',serif;font-size:clamp(24px,5vw,34px);
+    color:var(--ink);line-height:1.1;margin-bottom:6px;}
+  .top h1 em{font-style:italic;color:var(--accent);}
+  .top p{font-size:13px;color:var(--muted);font-weight:500;}
+  .stepper{display:flex;gap:5px;justify-content:center;margin-bottom:24px;}
+  .step-dot{width:5px;height:5px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .step-dot.active{background:var(--accent2);transform:scale(1.8);}
+  .step-dot.done{background:var(--accent);}
+  .nia{display:flex;gap:12px;align-items:center;background:var(--card);
+    border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px;
+    margin-bottom:20px;box-shadow:var(--sh);min-height:60px;}
+  .nia-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+    animation:bob 3s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .nia-text{font-size:14px;line-height:1.55;color:var(--ink2);flex:1;}
+  .nia-text strong{color:var(--accent);font-weight:700;}
+  .nia-text em{color:var(--accent2);font-style:normal;font-weight:700;}
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);
+    padding:22px;margin-bottom:16px;box-shadow:var(--sh);}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:14px;}
+  .s-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;
+    font-size:13px;color:var(--ink2);line-height:1.6;}
+  .s-row:last-child{margin-bottom:0;}
+  .s-num{width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;
+    font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:1px;}
+  .slide-nav{display:flex;gap:6px;justify-content:center;margin-top:14px;}
+  .sdot{width:6px;height:6px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .sdot.on{background:var(--accent);transform:scale(1.4);}
+  .snav{display:flex;gap:8px;justify-content:center;margin-top:12px;}
+  .sbtn{padding:8px 20px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;
+    font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+  .sbtn.prev{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);}
+  .sbtn.prev:disabled{opacity:.3;cursor:not-allowed;}
+  .sbtn.nxt{background:var(--accent);color:#fff;}
+  .puz-q{font-family:'DM Serif Display',serif;font-size:clamp(16px,3.5vw,20px);
+    text-align:center;line-height:1.4;margin-bottom:16px;color:var(--ink);}
+  .prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .prog-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .prog-pips{display:flex;gap:5px;}
+  .prog-pip{width:8px;height:8px;border-radius:50%;background:var(--rule);border:1.5px solid #d1d5db;transition:all .3s;}
+  .prog-pip.dp{background:var(--accent);border-color:var(--accent);}
+  .prog-pip.cp{background:var(--accent2);border-color:var(--accent2);transform:scale(1.3);}
+  .res{text-align:center;margin-top:10px;font-size:14px;font-weight:700;min-height:20px;}
+  .res.ok{color:var(--green);}
+  .res.no{color:var(--red);}
+  .stars{display:flex;justify-content:center;gap:5px;margin-bottom:16px;}
+  .star{font-size:20px;opacity:.18;transition:all .3s;}
+  .star.on{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .nav{display:flex;gap:10px;margin-top:4px;}
+  .btn{min-height:50px;padding:0 22px;border-radius:14px;border:none;
+    font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;
+    cursor:pointer;transition:all .2s;}
+  .btn:active{transform:scale(.97);}
+  .btn-back{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);min-width:50px;}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-next{background:var(--accent);color:#fff;flex:1;box-shadow:0 4px 14px rgba(79,70,229,.2);}
+  .btn-next:hover{background:#4338ca;transform:translateY(-1px);}
+  .cc{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .cp{position:absolute;border-radius:2px;animation:cf 2s ease-in forwards;}
+  @keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+  /* Bar chart */
+  .bar-wrap{display:flex;align-items:flex-end;gap:8px;height:120px;padding:0 8px;margin:12px 0;}
+  .bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+  .bar{border-radius:6px 6px 0 0;width:100%;background:var(--accent);transition:height .5s ease;}
+  .bar-label{font-size:11px;color:var(--muted);font-weight:600;}
+  .bar-val{font-size:12px;font-weight:700;color:var(--ink);}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="shell">
+  <div class="top">
+    <div class="badge">Ages 9 - 12</div>
+    <h1><em>Analytical</em> Thinking — Breaking Problems Into Parts</h1>
+    <p>Take something complex and understand it piece by piece</p>
+  </div>
+  <div class="stepper">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia">
+    <div class="nia-dot">&#127775;</div>
+    <div class="nia-text" id="nia">
+      When a problem feels too big — <strong>break it into smaller parts</strong>. Solve each part. Put the answers back together.
+    </div>
+  </div>
+  <div id="main"></div>
+  <div class="nav">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>&#8592;</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let&apos;s go &#8594;</button>
+  </div>
+</div>
+<div class="cc" id="cc"></div>
+<script>
+var step=0,qIdx=0,qScore=0,puzzleLevel=0,puzzleScore=0,puzzleResults=[],levelAnswered=false,qHistory=[];
+
+var OPT_COLS=['#4f46e5','#0369a1','#059669','#b45309'];
+var OPT_LBLS=['A','B','C','D'];
+
+function renderOpts(opts,idPfx,clickFn,disMap){
+  var allShort=opts.every(function(o){return String(o).length<=6;});
+  var html='';
+  if(allShort){
+    html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">';
+    opts.forEach(function(o,i){
+      var dis=disMap?disMap[i]:'';
+      var bg='#ffffff',bc='#e5e7eb',tc='#0f1117';
+      if(dis==='correct'){bg='rgba(5,150,105,.12)';bc='#059669';tc='#059669';}
+      else if(dis==='wrong'){bg='rgba(220,38,38,.08)';bc='#dc2626';tc='#dc2626';}
+      html+='<button id="'+idPfx+i+'" data-val="'+o+'" '+(clickFn&&!dis?'onclick="'+clickFn+'('+i+')"':'')+
+        ' style="min-height:80px;border-radius:16px;border:2px solid '+bc+';background:'+bg+';'+
+        'cursor:'+(dis?'default':'pointer')+';display:flex;align-items:center;justify-content:center;'+
+        'font-family:DM Serif Display,serif;font-size:clamp(20px,4vw,28px);color:'+tc+';padding:12px;'+
+        'border-left:5px solid '+OPT_COLS[i%OPT_COLS.length]+';'+
+        'transition:all .25s cubic-bezier(.34,1.56,.64,1)">'+o+'</button>';
+    });
+    html+='</div>';
+  } else {
+    html='<div style="display:flex;flex-direction:column;gap:8px;margin:12px 0">';
+    opts.forEach(function(o,i){
+      var dis=disMap?disMap[i]:'';
+      var bg='#ffffff',bc='#e5e7eb',tc='#0f1117',lc=OPT_COLS[i%OPT_COLS.length];
+      if(dis==='correct'){bg='rgba(5,150,105,.12)';bc='#059669';tc='#059669';lc='#059669';}
+      else if(dis==='wrong'){bg='rgba(220,38,38,.08)';bc='#dc2626';tc='#dc2626';lc='#dc2626';}
+      html+='<button id="'+idPfx+i+'" data-val="'+o+'" '+(clickFn&&!dis?'onclick="'+clickFn+'('+i+')"':'')+
+        ' style="min-height:54px;border-radius:14px;border:1.5px solid '+bc+';background:'+bg+';'+
+        'cursor:'+(dis?'default':'pointer')+';display:flex;align-items:center;gap:14px;'+
+        'padding:12px 16px;width:100%;box-sizing:border-box;transition:all .2s">'+
+        '<div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;'+
+        'justify-content:center;font-size:13px;font-weight:700;color:#fff;background:'+lc+'">'+OPT_LBLS[i]+'</div>'+
+        '<div style="font-family:DM Sans,sans-serif;font-size:14px;font-weight:600;color:'+tc+';line-height:1.4;flex:1;text-align:left">'+o+'</div>'+
+        '</button>';
+    });
+    html+='</div>';
+  }
+  return html;
+}
+
+function markOpts(idPfx,chosen,correct){
+  [0,1,2,3].forEach(function(i){
+    var b=document.getElementById(idPfx+i);if(!b)return;
+    var bv=b.getAttribute('data-val');
+    var isAns=Array.isArray(correct)?correct.indexOf(bv)>=0:bv===correct;
+    b.onclick=null;b.style.cursor='default';
+    if(bv===chosen&&isAns){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';b.style.color='#059669';}
+    else if(bv===chosen&&!isAns){b.style.background='rgba(220,38,38,.08)';b.style.borderColor='#dc2626';b.style.color='#dc2626';}
+    else if(isAns){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';}
+  });
+}
+
+// ── Bar chart SVG ─────────────────────────────────────────
+function barChartHTML(data,maxVal){
+  maxVal=maxVal||10;
+  var h=100;
+  return '<div class="bar-wrap">'+
+    data.map(function(d){
+      var barH=Math.round((d.v/maxVal)*h);
+      return '<div class="bar-col">'+
+        '<div class="bar-val">'+d.v+'</div>'+
+        '<div class="bar" style="height:'+barH+'px;background:'+d.col+'"></div>'+
+        '<div class="bar-label">'+d.n+'</div>'+
+        '</div>';
+    }).join('')+
+  '</div>';
+}
+
+var PUZZLES=[
+  {q:'A cinema has 15 rows of 24 seats.\n127 seats are taken.\nHow many are empty?',
+   opts:['226','233','240','253'],ans:'233',
+   explain:'Total seats: 15 x 24 = 360. Empty: 360 - 127 = 233.'},
+  {q:'Test scores: Ali=8, Ben=6, Cal=9, Dan=7.\nWhat is the mean score?',
+   opts:['6','7','7.5','8'],ans:'7.5',
+   explain:'Mean = (8+6+9+7) / 4 = 30 / 4 = 7.5.'},
+  {q:'Roughly how many seconds are in a day?\n60 sec x 60 min x 24 hours',
+   opts:['864','8,640','86,400','864,000'],ans:'86,400',
+   explain:'60 x 60 = 3,600 seconds per hour. 3,600 x 24 = 86,400 seconds per day.'},
+  {q:'5 apples cost £2.00. 8 oranges cost £2.80.\nWhich is cheaper per piece?',
+   opts:['Apples','Oranges','Same price','Cannot tell'],ans:'Oranges',
+   explain:'Apples: 200p / 5 = 40p each. Oranges: 280p / 8 = 35p each. Oranges are cheaper.'},
+];
+
+var QS=[
+  {q:'A train travels 360 km in 4 hours, then 180 km in 2 hours.\nWhat is the total distance?',
+   opts:['480km','520km','540km','560km'],ans:'540km'},
+  {q:'Five test scores: 72, 68, 85, 91, 64.\nWhat is the range?',
+   opts:['23','25','27','29'],ans:'27'},
+  {q:'Is 86,400 a reasonable estimate for the number of seconds in a day?',
+   opts:['Yes — correct','No — too large','No — too small','Cannot tell'],ans:'Yes — correct'},
+  {q:'A shop sells 3 pens for £1.20.\nHow much do 7 pens cost?',
+   opts:['£2.60','£2.70','£2.80','£2.90'],ans:'£2.80'},
+];
+
+var NIA=[
+  'When a problem feels too big — <strong>break it into smaller parts</strong>. Solve each part. Put the answers back together.',
+  'Every word problem has a question, information, and a method. Find all three before calculating.',
+  'Data tells a story. Your job is to read it carefully and ask the right questions.',
+  'A large estimate becomes simple when you break it into steps. Always ask: does this answer make sense?',
+  'Four puzzles. Break each one into steps.',
+  'Four questions. Think before calculating.',
+];
+var BTNS=['Word problems','Reading data','Estimation','Practice','Quiz'];
+
+function burst(){
+  var c=document.getElementById('cc');c.innerHTML='';
+  var cols=['#4f46e5','#f59e0b','#059669','#dc2626','#0369a1','#7c3aed'];
+  for(var i=0;i<48;i++){
+    var p=document.createElement('div');p.className='cp';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[i%cols.length]+
+      ';width:'+(5+Math.random()*7)+'px;height:'+(5+Math.random()*7)+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+
+      ';animation-delay:'+(Math.random()*.5)+'s;animation-duration:'+(1.5+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){c.innerHTML='';},3000);
+}
+
+// ── STEP 0: Preface ───────────────────────────────────────
+function renderStep0(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Break it down</div>'+
+        '<div style="text-align:center;font-size:56px;margin:12px 0">&#129513;</div>'+
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;justify-content:center">'+
+          '<div style="background:rgba(220,38,38,.08);border:1.5px solid rgba(220,38,38,.2);border-radius:12px;padding:12px 18px;text-align:center">'+
+            '<div style="font-size:28px;margin-bottom:4px">&#129000;</div>'+
+            '<div style="font-size:12px;color:var(--red);font-weight:700">All at once</div>'+
+            '<div style="font-size:12px;color:var(--muted)">Overwhelming</div>'+
+          '</div>'+
+          '<div style="font-size:28px;color:var(--muted)">&#8594;</div>'+
+          '<div style="background:rgba(5,150,105,.08);border:1.5px solid rgba(5,150,105,.2);border-radius:12px;padding:12px 18px;text-align:center">'+
+            '<div style="font-size:28px;margin-bottom:4px">&#9989;</div>'+
+            '<div style="font-size:12px;color:var(--green);font-weight:700">One piece at a time</div>'+
+            '<div style="font-size:12px;color:var(--muted)">Manageable</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px;font-size:13px;color:var(--ink2);font-weight:500;text-align:center;line-height:1.7">'+
+          'Analytical thinking is not a special talent.<br>It is a <strong style="color:var(--accent)">habit</strong> — always ask: what are the smaller parts of this problem?'+
+        '</div></div>',
+      nia:'Every complex problem is just several simple problems stacked together. <strong>Break it down</strong> — and each piece becomes easy.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Three places it appears in maths</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px">'+
+        [
+          {n:'1',icon:'&#128221;',t:'Multi-step word problems',d:'Find what you need, identify what you know, decide the operation — then calculate step by step.',col:'#4f46e5'},
+          {n:'2',icon:'&#128200;',t:'Reading data',d:'Charts and tables contain more information than they first appear. Learn to ask the right questions.',col:'#059669'},
+          {n:'3',icon:'&#129518;',t:'Estimation and reasonableness',d:'Break large numbers into parts. Then ask: does my answer actually make sense?',col:'#b45309'},
+        ].map(function(r){
+          return '<div style="display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--bg);border:1px solid var(--rule);border-radius:12px">'+
+            '<div style="width:36px;height:36px;border-radius:10px;background:'+r.col+';color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+r.icon+'</div>'+
+            '<div><div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px">'+r.t+'</div>'+
+              '<div style="font-size:12px;color:var(--muted);line-height:1.5">'+r.d+'</div></div>'+
+            '</div>';
+        }).join('')+
+        '</div></div>',
+      nia:'Three types of analytical problem — all solved with the same habit: <strong>break it down</strong>, solve each part, check the answer makes sense.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s0b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s0n()">'+(sl<S.length-1?'Next &#8594;':'Word problems &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+  }
+  window.s0n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s0b=function(){if(sl>0){sl--;show();}};
+  show();
+}
+
+// ── STEP 1: Word problems ─────────────────────────────────
+function renderStep1(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Four steps for any word problem</div>'+
+        '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">'+
+        [
+          {n:'1',t:'Read the whole problem first',d:'Do not start calculating immediately. Read it all.'},
+          {n:'2',t:'Find what you are asked',d:'Underline or highlight the question.'},
+          {n:'3',t:'Find what you are given',d:'List the numbers and facts provided.'},
+          {n:'4',t:'Decide the method',d:'What operation connects the given information to the answer?'},
+        ].map(function(r){
+          return '<div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--bg);border:1px solid var(--rule);border-radius:10px">'+
+            '<div style="width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+r.n+'</div>'+
+            '<div><div style="font-size:13px;font-weight:700;color:var(--ink)">'+r.t+'</div>'+
+              '<div style="font-size:12px;color:var(--muted)">'+r.d+'</div></div>'+
+            '</div>';
+        }).join('')+
+        '</div>'+
+        '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:12px;font-size:13px;color:var(--ink2)">'+
+          '&#128221; <strong style="color:var(--ink)">Example problem:</strong> A shop sells apples for 30p each and bananas for 20p each. Tom buys 4 apples and 3 bananas. How much does he spend?'+
+        '</div></div>',
+      nia:'Four steps — read, find the question, find the information, decide the method. <strong>Never skip step 1.</strong> Reading the whole problem first prevents most mistakes.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Solving step by step</div>'+
+        '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:12px;margin-bottom:12px;font-size:13px;color:var(--ink2)">'+
+          'Apples: 30p each. Bananas: 20p each. Tom buys 4 apples and 3 bananas. Total?'+
+        '</div>'+
+        '<div style="display:flex;flex-direction:column;gap:6px">'+
+          '<div class="s-row"><div class="s-num">1</div><div>Cost of apples: 4 &times; 30p = <strong style="color:var(--accent)">120p</strong></div></div>'+
+          '<div class="s-row"><div class="s-num">2</div><div>Cost of bananas: 3 &times; 20p = <strong style="color:var(--accent)">60p</strong></div></div>'+
+          '<div class="s-row"><div class="s-num">3</div><div>Total: 120p + 60p = <strong style="color:var(--accent)">180p = &pound;1.80</strong></div></div>'+
+        '</div>'+
+        '<div style="background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.2);border-radius:12px;padding:12px;margin-top:12px;font-size:13px;color:var(--ink2)">'+
+          '&#128161; Three separate calculations, each simple on its own. The complexity came from combining them — not from any single step.'+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:10px 12px;margin-top:8px;font-size:13px;color:var(--ink2)">'+
+          '<strong>Reasonableness check:</strong> Tom spent &pound;1.80 on fruit. Is that reasonable? Yes — 4 apples and 3 bananas for under &pound;2 makes sense. &#10003;'+
+        '</div></div>',
+      nia:'Three simple steps — each one easy. The key is <strong>not mixing them up</strong>. Finish one calculation before starting the next.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s1b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s1n()">'+(sl<S.length-1?'Next &#8594;':'Reading data &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s1n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s1b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 2: Reading data ──────────────────────────────────
+function renderStep2(){
+  var sl=0;
+  var barData=[
+    {n:'Ali',v:8,col:'#4f46e5'},{n:'Ben',v:6,col:'#0369a1'},
+    {n:'Cal',v:9,col:'#059669'},{n:'Dan',v:7,col:'#b45309'},{n:'Eva',v:5,col:'#7c3aed'},
+  ];
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Reading a bar chart — three questions</div>'+
+        barChartHTML(barData,10)+
+        '<div style="display:flex;flex-direction:column;gap:6px">'+
+          '<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg);border:1px solid var(--rule);border-radius:10px">'+
+            '<div style="width:22px;height:22px;border-radius:50%;background:#059669;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">Q</div>'+
+            '<div style="font-size:13px;color:var(--ink2)">Who scored highest? &rarr; <strong style="color:var(--accent)">Cal (9)</strong></div>'+
+          '</div>'+
+          '<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg);border:1px solid var(--rule);border-radius:10px">'+
+            '<div style="width:22px;height:22px;border-radius:50%;background:#0369a1;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">Q</div>'+
+            '<div style="font-size:13px;color:var(--ink2)">Range? &rarr; highest - lowest = 9 - 5 = <strong style="color:var(--accent)">4</strong></div>'+
+          '</div>'+
+          '<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg);border:1px solid var(--rule);border-radius:10px">'+
+            '<div style="width:22px;height:22px;border-radius:50%;background:#7c3aed;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">Q</div>'+
+            '<div style="font-size:13px;color:var(--ink2)">Mean? &rarr; (8+6+9+7+5)/5 = 35/5 = <strong style="color:var(--accent)">7</strong></div>'+
+          '</div>'+
+        '</div></div>',
+      nia:'One chart — three different questions. Each requires a different type of analysis. <strong>Highest</strong> means find the tallest bar. <strong>Range</strong> means highest minus lowest. <strong>Mean</strong> means add all and divide.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Spotting patterns in data</div>'+
+        '<div style="overflow-x:auto;margin-bottom:12px">'+
+          '<table style="width:100%;border-collapse:collapse;font-size:13px">'+
+            '<tr style="background:var(--accent);color:#fff">'+
+              '<th style="padding:8px 12px;text-align:left">Month</th>'+
+              '<th style="padding:8px 12px;text-align:center">Year 1 sales</th>'+
+              '<th style="padding:8px 12px;text-align:center">Year 2 sales</th>'+
+              '<th style="padding:8px 12px;text-align:center">Change</th>'+
+            '</tr>'+
+            [['Jan',120,145,'+25'],['Feb',98,102,'+4'],['Mar',134,119,'-15'],['Apr',150,178,'+28']].map(function(r,i){
+              return '<tr style="'+(i%2===0?'':'background:rgba(79,70,229,.03)')+'">'+
+                '<td style="padding:8px 12px;font-weight:600">'+r[0]+'</td>'+
+                '<td style="padding:8px 12px;text-align:center">'+r[1]+'</td>'+
+                '<td style="padding:8px 12px;text-align:center">'+r[2]+'</td>'+
+                '<td style="padding:8px 12px;text-align:center;font-weight:700;color:'+(r[3].startsWith('-')?'var(--red)':'var(--green)')+'">'+r[3]+'</td>'+
+                '</tr>';
+            }).join('')+
+          '</table>'+
+        '</div>'+
+        '<div style="display:flex;flex-direction:column;gap:6px">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:2px">Questions to ask:</div>'+
+          ['Which month had the biggest increase? April (+28)',
+           'Which month had a decrease? March (-15)',
+           'Overall trend: mostly increasing (3 out of 4 months up)'].map(function(q){
+            return '<div style="font-size:13px;color:var(--ink2);padding:6px 10px;background:var(--bg);border:1px solid var(--rule);border-radius:8px">&#8226; '+q+'</div>';
+          }).join('')+
+        '</div></div>',
+      nia:'Look for <strong>increases</strong>, <strong>decreases</strong>, the biggest and smallest values, and the overall trend. Tables contain more information than they first appear.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s2b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s2n()">'+(sl<S.length-1?'Next &#8594;':'Estimation &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s2n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s2b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 3: Estimation ────────────────────────────────────
+function renderStep3(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Breaking a large estimate into steps</div>'+
+        '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:12px;margin-bottom:12px;text-align:center;font-family:DM Serif Display,serif;font-size:clamp(15px,3.5vw,19px);color:var(--ink)">'+
+          'How many minutes are in a year?'+
+        '</div>'+
+        '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">'+
+          '<div class="s-row"><div class="s-num">1</div><div>60 minutes &times; 24 hours = <strong style="color:var(--accent)">1,440 minutes per day</strong></div></div>'+
+          '<div class="s-row"><div class="s-num">2</div><div>1,440 &times; 365 days = <strong style="color:var(--accent)">525,600 minutes per year</strong></div></div>'+
+          '<div class="s-row"><div class="s-num">3</div><div>Reasonableness check: about half a million minutes. Does that feel right? Yes. &#10003;</div></div>'+
+        '</div>'+
+        '<div style="background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.2);border-radius:12px;padding:12px;font-size:13px;color:var(--ink2)">'+
+          'Each individual step was simple. The final answer is large but correct — and the reasonableness check confirms it.'+
+        '</div></div>',
+      nia:'No large estimate is scary if you <strong>break it into steps</strong>. Each step is simple arithmetic. The complexity comes from the chain — not from any single calculation.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Checking reasonableness</div>'+
+        '<div style="font-size:13px;color:var(--ink2);margin-bottom:10px;font-weight:600">After every calculation — ask: does this make sense?</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px">'+
+        [
+          {q:'Length of a pencil = 5,000 km',ok:false,why:'A pencil is about 19 cm. 5,000 km is the distance from London to New York.'},
+          {q:'A child runs 100m in 12 seconds',ok:true,why:'World record is about 9.5 seconds. 12 seconds is fast but reasonable for a child.'},
+          {q:'A bag of 6 oranges costs £0.10',ok:false,why:'6 oranges for 10p is far too cheap — each orange would cost under 2p.'},
+        ].map(function(r){
+          return '<div style="background:'+(r.ok?'rgba(5,150,105,.06)':'rgba(220,38,38,.05)')+';border:1.5px solid '+(r.ok?'rgba(5,150,105,.2)':'rgba(220,38,38,.2)')+';border-radius:12px;padding:12px">'+
+            '<div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px">'+(r.ok?'&#10003;':'&#10005;')+' '+r.q+'</div>'+
+            '<div style="font-size:12px;color:var(--muted)">'+r.why+'</div>'+
+            '</div>';
+        }).join('')+
+        '</div></div>',
+      nia:'<strong>Always sanity-check your answer.</strong> If it seems wildly large or small, go back and check. Real-world knowledge is your best reasonableness test.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s3b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s3n()">'+(sl<S.length-1?'Next &#8594;':'Practice &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s3n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s3b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 4: Puzzles ───────────────────────────────────────
+function renderStep4(){puzzleLevel=0;puzzleScore=0;puzzleResults=[];levelAnswered=false;showPuzzle();}
+
+function showPuzzle(){
+  if(puzzleLevel>=PUZZLES.length){showPuzzleDone();return;}
+  var pz=PUZZLES[puzzleLevel];levelAnswered=false;
+  var pips='';for(var i=0;i<PUZZLES.length;i++)pips+='<div class="prog-pip'+(i<puzzleLevel?' dp':i===puzzleLevel?' cp':'')+'" ></div>';
+  var qDisplay=pz.q.replace(/\n/g,'<br>');
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="prog-row"><span class="prog-label">Puzzle '+(puzzleLevel+1)+' of '+PUZZLES.length+'</span><div class="prog-pips">'+pips+'</div></div>'+
+    '<div class="puz-q">'+qDisplay+'</div>'+
+    renderOpts(pz.opts,'popt','pickPuz',null)+
+    '<div class="res" id="pzRes"></div></div>';
+  document.getElementById('nia').innerHTML='Break it into steps. Pick your answer.';
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){
+    if(puzzleLevel>0){puzzleLevel--;if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}levelAnswered=false;showPuzzle();}
+    else{goStep(-1);}
+  };}
+}
+
+function pickPuz(idx){
+  if(levelAnswered)return;levelAnswered=true;
+  var pz=PUZZLES[puzzleLevel];
+  var chosen=document.getElementById('popt'+idx)?document.getElementById('popt'+idx).getAttribute('data-val'):'';
+  var ok=(chosen===pz.ans);
+  puzzleResults[puzzleLevel]=ok;
+  markOpts('popt',chosen,pz.ans);
+  var res=document.getElementById('pzRes');
+  if(ok){
+    puzzleScore++;
+    if(res){res.textContent='Correct. '+pz.explain;res.className='res ok';}
+    document.getElementById('nia').innerHTML='Correct. '+pz.explain;
+    puzzleLevel++;
+    var isLast=(puzzleLevel>=PUZZLES.length);
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showPuzzleDone():showPuzzle();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    if(res){res.textContent='Not quite. '+pz.explain;res.className='res no';}
+    document.getElementById('nia').innerHTML=pz.explain;
+    puzzleLevel++;
+    var isLast2=(puzzleLevel>=PUZZLES.length);
+    // Wrong answer — manual only, no auto-advance
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast2?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast2?showPuzzleDone():showPuzzle();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showPuzzleDone(){
+  var perfect=(puzzleScore>=PUZZLES.length);
+  if(perfect)burst();
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){
+    puzzleLevel=PUZZLES.length-1;
+    if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}
+    levelAnswered=false;showPuzzle();
+  };}
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div style="font-size:48px;margin-bottom:14px">'+(perfect?'&#127919;':'&#128077;')+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'All four puzzles correct!':'Practice complete \u2014 '+puzzleScore+' of '+PUZZLES.length+' correct.')+
+    '</div>'+
+    (perfect?'':'<p style="font-size:14px;color:var(--muted)">Tap &#8592; to retry any puzzle.</p>')+
+    '</div>';
+  document.getElementById('nia').innerHTML=perfect?'All four solved correctly. Ready for the quiz.':'Good effort. Use &#8592; to review before the quiz.';
+}
+
+// ── STEP 5: Quiz ──────────────────────────────────────────
+function renderStep5(){qIdx=0;qScore=0;qHistory=[];document.getElementById('nia').innerHTML=NIA[5];showQ();}
+
+function showQ(){
+  if(qIdx>=QS.length){showQEnd();return;}
+  var q=QS[qIdx];
+  var nia=document.getElementById('nia');if(nia)nia.innerHTML='Pick your answer.';
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  var qDisplay=q.q.replace(/\n/g,'<br>');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div class="puz-q">'+qDisplay+'</div>'+
+    renderOpts(q.opts,'qopt','pickQ',null)+
+    '<div class="res" id="qRes"></div></div>';
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){if(qIdx>0&&qHistory.length>0){showQPrev(qIdx-1);}else{goStep(-1);};};}
+}
+
+function showQPrev(idx){
+  if(idx<0||!qHistory[idx])return;
+  var q=QS[idx];var h=qHistory[idx];
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<h.score?' on':'')+'">&#11088;</div>';
+  var disMap={};
+  q.opts.forEach(function(o,i){
+    if(o===h.chosen&&h.wasCorrect)disMap[i]='correct';
+    else if(o===h.chosen&&!h.wasCorrect)disMap[i]='wrong';
+    else if(o===h.correct&&!h.wasCorrect)disMap[i]='correct';
+    else disMap[i]='';
+  });
+  var qDisplay=q.q.replace(/\n/g,'<br>');
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:8px">Question '+(idx+1)+' \u2014 reviewed</div>'+
+    '<div class="puz-q">'+qDisplay+'</div>'+
+    renderOpts(q.opts,'qopt',null,disMap)+
+    '<div style="display:flex;gap:8px;justify-content:center;margin-top:14px">'+
+    '<button onclick="showQPrev('+(idx-1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);opacity:'+(idx===0?.3:1)+'" '+(idx===0?'disabled':'')+'>&#8592; Prev</button>'+
+    (idx<qIdx-1?'<button onclick="showQPrev('+(idx+1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted)">Next &#8594;</button>':
+     '<button onclick="showQ()" style="padding:8px 16px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:700;cursor:pointer">Continue quiz &#8594;</button>')+
+    '</div></div>';
+  document.getElementById('nia').innerHTML=(h.wasCorrect?'Correct! ':'Answer was <strong>'+h.correct+'</strong>. ')+'Reviewing question '+(idx+1)+'.';
+}
+
+function pickQ(idx){
+  var q=QS[qIdx];
+  [0,1,2,3].forEach(function(i){var b=document.getElementById('qopt'+i);if(b){b.onclick=null;b.style.cursor='default';}});
+  var chosen=document.getElementById('qopt'+idx)?document.getElementById('qopt'+idx).getAttribute('data-val'):'';
+  var ok=(chosen===q.ans);
+  qHistory[qIdx]={chosen:chosen,correct:q.ans,wasCorrect:ok,score:qScore+(ok?1:0)};
+  markOpts('qopt',chosen,q.ans);
+  var res=document.getElementById('qRes');
+  qIdx++;
+  var isLast=(qIdx>=QS.length);
+  if(ok){
+    qScore++;
+    if(res){res.textContent='Correct.';res.className='res ok';}
+    document.getElementById('nia').innerHTML='Correct.';
+    // Auto-advance on correct
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showQEnd():showQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    if(res){res.textContent='Answer: '+q.ans;res.className='res no';}
+    document.getElementById('nia').innerHTML='Answer: <strong>'+q.ans+'</strong>. Take a moment to understand why.';
+    // Manual only on wrong — no auto-advance
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showQEnd():showQ();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQEnd(){
+  var perfect=(qScore===QS.length);if(perfect)burst();
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div class="stars" style="margin-bottom:20px">'+stars+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'Perfect.':qScore>=3?'Almost perfect.':qScore>=2?'Good work.':'Keep going.')+
+    '</div>'+
+    '<div style="font-size:14px;color:var(--muted);margin-bottom:20px">'+qScore+' of '+QS.length+' correct</div>'+
+    '<button onclick="goStep(-5)" style="padding:10px 28px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)">Start again</button>'+
+    '</div>';
+  document.getElementById('nia').innerHTML=(perfect?'<strong>Perfect.</strong> ':'')+'Break it down. Read data carefully. Always check: does the answer make sense?';
+}
+
+// ── Summary ───────────────────────────────────────────────
+function renderSummary(){
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="panel-title">Three analytical tools</div>'+
+    '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">'+
+    [
+      {icon:'&#128221;',t:'Breaking down word problems',col:'#4f46e5',
+       r:'Read all. Find the question. Find the information. Decide the method. Solve step by step.',
+       e:'4 apples at 30p + 3 bananas at 20p = £1.80'},
+      {icon:'&#128200;',t:'Reading data',col:'#059669',
+       r:'Ask: highest, lowest, range, mean, trend. Each question needs a different analysis.',
+       e:'Range = highest - lowest. Mean = sum / count.'},
+      {icon:'&#129518;',t:'Estimation and reasonableness',col:'#b45309',
+       r:'Break large estimates into simple steps. Always sanity-check the final answer.',
+       e:'Minutes in a year: 60 x 24 x 365 = 525,600'},
+    ].map(function(r){
+      return '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px">'+
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">'+
+          '<div style="width:30px;height:30px;border-radius:8px;background:'+r.col+';color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+r.icon+'</div>'+
+          '<div style="font-size:13px;font-weight:700;color:var(--ink)">'+r.t+'</div>'+
+        '</div>'+
+        '<div style="font-size:12px;color:var(--ink2);padding-left:40px;margin-bottom:3px">'+r.r+'</div>'+
+        '<div style="font-size:12px;color:var(--muted);padding-left:40px;font-style:italic">e.g. '+r.e+'</div>'+
+        '</div>';
+    }).join('')+
+    '</div>'+
+    '<div style="padding-top:12px;border-top:1px solid var(--rule);font-size:13px;color:var(--ink2)">'+
+      'Next: <strong style="color:var(--ink)">Deductive Reasoning</strong>'+
+    '</div></div>';
+}
+
+var RS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4,renderStep5,renderSummary];
+
+function goStep(dir){
+  step=Math.max(0,Math.min(6,step+dir));
+  var dotStep=Math.min(step,4);
+  for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<dotStep?' done':i===dotStep?' active':'');}
+  document.getElementById('nia').innerHTML=NIA[Math.min(step,NIA.length-1)];
+  document.getElementById('btnBack').disabled=(step===0);
+  var bl=['Word problems','Reading data','Estimation','Practice','Quiz','Summary','Start again'];
+  document.getElementById('btnNext').textContent=(bl[step]||'Next')+' \u2192';
+  if(step>=6){document.getElementById('btnNext').onclick=function(){goStep(-6);};}
+  else{document.getElementById('btnNext').onclick=function(){goStep(1);};}
+  if(step!==4&&step!==5){
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=(step===0);bb.onclick=function(){goStep(-1);};}
+  }
+  RS[Math.min(step,RS.length-1)]();
+}
+goStep(0);
+</script>
+</body>
+</html>

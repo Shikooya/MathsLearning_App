@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya — Coordinates (Ages 9–12)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
+  :root{
+    --ink:#0f1117;--ink2:#3a3d4a;--muted:#8b8fa8;
+    --bg:#f7f6f2;--card:#ffffff;
+    --accent:#4f46e5;--accent2:#f59e0b;
+    --green:#059669;--red:#dc2626;
+    --q1:#dcfce7;--q2:#dbeafe;--q3:#fce7f3;--q4:#fef9c3;
+    --rule:rgba(0,0,0,.07);--sh:0 2px 16px rgba(0,0,0,.07);
+    --r:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:20px;color:var(--ink);}
+  .shell{width:100%;max-width:680px;}
+  .top{text-align:center;margin-bottom:20px;}
+  .top .badge{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);border:1.5px solid var(--rule);border-radius:20px;
+    padding:4px 14px;display:inline-block;margin-bottom:10px;}
+  .top h1{font-family:'DM Serif Display',serif;font-size:clamp(24px,5vw,34px);color:var(--ink);line-height:1.15;}
+  .top h1 em{font-style:italic;color:var(--accent);}
+  .top p{font-size:13px;color:var(--muted);margin-top:6px;}
+  .stepper{display:flex;gap:6px;justify-content:center;margin-bottom:20px;}
+  .step-dot{width:6px;height:6px;border-radius:50%;background:var(--rule);border:1.5px solid #ccc;transition:all .3s;}
+  .step-dot.active{background:var(--accent2);border-color:var(--accent2);transform:scale(1.6);}
+  .step-dot.done{background:var(--accent);border-color:var(--accent);}
+  .nia{display:flex;gap:12px;align-items:flex-start;background:var(--card);
+    border:1.5px solid var(--rule);border-radius:var(--r);padding:14px 16px;
+    margin-bottom:20px;box-shadow:var(--sh);min-height:64px;}
+  .nia-dot{width:36px;height:36px;border-radius:50%;flex-shrink:0;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:18px;
+    animation:bob 3s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  .nia-text{font-size:clamp(13px,2.8vw,15px);line-height:1.65;color:var(--ink2);flex:1;}
+  .nia-text strong{color:var(--accent);font-weight:700;}
+  .nia-text em{color:var(--accent2);font-style:normal;font-weight:700;}
+  .panel{background:var(--card);border:1.5px solid var(--rule);border-radius:var(--r);
+    padding:22px;margin-bottom:16px;box-shadow:var(--sh);}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:14px;}
+  .pf-row{display:flex;gap:12px;align-items:flex-start;padding:10px 0;
+    border-bottom:1px solid var(--rule);font-size:clamp(13px,2.5vw,14px);line-height:1.7;color:var(--ink2);}
+  .pf-row:last-child{border-bottom:none;padding-bottom:0;}
+  .pf-row:first-child{padding-top:0;}
+  .pf-icon{font-size:18px;flex-shrink:0;margin-top:2px;}
+  /* Grid canvas */
+  .grid-wrap{display:flex;justify-content:center;margin:10px 0;touch-action:none;}
+  /* Coord display */
+  .coord-display{font-family:'DM Serif Display',serif;font-size:clamp(22px,5vw,32px);
+    text-align:center;color:var(--ink);margin:8px 0;line-height:1;}
+  .coord-display .cx{color:var(--accent);}
+  .coord-display .cy{color:var(--red);}
+  /* Quiz */
+  .quiz-q{font-family:'DM Serif Display',serif;font-size:clamp(16px,4vw,22px);
+    text-align:center;line-height:1.4;margin-bottom:16px;color:var(--ink);}
+  .quiz-opts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+  .quiz-opt{min-width:80px;min-height:52px;border-radius:12px;border:1.5px solid var(--rule);
+    background:var(--bg);font-family:'DM Sans',sans-serif;font-size:clamp(13px,3vw,15px);
+    font-weight:600;cursor:pointer;color:var(--ink);padding:8px 12px;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);}
+  .quiz-opt:hover{border-color:var(--accent);transform:translateY(-1px);}
+  .quiz-opt.correct{background:rgba(5,150,105,.1);border-color:var(--green);color:var(--green);animation:pop .4s ease;}
+  .quiz-opt.wrong{background:rgba(220,38,38,.06);border-color:var(--red);color:var(--red);animation:shake .3s ease;}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .quiz-result{text-align:center;margin-top:10px;font-size:14px;font-weight:700;min-height:20px;}
+  .quiz-result.correct{color:var(--green);}
+  .quiz-result.wrong{color:var(--red);}
+  .stars-row{display:flex;justify-content:center;gap:6px;margin-bottom:14px;}
+  .star{font-size:22px;opacity:.2;transition:all .3s;}
+  .star.earned{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+  .prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .prog-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .prog-pips{display:flex;gap:5px;}
+  .prog-pip{width:10px;height:10px;border-radius:50%;background:var(--rule);border:1.5px solid #ccc;transition:all .3s;}
+  .prog-pip.dp{background:var(--accent);border-color:var(--accent);}
+  .prog-pip.cp{background:var(--accent2);border-color:var(--accent2);transform:scale(1.3);}
+  .nav-row{display:flex;gap:10px;}
+  .btn{min-height:52px;padding:0 22px;border-radius:14px;border:none;
+    font-family:'DM Sans',sans-serif;font-size:clamp(14px,3vw,16px);font-weight:700;
+    cursor:pointer;transition:all .2s;}
+  .btn:active{transform:scale(.97);}
+  .btn-back{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);min-width:52px;}
+  .btn-back:hover{border-color:#aaa;color:var(--ink);}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-next{background:var(--accent);color:#fff;flex:1;box-shadow:0 4px 14px rgba(3,105,161,.25);}
+  .btn-next:hover{background:#075985;transform:translateY(-1px);}
+  .cc{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .cp{position:absolute;border-radius:2px;animation:cf 2s ease-in forwards;}
+  @keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+  @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="shell">
+  <div class="top">
+    <div class="badge">Ages 9–12</div>
+    <h1>The <em>Address</em> of Every Point — Coordinates</h1>
+    <p>How to describe any location with two numbers</p>
+  </div>
+  <div class="stepper">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia">
+    <div class="nia-dot">🌟</div>
+    <div class="nia-text" id="nia">
+      Every point on a grid has an <strong>address</strong> — two numbers that pinpoint its exact location. The first number says how far <em>across</em>, the second says how far <strong>up or down</strong>. Together they describe any location precisely.
+    </div>
+  </div>
+  <div id="mainArea"></div>
+  <div class="nav-row">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>←</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let's explore →</button>
+  </div>
+</div>
+<div class="cc" id="confetti"></div>
+<script>
+var currentStep=0,puzzleLevel=0,quizIdx=0,quizCorrect=0,levelAnswered=false;
+
+// ── Grid drawing ───────────────────────────────────────────
+var GS=36; // grid step size in px
+var GCOLS=11; var GROWS=11; // -5 to +5
+var W=GS*GCOLS+40; var H=GS*GROWS+40;
+var OX=W/2; var OY=H/2; // origin pixel position
+
+function gx(x){ return OX + x*GS; }
+function gy(y){ return OY - y*GS; }
+
+function drawGrid(points, highlightPt, showQuadrants, animatePt){
+  var s='<svg id="coordSVG" viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block;max-width:'+(W+10)+'px;margin:0 auto;cursor:crosshair" xmlns="http://www.w3.org/2000/svg">';
+
+  // Quadrant fills
+  if(showQuadrants){
+    s+='<rect x="'+gx(0)+'" y="'+gy(5)+'" width="'+gx(5)-gx(0)+'" height="'+gy(0)-gy(5)+'" fill="'+('rgba(5,150,105,.07)')+'"/>';
+    s+='<rect x="'+gx(-5)+'" y="'+gy(5)+'" width="'+gx(0)-gx(-5)+'" height="'+gy(0)-gy(5)+'" fill="rgba(59,130,246,.07)"/>';
+    s+='<rect x="'+gx(-5)+'" y="'+gy(0)+'" width="'+gx(0)-gx(-5)+'" height="'+gy(-5)-gy(0)+'" fill="rgba(236,72,153,.07)"/>';
+    s+='<rect x="'+gx(0)+'" y="'+gy(0)+'" width="'+gx(5)-gx(0)+'" height="'+gy(-5)-gy(0)+'" fill="rgba(234,179,8,.07)"/>';
+    // Quadrant labels
+    s+='<text x="'+(gx(2.5))+'" y="'+(gy(3))+'" text-anchor="middle" font-size="11" fill="rgba(5,150,105,.5)" font-family="DM Sans,sans-serif" font-weight="700">Q1 (+,+)</text>';
+    s+='<text x="'+(gx(-2.5))+'" y="'+(gy(3))+'" text-anchor="middle" font-size="11" fill="rgba(59,130,246,.5)" font-family="DM Sans,sans-serif" font-weight="700">Q2 (-,+)</text>';
+    s+='<text x="'+(gx(-2.5))+'" y="'+(gy(-3))+'" text-anchor="middle" font-size="11" fill="rgba(236,72,153,.5)" font-family="DM Sans,sans-serif" font-weight="700">Q3 (-,-)</text>';
+    s+='<text x="'+(gx(2.5))+'" y="'+(gy(-3))+'" text-anchor="middle" font-size="11" fill="rgba(234,179,8,.6)" font-family="DM Sans,sans-serif" font-weight="700">Q4 (+,-)</text>';
+  }
+
+  // Grid lines
+  for(var gv=-5;gv<=5;gv++){
+    s+='<line x1="'+gx(-5)+'" y1="'+gy(gv)+'" x2="'+gx(5)+'" y2="'+gy(gv)+'" stroke="'+(gv===0?'#374151':'#e5e7eb')+'" stroke-width="'+(gv===0?2:1)+'"/>';
+    s+='<line x1="'+gx(gv)+'" y1="'+gy(-5)+'" x2="'+gx(gv)+'" y2="'+gy(5)+'" stroke="'+(gv===0?'#374151':'#e5e7eb')+'" stroke-width="'+(gv===0?2:1)+'"/>';
+  }
+
+  // Axis arrows
+  s+='<polygon points="'+gx(5)+','+(OY-6)+' '+gx(5)+','+(OY+6)+' '+(gx(5)+10)+','+OY+'" fill="#374151"/>';
+  s+='<polygon points="'+(OX-6)+','+gy(5)+' '+(OX+6)+','+gy(5)+' '+OX+','+(gy(5)-10)+'" fill="#374151"/>';
+
+  // Axis labels
+  s+='<text x="'+(gx(5)+16)+'" y="'+(OY+4)+'" font-size="13" font-family="DM Serif Display,serif" font-style="italic" fill="#374151">x</text>';
+  s+='<text x="'+(OX+6)+'" y="'+(gy(5)-14)+'" font-size="13" font-family="DM Serif Display,serif" font-style="italic" fill="#374151">y</text>';
+
+  // Tick labels
+  for(var tv=-5;tv<=5;tv++){
+    if(tv!==0){
+      s+='<text x="'+gx(tv)+'" y="'+(OY+16)+'" text-anchor="middle" font-size="9" fill="#9ca3af" font-family="DM Sans,sans-serif">'+tv+'</text>';
+      s+='<text x="'+(OX-10)+'" y="'+(gy(tv)+4)+'" text-anchor="end" font-size="9" fill="#9ca3af" font-family="DM Sans,sans-serif">'+tv+'</text>';
+    }
+  }
+  s+='<text x="'+(OX-10)+'" y="'+(OY+16)+'" text-anchor="end" font-size="9" fill="#9ca3af" font-family="DM Sans,sans-serif">0</text>';
+
+  // Named points
+  if(points){
+    points.forEach(function(pt){
+      var px=gx(pt.x); var py=gy(pt.y);
+      s+='<circle cx="'+px+'" cy="'+py+'" r="6" fill="'+(pt.col||'#0369a1')+'" stroke="#fff" stroke-width="2"/>';
+      if(pt.label){
+        var lx=px+(pt.lx||10); var ly=py+(pt.ly||-10);
+        s+='<text x="'+lx+'" y="'+ly+'" font-size="11" font-family="DM Sans,sans-serif" font-weight="700" fill="'+(pt.col||'#0369a1')+'">'+pt.label+'</text>';
+      }
+    });
+  }
+
+  // Highlighted point with crosshair lines
+  if(highlightPt){
+    var hx=gx(highlightPt.x); var hy=gy(highlightPt.y);
+    var hc=highlightPt.col||'#0369a1';
+    // Dashed guide lines to axes
+    s+='<line x1="'+hx+'" y1="'+hy+'" x2="'+hx+'" y2="'+OY+'" stroke="'+hc+'" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>';
+    s+='<line x1="'+hx+'" y1="'+hy+'" x2="'+OX+'" y2="'+hy+'" stroke="'+hc+'" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>';
+    // Axis intercepts
+    s+='<circle cx="'+hx+'" cy="'+OY+'" r="4" fill="'+hc+'" opacity="0.5"/>';
+    s+='<circle cx="'+OX+'" cy="'+hy+'" r="4" fill="'+hc+'" opacity="0.5"/>';
+    // Main point
+    s+='<circle cx="'+hx+'" cy="'+hy+'" r="8" fill="'+hc+'" stroke="#fff" stroke-width="2.5"'+(animatePt?' style="animation:pop .4s ease"':'')+'/>';
+    // Coordinate label
+    var labelX=hx+12; var labelY=hy-12;
+    if(highlightPt.x>3) labelX=hx-60;
+    if(highlightPt.y<-3) labelY=hy+22;
+    s+='<rect x="'+(labelX-4)+'" y="'+(labelY-13)+'" width="56" height="18" rx="5" fill="white" opacity="0.9"/>';
+    s+='<text x="'+labelX+'" y="'+labelY+'" font-size="12" font-family="DM Serif Display,serif" fill="'+hc+'">('+highlightPt.x+', '+highlightPt.y+')</text>';
+  }
+
+  s+='</svg>';
+  return s;
+}
+
+// ── Preface slides ─────────────────────────────────────────
+function renderStep0(){
+  var slide=0;
+  var SLIDES=[
+    {
+      render:function(){
+        return '<div style="animation:fi .35s ease">'+
+          '<div class="panel-title">Coordinates describe any location with two numbers</div>'+
+          '<div style="margin-bottom:14px">'+drawGrid(
+            [{x:3,y:2,col:'#0369a1',label:'A (3, 2)',lx:10,ly:-10},
+             {x:-2,y:4,col:'#059669',label:'B (-2, 4)',lx:8,ly:-10},
+             {x:-4,y:-1,col:'#dc2626',label:'C (-4,-1)',lx:8,ly:-10},
+             {x:2,y:-3,col:'#d97706',label:'D (2,-3)',lx:8,ly:-10}],
+            null, false, false)+'</div>'+
+          '<div style="font-size:13px;color:var(--ink2);line-height:1.8;font-weight:500">'+
+            'Each point has an <strong style="color:var(--ink)">address</strong> — written as (x, y).<br>'+
+            '<strong style="color:var(--accent)">x</strong> = how far across (horizontal). '+
+            '<strong style="color:var(--red)">y</strong> = how far up or down (vertical).<br>'+
+            'Always read <em>across first, then up</em>.'+
+          '</div>'+
+          '</div>';
+      },
+      nia:'Each point on a grid has an <strong>address</strong> — written (x, y). Read <em>across first</em>, then <em>up or down</em>. Just like reading a map — column first, then row.'
+    },
+    {
+      render:function(){
+        return '<div style="animation:fi .35s ease">'+
+          '<div class="panel-title">The two axes</div>'+
+          '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">'+
+            '<div style="flex:1;min-width:130px;background:rgba(3,105,161,.06);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:14px;text-align:center">'+
+              '<div style="font-family:DM Serif Display,serif;font-size:32px;color:var(--accent);font-style:italic;margin-bottom:6px">x</div>'+
+              '<div style="font-size:13px;color:var(--ink2);font-weight:600;line-height:1.6">Horizontal axis.<br>Positive → right.<br>Negative ← left.</div>'+
+            '</div>'+
+            '<div style="flex:1;min-width:130px;background:rgba(220,38,38,.06);border:1.5px solid rgba(220,38,38,.2);border-radius:12px;padding:14px;text-align:center">'+
+              '<div style="font-family:DM Serif Display,serif;font-size:32px;color:var(--red);font-style:italic;margin-bottom:6px">y</div>'+
+              '<div style="font-size:13px;color:var(--ink2);font-weight:600;line-height:1.6">Vertical axis.<br>Positive ↑ up.<br>Negative ↓ down.</div>'+
+            '</div>'+
+          '</div>'+
+          '<div style="background:var(--bg);border-radius:12px;padding:12px;font-size:13px;color:var(--ink2);font-weight:600;line-height:1.8">'+
+            '📍 To plot (3, 2): start at origin (0,0). Move <strong style="color:var(--accent)">3 right</strong>. Then <strong style="color:var(--red)">2 up</strong>. Mark the point.<br>'+
+            '📍 To plot (-2, -4): move <strong style="color:var(--accent)">2 left</strong>. Then <strong style="color:var(--red)">4 down</strong>.'+
+          '</div>'+
+          '</div>';
+      },
+      nia:'The <strong style="color:var(--accent)">x-axis</strong> runs horizontally — positive right, negative left. The <strong style="color:var(--red)">y-axis</strong> runs vertically — positive up, negative down. They meet at the <em>origin</em> (0, 0).'
+    },
+    {
+      render:function(){
+        return '<div style="animation:fi .35s ease">'+
+          '<div class="panel-title">The four quadrants</div>'+
+          '<div style="margin-bottom:12px">'+drawGrid(null,null,true,false)+'</div>'+
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;font-weight:600">'+
+            '<div style="background:rgba(5,150,105,.1);border-radius:10px;padding:8px 10px;color:#065f46">Q1 (+x, +y) — right and up</div>'+
+            '<div style="background:rgba(59,130,246,.1);border-radius:10px;padding:8px 10px;color:#1e3a8a">Q2 (-x, +y) — left and up</div>'+
+            '<div style="background:rgba(236,72,153,.1);border-radius:10px;padding:8px 10px;color:#831843">Q3 (-x, -y) — left and down</div>'+
+            '<div style="background:rgba(234,179,8,.15);border-radius:10px;padding:8px 10px;color:#713f12">Q4 (+x, -y) — right and down</div>'+
+          '</div>'+
+          '</div>';
+      },
+      nia:'The axes divide the grid into <strong>four quadrants</strong>. Knowing which quadrant a point is in tells you immediately whether x and y are positive or negative — a useful shortcut!'
+    },
+  ];
+
+  function renderSlide(){
+    var s=SLIDES[slide];
+    var sdots='';
+    for(var i=0;i<SLIDES.length;i++)
+      sdots+='<div style="width:7px;height:7px;border-radius:50%;background:'+(i===slide?'var(--accent)':'#ddd')+';transition:all .3s;'+(i===slide?'transform:scale(1.4)':'')+';margin:0 2px"></div>';
+    document.getElementById('mainArea').innerHTML=
+      '<div class="panel">'+s.render()+
+        '<div style="display:flex;gap:6px;justify-content:center;align-items:center;margin-top:16px">'+sdots+'</div>'+
+        '<div style="display:flex;gap:8px;justify-content:center;margin-top:12px">'+
+          '<button onclick="s0Prev()" style="padding:8px 18px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:DM Sans,sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);opacity:'+(slide===0?.3:1)+'" '+(slide===0?'disabled':'')+'>← Back</button>'+
+          '<button onclick="s0Next()" style="padding:8px 22px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer">'+
+            (slide<SLIDES.length-1?'Next →':'Try plotting points →')+
+          '</button>'+
+        '</div>'+
+      '</div>';
+    document.getElementById('nia').innerHTML=s.nia;
+  }
+  window.s0Next=function(){if(slide<SLIDES.length-1){slide++;renderSlide();}else{goStep(1);}};
+  window.s0Prev=function(){if(slide>0){slide--;renderSlide();}};
+  renderSlide();
+}
+
+// ── STEP 1 — Interactive grid ──────────────────────────────
+var clickedPt=null;
+
+function renderStep1(){
+  clickedPt=null;
+  buildInteractive();
+}
+
+function buildInteractive(){
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel">'+
+    '<div class="panel-title">Tap any point on the grid to read its coordinates</div>'+
+    '<div id="gridWrap" class="grid-wrap">'+drawGrid(null,clickedPt,true,false)+'</div>'+
+    '<div class="coord-display" id="coordDisp">'+
+      (clickedPt?'(<span class="cx">'+clickedPt.x+'</span>, <span class="cy">'+clickedPt.y+'</span>)':'Tap a point on the grid')+'</div>'+
+    '<div style="font-size:13px;color:var(--muted);text-align:center;margin-bottom:10px" id="coordHint">'+
+      (clickedPt?quadrantHint(clickedPt.x,clickedPt.y):'')+'</div>'+
+    '</div>'+
+    '<div class="panel">'+
+    '<div class="panel-title">Plot these points</div>'+
+    '<div style="display:flex;flex-direction:column;gap:8px" id="plotChallenges"></div>'+
+    '</div>';
+
+  // Wire click on SVG
+  setTimeout(function(){
+    var svg=document.getElementById('coordSVG');
+    if(svg) svg.addEventListener('click',function(e){
+      var rect=svg.getBoundingClientRect();
+      var scaleX=W/rect.width; var scaleY=H/rect.height;
+      var px=(e.clientX-rect.left)*scaleX;
+      var py=(e.clientY-rect.top)*scaleY;
+      var cx=Math.round((px-OX)/GS);
+      var cy=Math.round(-(py-OY)/GS);
+      if(cx>=-5&&cx<=5&&cy>=-5&&cy<=5){
+        clickedPt={x:cx,y:cy};
+        buildInteractive();
+        document.getElementById('nia').innerHTML=
+          'You tapped <strong>('+cx+', '+cy+')</strong>. '+quadrantHint(cx,cy);
+      }
+    });
+  },100);
+
+  // Plot challenges
+  var challenges=[
+    {pt:{x:3,y:2},label:'Plot (3, 2)'},
+    {pt:{x:-4,y:3},label:'Plot (-4, 3)'},
+    {pt:{x:-2,y:-3},label:'Plot (-2, -3)'},
+    {pt:{x:4,y:-1},label:'Plot (4, -1)'},
+  ];
+  var pc=document.getElementById('plotChallenges');
+  if(pc){
+    challenges.forEach(function(ch){
+      var row=document.createElement('div');
+      row.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg);border:1.5px solid var(--rule);border-radius:10px';
+      var hit=clickedPt&&clickedPt.x===ch.pt.x&&clickedPt.y===ch.pt.y;
+      row.innerHTML=
+        '<div style="font-family:DM Serif Display,serif;font-size:16px;color:var(--ink);flex:1">'+ch.label+'</div>'+
+        '<div style="font-size:20px">'+(hit?'✅':'⭕')+'</div>';
+      pc.appendChild(row);
+    });
+  }
+}
+
+function quadrantHint(x,y){
+  if(x===0&&y===0) return 'The origin — (0, 0).';
+  if(x===0) return 'On the y-axis.';
+  if(y===0) return 'On the x-axis.';
+  if(x>0&&y>0) return 'Quadrant 1 — positive x, positive y.';
+  if(x<0&&y>0) return 'Quadrant 2 — negative x, positive y.';
+  if(x<0&&y<0) return 'Quadrant 3 — negative x, negative y.';
+  return 'Quadrant 4 — positive x, negative y.';
+}
+
+// ── STEP 2 — Puzzles: identify the coordinate ─────────────
+var PUZZLES=[
+  {
+    label:'1 of 4',
+    q:'Which point is at (3, 2)?',
+    points:[
+      {x:3,y:2,col:'#0369a1',label:'A',lx:8,ly:-10},
+      {x:-2,y:3,col:'#059669',label:'B',lx:8,ly:-10},
+      {x:3,y:-2,col:'#dc2626',label:'C',lx:8,ly:-10},
+      {x:2,y:3,col:'#d97706',label:'D',lx:8,ly:-10},
+    ],
+    opts:['A','B','C','D'], answer:'A',
+    explain:'(3, 2) means 3 right, 2 up. That is point A.'
+  },
+  {
+    label:'2 of 4',
+    q:'What are the coordinates of the red point?',
+    points:[{x:-3,y:4,col:'#dc2626',label:'?',lx:8,ly:-10}],
+    opts:['(3, 4)','(-3, -4)','(-3, 4)','(4, -3)'], answer:'(-3, 4)',
+    explain:'3 left and 4 up means x = -3, y = 4. Written (-3, 4).'
+  },
+  {
+    label:'3 of 4',
+    q:'In which quadrant does the point (-2, -4) lie?',
+    points:[{x:-2,y:-4,col:'#8b5cf6',label:'?',lx:8,ly:-10}],
+    opts:['Q1','Q2','Q3','Q4'], answer:'Q3',
+    explain:'(-2, -4) has negative x and negative y — that is Quadrant 3.'
+  },
+  {
+    label:'4 of 4',
+    q:'A point moves from (1, 3) to (1, -2). How far did it move?',
+    points:[
+      {x:1,y:3,col:'#059669',label:'start',lx:6,ly:-10},
+      {x:1,y:-2,col:'#dc2626',label:'end',lx:6,ly:18},
+    ],
+    opts:['1','3','5','8'], answer:'5',
+    explain:'From y=3 to y=-2 is a distance of 3+2 = 5 units downward.'
+  },
+];
+
+var QUIZ_QS=[
+  {q:'What does the x-coordinate tell you?',
+   opts:['How far up or down','How far across','The quadrant number','The distance from origin'],
+   answer:'How far across'},
+  {q:'Which quadrant has negative x and positive y?',
+   opts:['Q1','Q2','Q3','Q4'],answer:'Q2'},
+  {q:'What are the coordinates of the origin?',
+   opts:['(1, 1)','(0, 0)','(-1, -1)','(1, 0)'],answer:'(0, 0)'},
+  {q:'A point is at (-3, 5). Which direction do you go first to plot it?',
+   opts:['5 up','3 right','3 left','5 down'],answer:'3 left'},
+];
+
+var NIA=[
+  "Every point on a grid has an <strong>address</strong> — two numbers that pinpoint its exact location. The first number says how far <em>across</em>, the second says how far <strong>up or down</strong>. Together they describe any location precisely.",
+  "Tap anywhere on the grid to see its <strong>coordinates</strong>. Try to hit the challenge points! Remember — read <em>across first</em>, then <em>up or down</em>.",
+  "Now identify and plot coordinates yourself. Use what you know about x and y axes to solve each puzzle!",
+  "Quiz time. Four questions on coordinates.",
+  "You understand coordinates — the address system for every point in mathematics."
+];
+var BTNS=["Try the grid →","Coordinate puzzles →","Quiz →","Summary →","🔁 Play again"];
+var RENDERS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4];
+
+function dots(s){for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<s?' done':i===s?' active':'');}}
+
+function confettiBurst(){
+  var c=document.getElementById('confetti');c.innerHTML='';
+  var cols=['#0369a1','#059669','#dc2626','#f59e0b','#8b5cf6','#0ea5e9'];
+  for(var i=0;i<48;i++){
+    var p=document.createElement('div');p.className='cp';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[Math.floor(Math.random()*cols.length)]+
+      ';width:'+(6+Math.random()*7)+'px;height:'+(6+Math.random()*7)+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+
+      ';animation-delay:'+(Math.random()*.6)+'s;animation-duration:'+(1.6+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){c.innerHTML='';},3000);
+}
+
+function renderStep2(){puzzleLevel=0;levelAnswered=false;showPuzzle();}
+
+function showPuzzle(){
+  if(puzzleLevel>=PUZZLES.length){showPuzzleDone();return;}
+  var pz=PUZZLES[puzzleLevel];levelAnswered=false;
+  var pips='';
+  for(var i=0;i<PUZZLES.length;i++)pips+='<div class="prog-pip'+(i<puzzleLevel?' dp':i===puzzleLevel?' cp':'')+'" ></div>';
+  var opts=pz.opts.map(function(o,oi){
+    return '<button class="quiz-opt" id="pb'+oi+'" data-val="'+o+'" onclick="pickPuz('+oi+')">'+o+'</button>';
+  }).join('');
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel">'+
+    '<div class="prog-row"><span class="prog-label">Puzzle '+pz.label+'</span><div class="prog-pips">'+pips+'</div></div>'+
+    '<div class="quiz-q">'+pz.q+'</div>'+
+    '<div style="margin-bottom:12px">'+drawGrid(pz.points,null,false,false)+'</div>'+
+    '<div class="quiz-opts">'+opts+'</div>'+
+    '<div class="quiz-result" id="pzRes"></div>'+
+    '</div>';
+  document.getElementById('nia').innerHTML='Study the grid carefully. <em>Remember: across first, then up or down.</em>';
+}
+
+function pickPuz(idx){
+  if(levelAnswered)return;levelAnswered=true;
+  var pz=PUZZLES[puzzleLevel];
+  var btns=document.querySelectorAll('.quiz-opt');
+  var chosen=btns[idx]?btns[idx].getAttribute('data-val'):'';
+  var res=document.getElementById('pzRes');
+  var isCorrect=(chosen===pz.answer);
+  if(isCorrect){
+    btns[idx].className='quiz-opt correct';
+    if(res){res.textContent='Correct. '+pz.explain;res.className='quiz-result correct';}
+    document.getElementById('nia').innerHTML='<strong>Correct!</strong> '+pz.explain;
+    if(puzzleLevel===PUZZLES.length-1)confettiBurst();
+    setTimeout(function(){puzzleLevel++;showPuzzle();},2200);
+  } else {
+    btns[idx].className='quiz-opt wrong';
+    btns.forEach(function(b){if(b.getAttribute('data-val')===pz.answer)b.className='quiz-opt correct';});
+    if(res){res.textContent='Not quite. '+pz.explain;res.className='quiz-result wrong';}
+    document.getElementById('nia').innerHTML=pz.explain;
+    var _nxtW=document.createElement('button');_nxtW.textContent='Next \u2192';_nxtW.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';_nxtW.onclick=function(){puzzleLevel++;showPuzzle();};var _rW=document.getElementById('quizResult')||document.getElementById('qResult')||document.getElementById('puzResult')||document.getElementById('pzRes')||document.getElementById('qRes');if(_rW&&_rW.parentNode)_rW.parentNode.appendChild(_nxtW);
+  }
+}
+
+function showPuzzleDone(){
+  // celebration handled in pickAnswer on correct last answer
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px">'+
+    '<div style="font-size:48px;margin-bottom:14px">📍</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(20px,5vw,28px);margin-bottom:8px">All four puzzles solved.</div>'+
+    '<p style="font-size:14px;color:var(--muted)">You can read and plot coordinates in all four quadrants.</p>'+
+    '</div>';
+  document.getElementById('nia').innerHTML='You plotted and read coordinates across all four quadrants. <strong>Across first, then up or down — always.</strong>';
+}
+
+function renderStep3(){quizIdx=0;quizCorrect=0;document.getElementById('nia').innerHTML=NIA[3];showQuizQ();}
+
+function showQuizQ(){
+  if(quizIdx>=QUIZ_QS.length){showQuizEnd();return;}
+  var q=QUIZ_QS[quizIdx];
+  var nia=document.getElementById('nia');if(nia)nia.innerHTML='Read carefully — then pick your answer.';
+  var stars='';for(var i=0;i<QUIZ_QS.length;i++)stars+='<div class="star'+(i<quizCorrect?' earned':'')+'" >⭐</div>';
+  var opts='';q.opts.forEach(function(o,oi){opts+='<button class="quiz-opt" id="qo'+oi+'" data-val="'+o+'" onclick="answerQIdx('+oi+')">'+o+'</button>';});
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel"><div class="stars-row">'+stars+'</div><div class="quiz-q">'+q.q+'</div>'+
+    '<div class="quiz-opts">'+opts+'</div><div class="quiz-result" id="qRes"></div></div>';
+}
+
+function answerQIdx(idx){
+  var q=QUIZ_QS[quizIdx];
+  var btns=document.querySelectorAll('.quiz-opt');
+  var chosen=btns[idx]?btns[idx].getAttribute('data-val'):'';
+  answerQ(chosen,q.answer);
+}
+
+function answerQ(chosen,correct){
+  var btns=document.querySelectorAll('.quiz-opt');btns.forEach(function(b){b.disabled=true;});
+  var res=document.getElementById('qRes');
+  if(chosen===correct){
+    btns.forEach(function(b){if(b.getAttribute('data-val')===correct)b.className='quiz-opt correct';});
+    quizCorrect++;if(res){res.textContent='Correct.';res.className='quiz-result correct';}
+    document.getElementById('nia').innerHTML='Correct.';
+  } else {
+    btns.forEach(function(b){
+      if(b.getAttribute('data-val')===chosen)b.className='quiz-opt wrong';
+      if(b.getAttribute('data-val')===correct)b.className='quiz-opt correct';
+    });
+    if(res){res.textContent='The answer is: '+correct;res.className='quiz-result wrong';}
+    document.getElementById('nia').innerHTML='The answer is <strong>'+correct+'</strong>.';
+  }
+  quizIdx++;
+  if(chosen===correct){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;_doAdv();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxtOk=document.createElement('button');
+    nxtOk.textContent='Next \u2192';
+    nxtOk.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxtOk.onclick=function(){clearTimeout(_t);_doAdv();};
+    var _r=document.getElementById('quizResult')||document.getElementById('qResult')||document.getElementById('qRes');
+    if(_r&&_r.parentNode)_r.parentNode.appendChild(nxtOk);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent='Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){_doAdv();};
+    var _r2=document.getElementById('quizResult')||document.getElementById('qResult')||document.getElementById('qRes');
+    if(_r2&&_r2.parentNode)_r2.parentNode.appendChild(nxt2);
+  }
+  var nxt=document.createElement('button');
+  nxt.textContent=isLast?'See results →':'Next →';
+  nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 24px;border-radius:10px;border:none;background:#0369a1;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+  nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+  var qRes2=document.getElementById('qRes');
+  if(qRes2&&qRes2.parentNode) qRes2.parentNode.appendChild(nxt);
+}
+
+function showQuizEnd(){
+  var stars='';for(var i=0;i<QUIZ_QS.length;i++)stars+='<div class="star'+(i<quizCorrect?' earned':'')+'" >⭐</div>';
+  if(quizCorrect===4)confettiBurst();
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel"><div class="stars-row">'+stars+'</div>'+
+    '<div style="background:var(--bg);border:1.5px solid var(--rule);border-radius:12px;padding:18px;text-align:center">'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(18px,4vw,24px);margin-bottom:6px">'+
+      (quizCorrect===4?'Perfect score.':quizCorrect>=3?'Almost perfect.':quizCorrect>=2?'Good work.':'Keep going.')+
+    '</div><div style="font-size:14px;color:var(--muted)">You got <strong style="color:var(--red)">'+quizCorrect+'</strong> out of 4 correct.</div>'+
+    '<div style="text-align:center;margin-top:16px">'+'<button onclick="goStep(-4)" style="padding:10px 28px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)">Start again</button>'+'</div>'+'</div></div>';
+  document.getElementById('nia').innerHTML=(quizCorrect===4?'<strong>Perfect.</strong> ':'')+
+    'Coordinates: always (x, y). Across first, then up or down. Four quadrants, four sign combinations.';
+}
+
+function renderStep4(){
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel">'+
+    '<div class="panel-title">What we learned</div>'+
+    '<div style="margin-bottom:16px">'+drawGrid(
+      [{x:3,y:2,col:'#059669',label:'(3,2) Q1',lx:6,ly:-12},
+       {x:-3,y:2,col:'#0369a1',label:'(-3,2) Q2',lx:6,ly:-12},
+       {x:-3,y:-2,col:'#dc2626',label:'(-3,-2) Q3',lx:6,ly:18},
+       {x:3,y:-2,col:'#d97706',label:'(3,-2) Q4',lx:6,ly:18}],
+      null,true,false)+'</div>'+
+    '<div class="pf-row" style="padding-top:0"><div class="pf-icon">✅</div><div>Coordinates are written <strong style="color:var(--ink)">(x, y)</strong>. Always read the x (across) value first, then y (up or down).</div></div>'+
+    '<div class="pf-row"><div class="pf-icon">✅</div><div>The <strong style="color:var(--ink)">origin</strong> is (0, 0) — where the two axes cross.</div></div>'+
+    '<div class="pf-row"><div class="pf-icon">✅</div><div>Four <strong style="color:var(--ink)">quadrants</strong>: Q1(+,+), Q2(-,+), Q3(-,-), Q4(+,-). The signs tell you which quadrant instantly.</div></div>'+
+    '<div class="pf-row"><div class="pf-icon">✅</div><div>To find the <strong style="color:var(--ink)">distance</strong> between two points on the same axis — subtract the smaller coordinate from the larger.</div></div>'+
+    '<div class="pf-row" style="border-bottom:none"><div class="pf-icon">🚀</div><div>Next — <strong style="color:var(--ink)">Geometry</strong>: properties of shapes and angles.</div></div>'+
+    '</div>';
+  confettiBurst();
+}
+
+function goStep(dir){
+  currentStep=Math.max(0,Math.min(4,currentStep+dir));
+  dots(currentStep);
+  document.getElementById('nia').innerHTML=NIA[currentStep];
+  document.getElementById('btnBack').disabled=(currentStep===0);
+  document.getElementById('btnNext').textContent=BTNS[currentStep];
+  document.getElementById('btnNext').disabled=false;
+  if(currentStep===4){document.getElementById('btnNext').onclick=function(){goStep(-4);};}
+  else{document.getElementById('btnNext').onclick=function(){goStep(1);};}
+  RENDERS[currentStep]();
+}
+goStep(0);
+</script>
+</body>
+</html>

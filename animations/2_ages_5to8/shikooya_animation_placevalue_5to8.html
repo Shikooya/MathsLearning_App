@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya — Why Place Value? (Ages 5–8)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap');
+
+  :root {
+    --bg: #f0f4ff;
+    --panel: #ffffff;
+    --violet: #7c5cfc;
+    --sky: #38bdf8;
+    --em: #10b981;
+    --rose: #f43f5e;
+    --amber: #f59e0b;
+    --txt: #1a1a2e;
+    --muted: #6b7280;
+    --ones-col: #f43f5e;
+    --tens-col: #7c5cfc;
+    --hunds-col: #10b981;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .header-tag {
+    display: inline-block;
+    background: rgba(124,92,252,.12);
+    color: var(--violet);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+  .header h1 {
+    font-family: 'Baloo 2', cursive;
+    font-size: clamp(22px, 5vw, 34px);
+    color: var(--txt);
+  }
+  .header h1 span { color: var(--violet); }
+
+  .card {
+    background: var(--panel);
+    border-radius: 28px;
+    padding: 28px;
+    max-width: 720px;
+    width: 100%;
+    box-shadow: 0 8px 40px rgba(0,0,0,.08);
+  }
+
+  /* Nia */
+  .nia-area {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .nia-avatar {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, var(--violet), #a78bfa);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(124,92,252,.3);
+    animation: niaBounce 2s ease-in-out infinite;
+  }
+  @keyframes niaBounce {
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-4px);}
+  }
+  .nia-bubble {
+    background: linear-gradient(135deg, rgba(124,92,252,.08), rgba(56,189,248,.06));
+    border: 1.5px solid rgba(124,92,252,.18);
+    border-radius: 18px 18px 18px 4px;
+    padding: 14px 18px;
+    font-size: clamp(13px, 3vw, 16px);
+    font-weight: 700;
+    color: var(--txt);
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  /* Steps */
+  .steps {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .step-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    transition: all .3s;
+  }
+  .step-dot.active { background: var(--violet); transform: scale(1.3); }
+  .step-dot.done { background: var(--em); }
+
+  /* Scene */
+  .scene {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  /* Houses */
+  .houses-row {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .house-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .house {
+    position: relative;
+    border-radius: 12px 12px 8px 8px;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* House roof */
+  .house-roof {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    position: relative;
+    z-index: 2;
+  }
+  .ones-roof  { border-width: 0 45px 36px 45px; border-color: transparent transparent #f43f5e transparent; }
+  .tens-roof  { border-width: 0 55px 44px 55px; border-color: transparent transparent #7c5cfc transparent; }
+  .hunds-roof { border-width: 0 65px 52px 65px; border-color: transparent transparent #10b981 transparent; }
+
+  .house-body {
+    border-radius: 0 0 8px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 8px;
+    gap: 4px;
+    position: relative;
+    z-index: 1;
+  }
+  .ones-body  { width: 90px;  min-height: 100px; background: rgba(244,63,94,.12);  border: 2px solid rgba(244,63,94,.3); }
+  .tens-body  { width: 110px; min-height: 120px; background: rgba(124,92,252,.1); border: 2px solid rgba(124,92,252,.25); }
+  .hunds-body { width: 130px; min-height: 140px; background: rgba(16,185,129,.1);  border: 2px solid rgba(16,185,129,.25); }
+
+  .house-door {
+    width: 24px; height: 32px;
+    border-radius: 12px 12px 0 0;
+    margin-top: auto;
+  }
+  .ones-door  { background: rgba(244,63,94,.4); }
+  .tens-door  { background: rgba(124,92,252,.35); }
+  .hunds-door { background: rgba(16,185,129,.35); }
+
+  .house-label {
+    font-family: 'Baloo 2', cursive;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: center;
+    line-height: 1.2;
+  }
+  .ones-lbl  { color: var(--ones-col); }
+  .tens-lbl  { color: var(--tens-col); }
+  .hunds-lbl { color: var(--hunds-col); }
+
+  .house-count {
+    font-family: 'Baloo 2', cursive;
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+  }
+  .ones-count  { color: var(--ones-col); }
+  .tens-count  { color: var(--tens-col); }
+  .hunds-count { color: var(--hunds-col); }
+
+  /* Balls inside house */
+  .balls-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    justify-content: center;
+    padding: 4px;
+    min-height: 50px;
+    align-content: flex-end;
+  }
+
+  .ball {
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 900;
+    color: white;
+    opacity: 0;
+    transform: scale(0);
+    transition: all .25s cubic-bezier(.34,1.56,.64,1);
+    flex-shrink: 0;
+  }
+  .ball.visible { opacity: 1; transform: scale(1); }
+  .ball.merging { animation: mergePulse .4s ease; }
+  @keyframes mergePulse {
+    0%  { transform: scale(1.5); }
+    50% { transform: scale(0.5); opacity: 0.5; }
+    100%{ transform: scale(0); opacity: 0; }
+  }
+
+  .ones-ball  { width: 20px; height: 20px; background: var(--ones-col); }
+  .tens-ball  { width: 26px; height: 26px; background: var(--tens-col); }
+  .hunds-ball { width: 32px; height: 32px; background: var(--hunds-col); }
+
+  /* Number display */
+  .number-display {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: center;
+    min-height: 60px;
+  }
+  .num-digit {
+    font-family: 'Baloo 2', cursive;
+    font-size: 52px;
+    font-weight: 800;
+    line-height: 1;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all .3s ease;
+  }
+  .num-digit.visible { opacity: 1; transform: translateY(0); }
+  .d-hundreds { color: var(--hunds-col); }
+  .d-tens     { color: var(--tens-col); }
+  .d-ones     { color: var(--ones-col); }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .action-btn {
+    padding: 12px 24px;
+    border-radius: 50px;
+    border: none;
+    background: linear-gradient(135deg, var(--violet), #a78bfa);
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(124,92,252,.35);
+    transition: all .2s;
+  }
+  .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124,92,252,.45); }
+  .action-btn:active { transform: scale(.97); }
+  .action-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+  .action-btn.secondary {
+    background: linear-gradient(135deg, #10b981, #38bdf8);
+  }
+  .action-btn.danger {
+    background: linear-gradient(135deg, #f43f5e, #fb923c);
+  }
+
+  /* Carry animation overlay */
+  .carry-msg {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: white;
+    border: 3px solid var(--violet);
+    border-radius: 20px;
+    padding: 20px 32px;
+    font-family: 'Baloo 2', cursive;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--violet);
+    text-align: center;
+    z-index: 100;
+    box-shadow: 0 16px 48px rgba(0,0,0,.2);
+    transition: transform .4s cubic-bezier(.34,1.56,.64,1);
+    pointer-events: none;
+  }
+  .carry-msg.show { transform: translate(-50%, -50%) scale(1); }
+
+  /* Insight */
+  .insight {
+    background: linear-gradient(135deg, rgba(16,185,129,.08), rgba(56,189,248,.06));
+    border: 1.5px solid rgba(16,185,129,.2);
+    border-radius: 16px;
+    padding: 14px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--txt);
+    line-height: 1.6;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all .4s ease;
+    text-align: center;
+    width: 100%;
+  }
+  .insight.visible { opacity: 1; transform: translateY(0); }
+  .insight strong { color: var(--em); }
+
+  /* Confetti */
+  .confetti-piece {
+    position: fixed;
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    pointer-events: none;
+    animation: confettiFall 1.8s ease-in forwards;
+  }
+  @keyframes confettiFall {
+    0%  { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100%{ transform: translateY(100vh) rotate(540deg); opacity: 0; }
+  }
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+
+<div class="header">
+  <div class="header-tag">Shikooya · Ages 5–8 · Concept Animation</div>
+  <h1>Why does <span>carrying</span> work?</h1>
+</div>
+
+<div class="card">
+  <div class="steps">
+    <div class="step-dot active" id="dot0"></div>
+    <div class="step-dot" id="dot1"></div>
+    <div class="step-dot" id="dot2"></div>
+    <div class="step-dot" id="dot3"></div>
+  </div>
+
+  <div class="nia-area">
+    <div class="nia-avatar">🦋</div>
+    <div class="nia-bubble" id="niaSpeech">
+      Hi! 👋 See these three houses? Small, medium and big. Every number lives in a house! Press <strong>+1</strong> to drop a ball into the Ones house. What happens when we have 10?
+    </div>
+  </div>
+
+  <div class="scene">
+
+    <!-- Houses -->
+    <div class="houses-row">
+
+      <!-- Hundreds house -->
+      <div class="house-wrap" id="hundsWrap" style="opacity:.4;transition:opacity .5s">
+        <div class="house">
+          <div class="house-roof hunds-roof"></div>
+          <div class="house-body hunds-body">
+            <div class="balls-grid" id="hundsBalls"></div>
+            <div class="house-door hunds-door"></div>
+          </div>
+        </div>
+        <div class="house-count hunds-count" id="hundsCount">0</div>
+        <div class="house-label hunds-lbl">Hundreds<br>🏛️</div>
+      </div>
+
+      <!-- Tens house -->
+      <div class="house-wrap" id="tensWrap" style="opacity:.4;transition:opacity .5s">
+        <div class="house">
+          <div class="house-roof tens-roof"></div>
+          <div class="house-body tens-body">
+            <div class="balls-grid" id="tensBalls"></div>
+            <div class="house-door tens-door"></div>
+          </div>
+        </div>
+        <div class="house-count tens-count" id="tensCount">0</div>
+        <div class="house-label tens-lbl">Tens<br>🏠</div>
+      </div>
+
+      <!-- Ones house -->
+      <div class="house-wrap">
+        <div class="house">
+          <div class="house-roof ones-roof"></div>
+          <div class="house-body ones-body">
+            <div class="balls-grid" id="onesBalls"></div>
+            <div class="house-door ones-door"></div>
+          </div>
+        </div>
+        <div class="house-count ones-count" id="onesCount">0</div>
+        <div class="house-label ones-lbl">Ones<br>🏡</div>
+      </div>
+
+    </div>
+
+    <!-- Number display -->
+    <div class="number-display">
+      <div class="num-digit d-hundreds" id="dHunds">0</div>
+      <div class="num-digit d-tens" id="dTens">0</div>
+      <div class="num-digit d-ones" id="dOnes">0</div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button class="action-btn danger" onclick="addOne()" id="addBtn">+1 Drop a ball 🔴</button>
+      <button class="action-btn secondary" onclick="addTen()" id="addTenBtn" style="display:none">+10 Drop ten balls</button>
+      <button class="action-btn" onclick="resetScene()" id="resetBtn" style="display:none">🔄 Start again</button>
+    </div>
+
+    <!-- Insight -->
+    <div class="insight" id="insight">
+      🌟 <strong>10 ones</strong> always become <strong>1 ten</strong>.<br>
+      <strong>10 tens</strong> always become <strong>1 hundred</strong>.<br>
+      That is why we call it base <strong>ten</strong> — and why carrying works!
+    </div>
+
+  </div>
+</div>
+
+<!-- Carry message overlay -->
+<div class="carry-msg" id="carryMsg">🎉 10 ones = 1 ten!<br>Moving next door!</div>
+<div class="carry-msg" id="carryMsg2">🏆 10 tens = 1 hundred!<br>Moving to the big house!</div>
+
+<script>
+  let ones = 0, tens = 0, hundreds = 0;
+  let step = 0;
+  let busy = false;
+
+  const NIA = [
+    "Hi! 👋 See these three houses? Every number lives in a house! Press <strong>+1</strong> to drop a ball into the Ones house. What happens when we have 10?",
+    "Great! Keep going — what happens when the Ones house has 10 balls? 🤔",
+    "WOW! 10 balls became 1 bigger ball and moved to the <strong>Tens</strong> house! That is <strong>carrying</strong>! Keep adding — what happens when Tens gets to 10?",
+    "INCREDIBLE! 10 tens became 1 hundred! 🏆 Now you understand why carrying works in addition — it is just balls moving to bigger houses!",
+  ];
+
+  function updateDots(s) {
+    for (let i = 0; i <= 3; i++) {
+      const dot = document.getElementById('dot' + i);
+      if (i < s) dot.className = 'step-dot done';
+      else if (i === s) dot.className = 'step-dot active';
+      else dot.className = 'step-dot';
+    }
+  }
+
+  function setNia(html) {
+    document.getElementById('niaSpeech').innerHTML = html;
+  }
+
+  function updateDisplay() {
+    document.getElementById('onesCount').textContent = ones;
+    document.getElementById('tensCount').textContent = tens;
+    document.getElementById('hundsCount').textContent = hundreds;
+    // Number display
+    const total = hundreds * 100 + tens * 10 + ones;
+    document.getElementById('dHunds').textContent = hundreds;
+    document.getElementById('dTens').textContent = tens;
+    document.getElementById('dOnes').textContent = ones;
+    // Show relevant digits
+    document.getElementById('dHunds').classList.toggle('visible', hundreds > 0);
+    document.getElementById('dTens').classList.toggle('visible', tens > 0 || hundreds > 0);
+    document.getElementById('dOnes').classList.toggle('visible', true);
+  }
+
+  function addBallToGrid(gridId, cls) {
+    const grid = document.getElementById(gridId);
+    const ball = document.createElement('div');
+    ball.className = `ball ${cls}`;
+    grid.appendChild(ball);
+    setTimeout(() => ball.classList.add('visible'), 30);
+    return ball;
+  }
+
+  function clearGrid(gridId) {
+    document.getElementById(gridId).innerHTML = '';
+  }
+
+  async function addOne() {
+    if (busy) return;
+    busy = true;
+    document.getElementById('addBtn').disabled = true;
+
+    ones++;
+    addBallToGrid('onesBalls', 'ones-ball');
+    updateDisplay();
+
+    // Step triggers
+    if (ones === 5 && step === 0) {
+      step = 1;
+      updateDots(1);
+      setNia(NIA[1]);
+    }
+
+    if (ones === 10) {
+      await carry('ones');
+    }
+
+    setTimeout(() => {
+      document.getElementById('addBtn').disabled = false;
+      busy = false;
+    }, ones === 10 ? 1800 : 100);
+  }
+
+  async function carry(from) {
+    return new Promise(resolve => {
+      if (from === 'ones') {
+        // Show carry message
+        showCarryMsg('carryMsg');
+        setTimeout(() => {
+          // Animate all ones balls merging
+          const balls = document.querySelectorAll('#onesBalls .ball');
+          balls.forEach(b => { b.classList.add('merging'); });
+          setTimeout(() => {
+            clearGrid('onesBalls');
+            ones = 0;
+            tens++;
+            addBallToGrid('tensBalls', 'tens-ball');
+            updateDisplay();
+            document.getElementById('tensWrap').style.opacity = '1';
+
+            // Step 2
+            step = 2;
+            updateDots(2);
+            setNia(NIA[2]);
+            document.getElementById('addTenBtn').style.display = 'flex';
+
+            if (tens === 10) carry('tens').then(resolve);
+            else resolve();
+          }, 600);
+        }, 800);
+      } else if (from === 'tens') {
+        showCarryMsg('carryMsg2');
+        setTimeout(() => {
+          const balls = document.querySelectorAll('#tensBalls .ball');
+          balls.forEach(b => { b.classList.add('merging'); });
+          setTimeout(() => {
+            clearGrid('tensBalls');
+            tens = 0;
+            hundreds++;
+            addBallToGrid('hundsBalls', 'hunds-ball');
+            updateDisplay();
+            document.getElementById('hundsWrap').style.opacity = '1';
+            step = 3;
+            updateDots(3);
+            setNia(NIA[3]);
+            document.getElementById('insight').classList.add('visible');
+            document.getElementById('resetBtn').style.display = 'flex';
+            document.getElementById('addBtn').style.display = 'none';
+            document.getElementById('addTenBtn').style.display = 'none';
+            spawnConfetti();
+            resolve();
+          }, 600);
+        }, 800);
+      }
+    });
+  }
+
+  async function addTen() {
+    if (busy) return;
+    busy = true;
+    document.getElementById('addTenBtn').disabled = true;
+    document.getElementById('addBtn').disabled = true;
+
+    // Add 10 ones rapidly then carry
+    let added = 0;
+    const addNext = () => {
+      if (added < 10) {
+        ones++;
+        addBallToGrid('onesBalls', 'ones-ball');
+        updateDisplay();
+        added++;
+        setTimeout(addNext, 80);
+      } else {
+        setTimeout(async () => {
+          await carry('ones');
+          document.getElementById('addTenBtn').disabled = false;
+          document.getElementById('addBtn').disabled = false;
+          busy = false;
+        }, 200);
+      }
+    };
+    addNext();
+  }
+
+  function showCarryMsg(id) {
+    const el = document.getElementById(id);
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 1800);
+  }
+
+  function resetScene() {
+    ones = 0; tens = 0; hundreds = 0;
+    step = 0;
+    updateDots(0);
+    clearGrid('onesBalls');
+    clearGrid('tensBalls');
+    clearGrid('hundsBalls');
+    updateDisplay();
+    document.getElementById('dHunds').classList.remove('visible');
+    document.getElementById('dTens').classList.remove('visible');
+    document.getElementById('tensWrap').style.opacity = '0.4';
+    document.getElementById('hundsWrap').style.opacity = '0.4';
+    document.getElementById('insight').classList.remove('visible');
+    document.getElementById('resetBtn').style.display = 'none';
+    document.getElementById('addTenBtn').style.display = 'none';
+    document.getElementById('addBtn').style.display = 'flex';
+    document.getElementById('addBtn').disabled = false;
+    setNia(NIA[0]);
+    busy = false;
+  }
+
+  function spawnConfetti() {
+    const cols = ['#7c5cfc','#f43f5e','#10b981','#f59e0b','#38bdf8'];
+    for (let i = 0; i < 50; i++) {
+      setTimeout(() => {
+        const p = document.createElement('div');
+        p.className = 'confetti-piece';
+        p.style.cssText = `left:${Math.random()*100}vw;top:-10px;background:${cols[i%cols.length]};animation-delay:${Math.random()*.4}s;animation-duration:${1.5+Math.random()}s;border-radius:${Math.random()>.5?'50%':'2px'}`;
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 2500);
+      }, i * 30);
+    }
+  }
+
+  // Init
+  updateDisplay();
+</script>
+</body>
+</html>

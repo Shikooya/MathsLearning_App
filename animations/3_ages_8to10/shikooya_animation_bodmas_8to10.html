@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya — BODMAS (Ages 8–10)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
+  :root{
+    --ink:#0f1117;--ink2:#3a3d4a;--muted:#8b8fa8;
+    --bg:#f7f6f2;--card:#ffffff;
+    --B:#e63946;--O:#f4a261;--D:#2a9d8f;--M:#457b9d;--A:#6a4c93;--S:#e76f51;
+    --green:#059669;--red:#dc2626;
+    --rule:rgba(0,0,0,.07);--sh:0 2px 16px rgba(0,0,0,.07);
+    --r:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;
+    color:var(--ink);}
+  .shell{width:100%;max-width:680px;}
+  /* Header */
+  .top{text-align:center;margin-bottom:20px;}
+  .top .badge{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);border:1.5px solid var(--rule);border-radius:20px;
+    padding:4px 14px;display:inline-block;margin-bottom:10px;}
+  .top h1{font-family:'DM Serif Display',serif;font-size:clamp(24px,5vw,34px);
+    color:var(--ink);line-height:1.15;}
+  .top h1 em{font-style:italic;color:var(--B);}
+  .top p{font-size:13px;color:var(--muted);margin-top:6px;}
+  /* Stepper */
+  .stepper{display:flex;gap:6px;justify-content:center;margin-bottom:20px;}
+  .step-dot{width:6px;height:6px;border-radius:50%;background:var(--rule);
+    border:1.5px solid #ccc;transition:all .3s;}
+  .step-dot.active{background:var(--O);border-color:var(--O);transform:scale(1.6);}
+  .step-dot.done{background:var(--B);border-color:var(--B);}
+  /* Nia */
+  .nia{display:flex;gap:12px;align-items:flex-start;background:var(--card);
+    border:1.5px solid var(--rule);border-radius:var(--r);padding:14px 16px;
+    margin-bottom:20px;box-shadow:var(--sh);min-height:64px;}
+  .nia-dot{width:36px;height:36px;border-radius:50%;flex-shrink:0;background:var(--B);
+    display:flex;align-items:center;justify-content:center;font-size:18px;
+    animation:bob 3s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  .nia-text{font-size:clamp(13px,2.8vw,15px);line-height:1.65;color:var(--ink2);flex:1;}
+  .nia-text strong{color:var(--B);font-weight:700;}
+  .nia-text em{color:var(--O);font-style:normal;font-weight:700;}
+  /* Panel */
+  .panel{background:var(--card);border:1.5px solid var(--rule);border-radius:var(--r);
+    padding:22px;margin-bottom:16px;box-shadow:var(--sh);}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:14px;}
+  /* Preface rows */
+  .pf-row{display:flex;gap:12px;align-items:flex-start;padding:10px 0;
+    border-bottom:1px solid var(--rule);font-size:clamp(13px,2.5vw,14px);
+    line-height:1.7;color:var(--ink2);}
+  .pf-row:last-child{border-bottom:none;padding-bottom:0;}
+  .pf-row:first-child{padding-top:0;}
+  .pf-icon{font-size:18px;flex-shrink:0;margin-top:2px;}
+  /* BODMAS pills */
+  .bodmas-strip{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:16px 0;}
+  .bod-pill{display:flex;flex-direction:column;align-items:center;gap:3px;
+    padding:10px 14px;border-radius:12px;min-width:clamp(44px,10vw,58px);
+    transition:all .3s cubic-bezier(.34,1.56,.64,1);}
+  .bod-pill.active-pill{transform:scale(1.18);box-shadow:0 6px 20px rgba(0,0,0,.15);}
+  .bod-pill .letter{font-family:'DM Serif Display',serif;font-size:clamp(22px,5vw,30px);
+    font-weight:400;color:#fff;line-height:1;}
+  .bod-pill .word{font-size:10px;font-weight:700;color:rgba(255,255,255,.8);
+    text-transform:uppercase;letter-spacing:.04em;}
+  /* Equation stepper */
+  .eq-wrap{text-align:center;padding:20px 0;}
+  .eq-expr{font-family:'DM Serif Display',serif;font-size:clamp(26px,6vw,38px);
+    color:var(--ink);line-height:1.4;margin-bottom:8px;letter-spacing:-.01em;}
+  .eq-expr .hi{border-radius:6px;padding:2px 6px;transition:all .3s;}
+  .eq-step-label{font-size:13px;color:var(--muted);font-weight:500;margin-bottom:4px;}
+  .eq-result{font-family:'DM Serif Display',serif;font-size:clamp(32px,7vw,48px);
+    transition:all .3s;color:var(--ink);}
+  /* Step buttons */
+  .eq-nav{display:flex;gap:8px;justify-content:center;margin-top:14px;}
+  .eq-btn{padding:8px 20px;border-radius:10px;border:1.5px solid var(--rule);
+    background:var(--bg);font-family:'DM Sans',sans-serif;font-size:13px;
+    font-weight:600;cursor:pointer;color:var(--ink);transition:all .2s;}
+  .eq-btn:hover{border-color:#aaa;}
+  .eq-btn.primary{background:var(--B);color:#fff;border-color:var(--B);
+    box-shadow:0 3px 10px rgba(230,57,70,.25);}
+  .eq-btn.primary:hover{background:#c1121f;}
+  .eq-btn:disabled{opacity:.3;cursor:not-allowed;}
+  /* Step trail */
+  .step-trail{background:var(--bg);border-radius:12px;padding:14px;margin-top:12px;}
+  .trail-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;
+    font-size:clamp(13px,2.5vw,14px);color:var(--ink2);line-height:1.6;
+    animation:fi .3s ease;}
+  @keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .trail-item:last-child{margin-bottom:0;}
+  .trail-badge{padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;
+    color:#fff;flex-shrink:0;margin-top:2px;}
+  /* Puzzle */
+  .puzzle-row{display:flex;align-items:center;gap:8px;justify-content:center;
+    flex-wrap:wrap;margin:14px 0;}
+  .puz-eq{font-family:'DM Serif Display',serif;font-size:clamp(20px,5vw,28px);color:var(--ink);}
+  .puz-opts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:6px;}
+  .puz-btn{min-width:64px;min-height:56px;border-radius:12px;border:1.5px solid var(--rule);
+    background:var(--bg);font-family:'DM Serif Display',serif;font-size:clamp(18px,4vw,26px);
+    color:var(--ink);cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);}
+  .puz-btn:hover{border-color:var(--O);transform:translateY(-2px);}
+  .puz-btn.correct{background:rgba(5,150,105,.1);border-color:var(--green);
+    color:var(--green);animation:pop .4s ease;}
+  .puz-btn.wrong{background:rgba(220,38,38,.08);border-color:var(--red);
+    color:var(--red);animation:shake .3s ease;}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .puz-result{text-align:center;font-size:14px;font-weight:700;min-height:22px;
+    margin-bottom:8px;}
+  .puz-result.ok{color:var(--green);}
+  .puz-result.no{color:var(--red);}
+  /* Progress */
+  .prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .prog-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .prog-pips{display:flex;gap:5px;}
+  .prog-pip{width:10px;height:10px;border-radius:50%;background:var(--rule);
+    border:1.5px solid #ccc;transition:all .3s;}
+  .prog-pip.dp{background:var(--B);border-color:var(--B);}
+  .prog-pip.cp{background:var(--O);border-color:var(--O);transform:scale(1.3);}
+  /* Quiz */
+  .quiz-q{font-family:'DM Serif Display',serif;font-size:clamp(18px,4vw,24px);
+    text-align:center;line-height:1.4;margin-bottom:18px;color:var(--ink);}
+  .quiz-opts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+  .quiz-opt{min-width:80px;min-height:52px;border-radius:12px;border:1.5px solid var(--rule);
+    background:var(--bg);font-family:'DM Sans',sans-serif;font-size:clamp(14px,3vw,16px);
+    font-weight:600;cursor:pointer;color:var(--ink);padding:8px 14px;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);}
+  .quiz-opt:hover{border-color:var(--B);transform:translateY(-1px);}
+  .quiz-opt.correct{background:rgba(5,150,105,.1);border-color:var(--green);color:var(--green);animation:pop .4s ease;}
+  .quiz-opt.wrong{background:rgba(220,38,38,.06);border-color:var(--red);color:var(--red);animation:shake .3s ease;}
+  .quiz-result{text-align:center;margin-top:10px;font-size:14px;font-weight:700;min-height:20px;}
+  .quiz-result.correct{color:var(--green);}
+  .quiz-result.wrong{color:var(--red);}
+  .stars-row{display:flex;justify-content:center;gap:6px;margin-bottom:14px;}
+  .star{font-size:22px;opacity:.2;transition:all .3s;}
+  .star.earned{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+  /* Summary */
+  .sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+  .sum-card{background:var(--bg);border:1.5px solid var(--rule);border-radius:12px;padding:12px;}
+  .sum-card .eq{font-family:'DM Serif Display',serif;font-size:clamp(14px,3vw,17px);color:var(--ink);margin-bottom:4px;}
+  .sum-card .ans{font-family:'DM Serif Display',serif;font-size:clamp(16px,4vw,20px);color:var(--B);margin-top:4px;}
+  /* Nav */
+  .nav-row{display:flex;gap:10px;}
+  .btn{min-height:52px;padding:0 22px;border-radius:14px;border:none;
+    font-family:'DM Sans',sans-serif;font-size:clamp(14px,3vw,16px);font-weight:700;
+    cursor:pointer;transition:all .2s;}
+  .btn:active{transform:scale(.97);}
+  .btn-back{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);min-width:52px;}
+  .btn-back:hover{border-color:#aaa;color:var(--ink);}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-next{background:var(--B);color:#fff;flex:1;box-shadow:0 4px 14px rgba(230,57,70,.25);}
+  .btn-next:hover{background:#c1121f;transform:translateY(-1px);}
+  /* Confetti */
+  .cc{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .cp{position:absolute;border-radius:2px;animation:cf 2s ease-in forwards;}
+  @keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="shell">
+  <div class="top">
+    <div class="badge">Ages 8–10</div>
+    <h1>The Rules of <em>Order</em> — BODMAS</h1>
+    <p>Why 2 + 3 × 4 is not 20</p>
+  </div>
+  <!-- 5 steps = d0..d4 -->
+  <div class="stepper">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia">
+    <div class="nia-dot">🌟</div>
+    <div class="nia-text" id="nia">
+      What is <strong>2 + 3 × 4</strong>? Is it 20 — or 14? It depends on which operation you do first. Mathematicians agreed on a <em>fixed order of operations</em> so everyone gets the same answer. That order is called <strong>BODMAS</strong>.
+    </div>
+  </div>
+  <div id="mainArea"></div>
+  <div class="nav-row">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>←</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let's learn →</button>
+  </div>
+</div>
+<div class="cc" id="confetti"></div>
+<script>
+var currentStep=0,puzzleScore=0,puzzleLevel=0,quizIdx=0,quizCorrect=0,levelAnswered=false;
+var eqStep=0;
+
+// BODMAS letters
+var BODMAS=[
+  {L:'B',W:'Brackets',col:'var(--B)',eg:'(2+3)',desc:'Always solve what is inside brackets first.'},
+  {L:'O',W:'Orders',col:'var(--O)',eg:'2³',desc:'Powers and roots next. (Sometimes called "Indices")'},
+  {L:'D',W:'Division',col:'var(--D)',eg:'÷',desc:'Division and multiplication — left to right.'},
+  {L:'M',W:'Multiplication',col:'var(--M)',eg:'×',desc:'Multiplication and division — same priority, left to right.'},
+  {L:'A',W:'Addition',col:'var(--A)',eg:'+',desc:'Addition and subtraction — left to right.'},
+  {L:'S',W:'Subtraction',col:'var(--S)',eg:'−',desc:'Last of all — subtraction.'},
+];
+
+// Walk-through equations — each has a step-by-step breakdown
+var WALKTHROUGHS=[
+  {
+    expr:'2 + 3 × 4',
+    answer:14,
+    steps:[
+      {label:'M',col:'var(--M)',action:'Multiply first: 3 × 4 = 12',expr:'2 + <span class="hi" style="background:rgba(69,123,157,.15)">3 × 4</span>',simplified:'2 + 12'},
+      {label:'A',col:'var(--A)',action:'Then add: 2 + 12 = 14',expr:'<span class="hi" style="background:rgba(106,76,147,.15)">2 + 12</span>',simplified:'14'},
+    ],
+    wrong:{val:20,reason:'Left to right gives 5×4=20 — but 3×4 is a complete group of 12. We are adding 2 to that group, not multiplying 5 by 4.'},
+  },
+  {
+    expr:'(3 + 2) × 4',
+    answer:20,
+    steps:[
+      {label:'B',col:'var(--B)',action:'Brackets first: (3 + 2) = 5',expr:'<span class="hi" style="background:rgba(230,57,70,.15)">(3 + 2)</span> × 4',simplified:'5 × 4'},
+      {label:'M',col:'var(--M)',action:'Then multiply: 5 × 4 = 20',expr:'<span class="hi" style="background:rgba(69,123,157,.15)">5 × 4</span>',simplified:'20'},
+    ],
+    wrong:{val:14,reason:'Without brackets, 2×4 is the natural group giving 3+8=11. Brackets signal that the real situation is different — combine 3 and 2 into one group first, then scale.'},
+  },
+  {
+    expr:'10 − 2 + 3',
+    answer:11,
+    steps:[
+      {label:'A/S',col:'var(--A)',action:'Addition and subtraction: left to right. 10 − 2 = 8',expr:'<span class="hi" style="background:rgba(106,76,147,.15)">10 − 2</span> + 3',simplified:'8 + 3'},
+      {label:'A',col:'var(--A)',action:'Then: 8 + 3 = 11',expr:'<span class="hi" style="background:rgba(106,76,147,.15)">8 + 3</span>',simplified:'11'},
+    ],
+    wrong:{val:5,reason:'10 − (2+3) = 5. But without brackets, go left to right!'},
+  },
+  {
+    expr:'2 × (4 + 1)² ÷ 10',
+    answer:5,
+    steps:[
+      {label:'B',col:'var(--B)',action:'Brackets first: (4 + 1) = 5',expr:'2 × <span class="hi" style="background:rgba(230,57,70,.15)">(4 + 1)</span>² ÷ 10',simplified:'2 × 5² ÷ 10'},
+      {label:'O',col:'var(--O)',action:'Orders (power): 5² = 25',expr:'2 × <span class="hi" style="background:rgba(244,162,97,.2)">5²</span> ÷ 10',simplified:'2 × 25 ÷ 10'},
+      {label:'M/D',col:'var(--D)',action:'Multiply/divide left to right: 2×25=50, then 50÷10=5',expr:'<span class="hi" style="background:rgba(42,157,143,.15)">2 × 25 ÷ 10</span>',simplified:'5'},
+    ],
+    wrong:{val:0,reason:'Without BODMAS this gets very wrong very quickly!'},
+  },
+];
+
+// Puzzles
+var PUZZLES=[
+  {eq:'3 + 4 × 2',opts:[14,11,10,8],answer:14,explain:'Multiply first: 4×2=8, then 3+8=14.'},
+  {eq:'(5 + 1) × 3',opts:[18,14,8,21],answer:18,explain:'Brackets first: 5+1=6, then 6×3=18.'},
+  {eq:'20 ÷ 4 + 1',opts:[4,6,5,3],answer:6,explain:'Divide first: 20÷4=5, then 5+1=6.'},
+  {eq:'(2 + 3)² − 5',opts:[20,25,0,10],answer:20,explain:'Brackets: 2+3=5. Power: 5²=25. Subtract: 25−5=20.'},
+];
+
+// Quiz
+var QUIZ_QS=[
+  {q:'What does the B in BODMAS stand for?',opts:['Brackets','Base','Binary','Both'],answer:'Brackets'},
+  {q:'What is 5 + 2 × 3?',opts:['21','11','16','25'],answer:'11'},
+  {q:'Which operation comes LAST in BODMAS?',opts:['Brackets','Multiplication','Subtraction','Division'],answer:'Subtraction'},
+  {q:'Why does multiplication come before addition in BODMAS?',opts:['Someone decided it long ago','Multiplication describes groups — structure before accumulation','It is faster to calculate','To avoid using brackets'],answer:'Multiplication describes groups — structure before accumulation'},
+];
+
+var NIA=[
+  "What is <strong>2 + 3 × 4</strong>? Is it 20 — or 14? It depends on which operation you do first. Multiplication describes <em>structure</em> — groups, rates, scaling. Addition describes <em>accumulation</em>. Structure must be resolved before accumulation. BODMAS is not a rule someone invented — it is <strong>how mathematics actually works</strong>.",
+  "Let us walk through equations <strong>step by step</strong> — watching BODMAS in action. Each colour shows which rule applies at that step.",
+  "Now it is your turn! Apply BODMAS to each equation and pick the correct answer. Work through the order — <em>Brackets, Orders, Division, Multiplication, Addition, Subtraction</em>.",
+  "Quiz time. Four questions on the order of operations.",
+  "You understand BODMAS — the rule that makes maths unambiguous."
+];
+var BTNS=["See it in action →","Try the puzzles →","Quiz →","Summary →","🔁 Play again"];
+var RENDERS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4];
+
+function dots(s){for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<s?' done':i===s?' active':'');}}
+
+function confettiBurst(){
+  var c=document.getElementById('confetti');c.innerHTML='';
+  var cols=['var(--B)','var(--O)','var(--D)','var(--M)','var(--A)','var(--S)','#f59e0b'];
+  var hex=['#e63946','#f4a261','#2a9d8f','#457b9d','#6a4c93','#e76f51','#f59e0b'];
+  for(var i=0;i<52;i++){
+    var p=document.createElement('div');p.className='cp';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+hex[Math.floor(Math.random()*hex.length)]+
+      ';width:'+(6+Math.random()*7)+'px;height:'+(6+Math.random()*7)+'px;'+
+      'border-radius:'+(Math.random()>.5?'50%':'2px')+';'+
+      'animation-delay:'+(Math.random()*.6)+'s;animation-duration:'+(1.6+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){c.innerHTML='';},3000);
+}
+
+// ── STEP 0 — Preface + BODMAS strip ───────────────────────
+function renderStep0(){
+  var slide=0;
+  var SLIDES=[
+    {
+      id:'problem',
+      render:function(){
+        return '<div style="text-align:center;padding:8px 0 4px">'+
+          '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:20px">The question</div>'+
+          '<div style="font-family:DM Serif Display,serif;font-size:clamp(32px,7vw,48px);color:var(--ink);margin-bottom:20px;line-height:1.2">2 + 3 × 4 = ?</div>'+
+          '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px">'+
+            '<div style="flex:1;min-width:130px;background:rgba(220,38,38,.06);border:1.5px solid rgba(220,38,38,.2);border-radius:14px;padding:16px;text-align:center">'+
+              '<div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600">Person A — left to right</div>'+
+              '<div style="font-family:DM Serif Display,serif;font-size:20px;color:var(--ink);line-height:1.6">2 + 3 = 5<br>5 × 4 = <span style="color:var(--red)">20</span></div>'+
+            '</div>'+
+            '<div style="flex:1;min-width:130px;background:rgba(5,150,105,.06);border:1.5px solid rgba(79,70,229,.2);border-radius:14px;padding:16px;text-align:center">'+
+              '<div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600">Person B — multiply first</div>'+
+              '<div style="font-family:DM Serif Display,serif;font-size:20px;color:var(--ink);line-height:1.6">3 × 4 = 12<br>2 + 12 = <span style="color:var(--green)">14</span></div>'+
+            '</div>'+
+          '</div>'+
+          '<div style="font-size:14px;color:var(--ink2);font-weight:600;line-height:1.7">Same expression. Two different answers.<br>Which one is right — and <em>why</em>?</div>'+
+          '</div>';
+      },
+      nia:'Same expression — two different answers. <strong>Which is right?</strong> This is exactly the question BODMAS answers. But not by convention — by what the mathematics actually means.'
+    },
+    {
+      id:'realworld',
+      render:function(){
+        return '<div style="padding:4px 0">'+
+          '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;text-align:center">The real situation</div>'+
+          '<div style="background:rgba(230,57,70,.05);border:1.5px solid rgba(230,57,70,.2);border-radius:14px;padding:18px;margin-bottom:14px;text-align:center">'+
+            '<div style="font-size:clamp(32px,7vw,44px);margin-bottom:10px">🍎 + 🛍️🛍️🛍️</div>'+
+            '<div style="font-family:DM Serif Display,serif;font-size:clamp(17px,4vw,22px);color:var(--ink);line-height:1.5;margin-bottom:8px">2 apples, plus 3 bags of 4 apples each</div>'+
+            '<div style="font-size:13px;color:var(--ink2);line-height:1.8">'+
+              'The <strong style="color:var(--M)">3 × 4</strong> describes one thing: <em>a group of twelve</em>.<br>'+
+              'It is a finished quantity before any adding happens.<br>'+
+              'We are adding 2 to <strong>twelve</strong> — not multiplying five by four.'+
+            '</div>'+
+          '</div>'+
+          '<div style="font-family:DM Serif Display,serif;font-size:clamp(26px,6vw,38px);text-align:center;color:var(--ink)">'+
+            '2 + <span style="color:var(--M)">12</span> = <span style="color:var(--green)">14</span>'+
+          '</div>'+
+          '<div style="text-align:center;font-size:13px;color:var(--muted);margin-top:8px;font-weight:500">Person B was right. And now we know why.</div>'+
+          '</div>';
+      },
+      nia:'The <strong>3 × 4</strong> is a complete group of twelve — it exists as a finished unit before any addition happens. We are adding 2 to that group. Person B was right because they read the expression the way the real world works.'
+    },
+    {
+      id:'principle',
+      render:function(){
+        return '<div style="padding:4px 0">'+
+          '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;text-align:center">The principle</div>'+
+          '<div style="background:rgba(69,123,157,.06);border:1.5px solid rgba(69,123,157,.2);border-radius:14px;padding:18px;margin-bottom:12px">'+
+            '<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px">'+
+              '<div style="width:36px;height:36px;border-radius:10px;background:var(--M);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:DM Serif Display,serif;font-size:18px;color:#fff">×</div>'+
+              '<div style="font-size:14px;color:var(--ink2);line-height:1.7"><strong style="color:var(--ink)">Multiplication describes structure</strong> — groups, rates, scaling. A completed, self-contained quantity.</div>'+
+            '</div>'+
+            '<div style="display:flex;align-items:flex-start;gap:12px">'+
+              '<div style="width:36px;height:36px;border-radius:10px;background:var(--A);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:DM Serif Display,serif;font-size:18px;color:#fff">+</div>'+
+              '<div style="font-size:14px;color:var(--ink2);line-height:1.7"><strong style="color:var(--ink)">Addition describes accumulation</strong> — combining things together.</div>'+
+            '</div>'+
+          '</div>'+
+          '<div style="background:rgba(0,0,0,.03);border-radius:12px;padding:14px;text-align:center">'+
+            '<div style="font-size:14px;color:var(--ink2);line-height:1.8;font-weight:600">Structure is resolved <em>before</em> accumulation.<br>Not because of a rule — because of what the expressions <strong style="color:var(--ink)">mean</strong>.</div>'+
+          '</div>'+
+          '</div>';
+      },
+      nia:'Multiplication describes <strong>structure</strong> — groups and scaling. Addition describes <strong>accumulation</strong>. Structure is always resolved before accumulation. BODMAS is not a convention — it is <em>how mathematics actually works</em>.'
+    },
+    {
+      id:'bodmas',
+      render:function(){
+        var pills=BODMAS.map(function(b){
+          return '<div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 12px;border-radius:12px;background:'+b.col+';min-width:clamp(42px,9vw,54px)">'+
+            '<div style="font-family:DM Serif Display,serif;font-size:clamp(20px,5vw,28px);color:#fff;line-height:1">'+b.L+'</div>'+
+            '<div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.85);text-transform:uppercase;letter-spacing:.04em;text-align:center">'+b.W+'</div>'+
+            '</div>';
+        }).join('');
+        var rows=BODMAS.map(function(b){
+          return '<div style="display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--rule);font-size:clamp(12px,2.5vw,13px);line-height:1.6;color:var(--ink2)">'+
+            '<div style="width:24px;height:24px;border-radius:7px;background:'+b.col+';flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:DM Serif Display,serif;font-size:14px;color:#fff;margin-top:1px">'+b.L+'</div>'+
+            '<div><strong style="color:var(--ink)">'+b.W+'</strong> — '+b.desc+'</div>'+
+            '</div>';
+        }).join('');
+        return '<div style="padding:4px 0">'+
+          '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;text-align:center">The order — B O D M A S</div>'+
+          '<div style="display:flex;gap:5px;justify-content:center;margin-bottom:16px;flex-wrap:wrap">'+pills+'</div>'+
+          '<div>'+rows+'</div>'+
+          '</div>';
+      },
+      nia:'<strong>B O D M A S</strong> — Brackets, Orders, Division, Multiplication, Addition, Subtraction. Each letter is a category of operation. Work through them in this order every time.'
+    },
+  ];
+
+  function renderSlide(){
+    var s=SLIDES[slide];
+    var dots='';
+    for(var i=0;i<SLIDES.length;i++)
+      dots+='<div style="width:7px;height:7px;border-radius:50%;background:'+(i===slide?'var(--B)':'#ddd')+';transition:all .3s;'+(i===slide?'transform:scale(1.4)':'')+';margin:0 2px"></div>';
+
+    document.getElementById('mainArea').innerHTML=
+      '<div class="panel" style="animation:fi .35s ease">'+
+        s.render()+
+        '<div style="display:flex;gap:6px;justify-content:center;align-items:center;margin-top:18px">'+dots+'</div>'+
+        '<div style="display:flex;gap:8px;justify-content:center;margin-top:12px">'+
+          '<button onclick="bPrev()" style="padding:8px 18px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:DM Sans,sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);opacity:'+(slide===0?.3:1)+'" '+(slide===0?'disabled':'')+'>← Back</button>'+
+          '<button onclick="bNext()" style="padding:8px 22px;border-radius:10px;border:none;background:'+(slide<SLIDES.length-1?'var(--B)':'var(--green)')+';color:#fff;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.15)">'+
+            (slide<SLIDES.length-1?'Next →':'Done — see it in action →')+
+          '</button>'+
+        '</div>'+
+      '</div>';
+    document.getElementById('nia').innerHTML=s.nia;
+  }
+
+  window.bNext=function(){
+    if(slide<SLIDES.length-1){slide++;renderSlide();}
+    else{goStep(1);}
+  };
+  window.bPrev=function(){if(slide>0){slide--;renderSlide();}};
+  renderSlide();
+}
+
+// ── STEP 1 — Walk-through ──────────────────────────────────
+var wtIdx=0;
+function renderStep1(){wtIdx=0;eqStep=0;buildWT();}
+
+function buildWT(){
+  var wt=WALKTHROUGHS[wtIdx];
+  eqStep=Math.min(eqStep,wt.steps.length);
+
+  var pips='';
+  for(var i=0;i<WALKTHROUGHS.length;i++)
+    pips+='<div class="prog-pip'+(i<wtIdx?' dp':i===wtIdx?' cp':'')+'" ></div>';
+
+  // Build the trail of completed steps
+  var trail='';
+  for(var s=0;s<eqStep;s++){
+    var st=wt.steps[s];
+    trail+='<div class="trail-item">'+
+      '<div class="trail-badge" style="background:'+st.col+'">'+st.label+'</div>'+
+      '<div>'+st.action+'</div>'+
+      '</div>';
+  }
+
+  var currentExpr = eqStep===0 ? wt.expr :
+    eqStep===wt.steps.length ? wt.steps[wt.steps.length-1].simplified :
+    wt.steps[eqStep-1].simplified;
+
+  var highlightedExpr = eqStep>0 && eqStep<=wt.steps.length ?
+    wt.steps[eqStep-1].expr : wt.expr;
+
+  var isDone = eqStep >= wt.steps.length;
+  var nextWt = wtIdx < WALKTHROUGHS.length-1;
+
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel">'+
+    '<div class="prog-row">'+
+      '<span class="prog-label">Example '+(wtIdx+1)+' of '+WALKTHROUGHS.length+'</span>'+
+      '<div class="prog-pips">'+pips+'</div>'+
+    '</div>'+
+    '<div class="eq-wrap">'+
+      '<div class="eq-step-label">'+(isDone?'Final answer:':'Starting expression:')+'</div>'+
+      '<div class="eq-expr">'+(isDone?currentExpr:highlightedExpr)+'</div>'+
+      (isDone?'<div class="eq-result" style="color:var(--green)">= '+wt.answer+'</div>':'<div class="eq-result" style="color:var(--muted)">= ?</div>')+
+    '</div>'+
+    (trail?'<div class="step-trail">'+trail+'</div>':'')+
+    '<div class="eq-nav">'+
+      '<button class="eq-btn" onclick="wtPrev()" '+(eqStep===0?'disabled':'')+'>← Undo</button>'+
+      (isDone&&nextWt?
+        '<button class="eq-btn primary" onclick="wtNext()">Next example →</button>':
+       isDone?
+        '<button class="eq-btn primary" onclick="wtDoneAll()">See puzzles →</button>':
+        '<button class="eq-btn primary" onclick="wtAdvance()">Next step →</button>')+
+    '</div>'+
+    '</div>';
+
+  if(isDone){
+    document.getElementById('nia').innerHTML='The answer is <strong>'+wt.answer+'</strong>! '+
+      (wt.wrong?'⚠️ Without BODMAS: '+wt.wrong.reason:'');
+    if(wtIdx===WALKTHROUGHS.length-1) confettiBurst();
+  } else if(eqStep>0){
+    var st=wt.steps[eqStep-1];
+    document.getElementById('nia').innerHTML='<strong>Step: '+st.label+'</strong> — '+st.action;
+  } else {
+    document.getElementById('nia').innerHTML='Expression: <strong>'+wt.expr+'</strong>. Tap <em>Next step</em> to apply BODMAS!';
+  }
+}
+
+function wtAdvance(){eqStep++;buildWT();}
+function wtPrev(){if(eqStep>0){eqStep--;buildWT();}}
+function wtNext(){if(wtIdx<WALKTHROUGHS.length-1){wtIdx++;eqStep=0;buildWT();}}
+function wtDoneAll(){
+  document.getElementById('nia').innerHTML='You have seen BODMAS in action across four examples! Now try the puzzles yourself!';
+  goStep(1);
+}
+
+// ── STEP 2 — Puzzles ──────────────────────────────────────
+function renderStep2(){
+  puzzleScore=0;puzzleLevel=0;levelAnswered=false;showPuzzle();}
+
+function showPuzzle(){
+  if(puzzleLevel>=PUZZLES.length){showPuzzleDone();return;}
+  var pz=PUZZLES[puzzleLevel];levelAnswered=false;
+
+  var pips='';
+  for(var i=0;i<PUZZLES.length;i++)
+    pips+='<div class="prog-pip'+(i<puzzleLevel?' dp':i===puzzleLevel?' cp':'')+'" ></div>';
+
+  var opts=pz.opts.map(function(o,oi){
+    return '<button class="puz-btn" id="pb'+oi+'" data-val="'+o+'" onclick="pickPuz('+oi+')">'+o+'</button>';
+  }).join('');
+
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel">'+
+    '<div class="prog-row">'+
+      '<span class="prog-label">Puzzle '+(puzzleLevel+1)+' of '+PUZZLES.length+'</span>'+
+      '<div class="prog-pips">'+pips+'</div>'+
+    '</div>'+
+    '<div class="eq-wrap" style="padding:16px 0">'+
+      '<div class="eq-step-label">Apply BODMAS and solve:</div>'+
+      '<div class="eq-expr" style="font-size:clamp(28px,6vw,40px)">'+pz.eq+'</div>'+
+    '</div>'+
+    '<div class="puz-opts">'+opts+'</div>'+
+    '<div class="puz-result" id="pzRes"></div>'+
+    '</div>';
+
+  document.getElementById('nia').innerHTML='Work through the order — <em>Brackets, Orders, Division, Multiplication, Addition, Subtraction</em> — then pick your answer!';
+}
+
+function pickPuz(idx){
+  if(levelAnswered)return;levelAnswered=true;
+  var pz=PUZZLES[puzzleLevel];
+  var btns=document.querySelectorAll('.puz-btn');
+  var chosen=parseInt(btns[idx].getAttribute('data-val'));
+  var res=document.getElementById('pzRes');
+  if(chosen===pz.answer){
+    btns[idx].className='puz-btn correct';
+    if(res){res.textContent='Correct! '+pz.explain;res.className='puz-result ok';}
+    document.getElementById('nia').innerHTML='<strong>Correct!</strong> '+pz.explain;
+    if(puzzleLevel===PUZZLES.length-1)confettiBurst();
+    setTimeout(function(){puzzleLevel++;showPuzzle();},2000);
+  } else {
+    btns[idx].className='puz-btn wrong';
+    btns.forEach(function(b){if(parseInt(b.getAttribute('data-val'))===pz.answer)b.className='puz-btn correct';});
+    if(res){res.textContent='Not quite. '+pz.explain;res.className='puz-result no';}
+    document.getElementById('nia').innerHTML='Not quite. '+pz.explain;
+    var nxt2=document.createElement('button');nxt2.textContent='Next \u2192';nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';nxt2.onclick=function(){puzzleLevel++;showPuzzle();};var _rW=document.getElementById('quizResult')||document.getElementById('qResult')||document.getElementById('puzResult')||document.getElementById('pzRes')||document.getElementById('qRes');if(_rW&&_rW.parentNode)_rW.parentNode.appendChild(_nxtW);
+  }
+}
+
+function showPuzzleDone(){
+  if(puzzleScore>=PUZZLES.length)confettiBurst();
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px">'+
+    '<div style="font-size:48px;margin-bottom:14px">🎯</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(20px,5vw,28px);margin-bottom:8px">All four puzzles solved.</div>'+
+    '<p style="font-size:14px;color:var(--muted)">You applied BODMAS correctly every time.</p>'+
+    '</div>';
+  document.getElementById('nia').innerHTML='You solved every puzzle using BODMAS. <strong>The order matters — always follow it.</strong>';
+}
+
+// ── STEP 3 — Quiz ─────────────────────────────────────────
+function renderStep3(){quizIdx=0;quizCorrect=0;document.getElementById('nia').innerHTML=NIA[3];showQuizQ();}
+
+function showQuizQ(){
+  if(quizIdx>=QUIZ_QS.length){showQuizEnd();return;}
+  var q=QUIZ_QS[quizIdx];
+  var nia=document.getElementById('nia');
+  if(nia)nia.innerHTML='Read carefully — then pick your answer.';
+  var stars='';for(var i=0;i<QUIZ_QS.length;i++)stars+='<div class="star'+(i<quizCorrect?' earned':'')+'" >⭐</div>';
+  var opts='';
+  q.opts.forEach(function(o,oi){
+    opts+='<button class="quiz-opt" id="qo'+oi+'" data-val="'+o+'" onclick="answerQIdx('+oi+')">'+o+'</button>';
+  });
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel">'+
+    '<div class="stars-row">'+stars+'</div>'+
+    '<div class="quiz-q">'+q.q+'</div>'+
+    '<div class="quiz-opts">'+opts+'</div>'+
+    '<div class="quiz-result" id="qRes"></div>'+
+    '</div>';
+}
+
+function answerQIdx(idx){
+  var q=QUIZ_QS[quizIdx];
+  var btns=document.querySelectorAll('.quiz-opt');
+  var chosen=btns[idx]?btns[idx].getAttribute('data-val'):'';
+  answerQ(chosen,q.answer);
+}
+
+function answerQ(chosen,correct){
+  var btns=document.querySelectorAll('.quiz-opt');btns.forEach(function(b){b.disabled=true;});
+  var res=document.getElementById('qRes');
+  if(chosen===correct){
+    btns.forEach(function(b){if(b.getAttribute('data-val')===correct)b.className='quiz-opt correct';});
+    quizCorrect++;if(res){res.textContent='Correct.';res.className='quiz-result correct';}
+    document.getElementById('nia').innerHTML='Correct.';
+  } else {
+    btns.forEach(function(b){
+      if(b.getAttribute('data-val')===chosen)b.className='quiz-opt wrong';
+      if(b.getAttribute('data-val')===correct)b.className='quiz-opt correct';
+    });
+    if(res){res.textContent='The answer is: '+correct;res.className='quiz-result wrong';}
+    document.getElementById('nia').innerHTML='The answer is <strong>'+correct+'</strong>.';
+  }
+  quizIdx++;
+  var isLast=(quizIdx>=QUIZ_QS.length);
+  var _adv=false;
+  function _doAdv(){if(_adv)return;_adv=true;isLast?showQuizEnd():showQuizQ();}
+  var _t=setTimeout(_doAdv,1500);
+  var nxt=document.createElement('button');
+  nxt.textContent=isLast?'See results →':'Next →';
+  nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 24px;border-radius:10px;border:none;background:#4f46e5;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+  nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+  var qRes2=document.getElementById('qRes');
+  if(qRes2&&qRes2.parentNode) qRes2.parentNode.appendChild(nxt);
+}
+
+function showQuizEnd(){
+  var stars='';for(var i=0;i<QUIZ_QS.length;i++)stars+='<div class="star'+(i<quizCorrect?' earned':'')+'" >⭐</div>';
+  if(quizCorrect===4)confettiBurst();
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel">'+
+    '<div class="stars-row">'+stars+'</div>'+
+    '<div style="background:var(--bg);border:1.5px solid var(--rule);border-radius:12px;padding:18px;text-align:center">'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(18px,4vw,24px);margin-bottom:6px">'+
+      (quizCorrect===4?'Perfect score.':quizCorrect>=3?'Almost perfect.':quizCorrect>=2?'Good work.':'Keep going.')+
+    '</div>'+
+    '<div style="font-size:14px;color:var(--muted)">You got <strong style="color:var(--red)">'+quizCorrect+'</strong> out of 4 correct.</div>'+
+    '<div style="text-align:center;margin-top:16px">'+
+    '<button onclick="goStep(-4)" style="padding:10px 28px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)">Start again</button>'+
+    '</div>'+
+    '</div></div>';
+  document.getElementById('nia').innerHTML=(quizCorrect===4?'<strong>Perfect.</strong> ':'')+
+    'BODMAS is <strong>how mathematics works</strong> — multiplication describes structure (groups, rates, scaling) which must be resolved before addition accumulates them. Brackets override the natural grouping when the real situation demands it.';
+}
+
+// ── STEP 4 — Summary ──────────────────────────────────────
+function renderStep4(){
+  var strip=BODMAS.map(function(b){
+    return '<div class="bod-pill" style="background:'+b.col+';padding:8px 12px">'+
+      '<div class="letter" style="font-size:24px">'+b.L+'</div>'+
+      '<div class="word">'+b.W+'</div>'+
+      '</div>';
+  }).join('');
+  var cards=WALKTHROUGHS.map(function(wt){
+    return '<div class="sum-card">'+
+      '<div class="eq">'+wt.expr+'</div>'+
+      '<div style="font-size:11px;color:var(--muted);line-height:1.7">'+
+        wt.steps.map(function(s){return s.action;}).join(' → ')+
+      '</div>'+
+      '<div class="ans">= '+wt.answer+'</div>'+
+      '</div>';
+  }).join('');
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel">'+
+    '<div class="panel-title">The order — commit it to memory</div>'+
+    '<div class="bodmas-strip">'+strip+'</div>'+
+    '<div class="pf-row" style="padding-top:0"><div class="pf-icon">✅</div><div>Always work through <strong style="color:var(--ink)">Brackets</strong> first — whatever is inside must be solved before anything outside.</div></div>'+
+    '<div class="pf-row"><div class="pf-icon">✅</div><div><strong style="color:var(--ink)">Division and Multiplication</strong> share priority — do them left to right.</div></div>'+
+    '<div class="pf-row"><div class="pf-icon">✅</div><div><strong style="color:var(--ink)">Addition and Subtraction</strong> share priority — do them left to right.</div></div>'+
+    '<div class="pf-row"><div class="pf-icon">💡</div><div><strong style="color:var(--ink)">Why this order?</strong> Multiplication describes structure — groups and scaling. Addition describes accumulation. Structure is resolved before accumulation because that is what the expressions mean. This is not a rule — it is mathematics.</div></div>'+
+    '<div class="pf-row" style="border-bottom:none"><div class="pf-icon">🚀</div><div>Next — <strong style="color:var(--ink)">Ages 9–12</strong> begins!</div></div>'+
+    '</div>'+
+    '<div class="sum-grid">'+cards+'</div>';
+  confettiBurst();
+}
+
+function goStep(dir){
+  currentStep=Math.max(0,Math.min(4,currentStep+dir));
+  dots(currentStep);
+  document.getElementById('nia').innerHTML=NIA[currentStep];
+  document.getElementById('btnBack').disabled=(currentStep===0);
+  document.getElementById('btnNext').textContent=BTNS[currentStep];
+  document.getElementById('btnNext').disabled=false;
+  if(currentStep===4){document.getElementById('btnNext').onclick=function(){goStep(-4);};}
+  else{document.getElementById('btnNext').onclick=function(){goStep(1);};}
+  RENDERS[currentStep]();
+}
+goStep(0);
+</script>
+</body>
+</html>

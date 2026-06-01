@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya — Basic Subtraction (Ages 5–7)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap');
+  :root{
+    --red:#e53935;--green:#43a047;--amber:#f59e0b;--violet:#7c5cfc;
+    --txt:#1a1a2e;--panel:rgba(255,255,255,0.93);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Nunito',sans-serif;
+    background:linear-gradient(180deg,#f1f8e9 0%,#dcedc8 100%);
+    min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:16px;
+  }
+  .header{text-align:center;margin-bottom:12px;width:100%;max-width:700px;}
+  .age-badge{display:inline-block;background:linear-gradient(135deg,#66bb6a,#2e7d32);
+    color:#fff;font-size:13px;font-weight:900;letter-spacing:.06em;
+    text-transform:uppercase;padding:5px 18px;border-radius:20px;
+    margin-bottom:8px;box-shadow:0 3px 10px rgba(46,125,50,.3);}
+  .header h1{font-family:'Fredoka One',cursive;font-size:clamp(22px,5vw,32px);
+    color:#2e7d32;text-shadow:0 2px 6px rgba(0,0,0,.1);line-height:1.2;}
+  .header h1 span{color:#e53935;}
+  .card{background:var(--panel);border-radius:28px;padding:20px;
+    max-width:700px;width:100%;
+    box-shadow:0 12px 48px rgba(0,0,0,.12);border:3px solid rgba(100,200,100,.4);}
+
+  /* Steps — exactly matching number of steps */
+  .steps{display:flex;gap:8px;justify-content:center;margin-bottom:14px;}
+  .step-dot{width:10px;height:10px;border-radius:50%;background:#ddd;transition:all .3s;}
+  .step-dot.active{background:#f59e0b;transform:scale(1.5);}
+  .step-dot.done{background:#43a047;}
+
+  /* Nia */
+  .nia-area{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;min-height:60px;}
+  .nia-avatar{width:52px;height:52px;flex-shrink:0;
+    background:linear-gradient(135deg,#66bb6a,#2e7d32);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:26px;
+    box-shadow:0 4px 12px rgba(46,125,50,.3);animation:bob 2.5s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  .nia-bubble{background:linear-gradient(135deg,#f1f8e9,#dcedc8);
+    border:2.5px solid #81c784;border-radius:16px 16px 16px 4px;
+    padding:12px 16px;font-size:clamp(14px,3vw,17px);font-weight:700;
+    color:var(--txt);line-height:1.6;flex:1;
+    box-shadow:0 3px 12px rgba(129,199,132,.2);}
+  .nia-bubble strong{color:#2e7d32;}
+  .nia-bubble em{color:#e53935;font-style:normal;font-weight:900;}
+
+  /* Preface */
+  .preface{background:linear-gradient(135deg,#f1f8e9,#fff9c4);
+    border-radius:18px;padding:16px 18px;margin-bottom:16px;
+    border:2.5px solid #a5d6a7;}
+  .preface-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;
+    font-size:clamp(13px,2.5vw,15px);font-weight:700;color:var(--txt);line-height:1.6;}
+  .preface-row:last-child{margin-bottom:0;}
+  .preface-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+
+  /* Stall scene */
+  .stall-scene{background:linear-gradient(180deg,#f1f8e9,#dcedc8);
+    border-radius:20px;border:3px solid #81c784;padding:16px 12px 12px;
+    margin-bottom:14px;position:relative;overflow:hidden;}
+  .stall-roof{background:linear-gradient(135deg,#43a047,#2e7d32);
+    height:36px;border-radius:12px 12px 0 0;margin:-16px -12px 12px;
+    display:flex;align-items:center;justify-content:center;
+    border-bottom:4px solid #1b5e20;}
+  .stall-roof span{font-family:'Fredoka One',cursive;font-size:18px;
+    color:#fff;letter-spacing:.04em;text-shadow:0 1px 4px rgba(0,0,0,.3);}
+
+  /* Apple row */
+  .apple-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+    min-height:60px;align-items:center;padding:8px;}
+  .apple-item{font-size:clamp(28px,6vw,40px);line-height:1;
+    display:inline-block;transition:all .3s;cursor:default;}
+  .apple-item.eating{animation:eat-apple .5s ease-in forwards;}
+  .apple-item.eaten{opacity:0;font-size:0;margin:0;padding:0;width:0;}
+  @keyframes eat-apple{
+    0%{transform:scale(1);opacity:1}
+    30%{transform:scale(1.3) rotate(-10deg);opacity:1}
+    60%{transform:scale(0.6) rotate(20deg);opacity:.6}
+    100%{transform:scale(0);opacity:0}
+  }
+
+  /* Worm */
+  .worm-area{display:flex;align-items:center;justify-content:center;gap:10px;
+    margin-bottom:10px;}
+  .worm{font-size:clamp(36px,7vw,52px);line-height:1;
+    animation:worm-wiggle 1s ease-in-out infinite;}
+  @keyframes worm-wiggle{
+    0%,100%{transform:rotate(-5deg) scaleX(1)}
+    50%{transform:rotate(5deg) scaleX(1.08)}
+  }
+  .worm.chomping{animation:chomp .3s ease-in-out 3;}
+  @keyframes chomp{
+    0%,100%{transform:scale(1)}
+    50%{transform:scale(1.25) rotate(10deg)}
+  }
+  .worm-label{font-family:'Fredoka One',cursive;font-size:clamp(14px,3vw,18px);
+    color:#2e7d32;background:rgba(255,255,255,.8);padding:4px 12px;
+    border-radius:12px;border:2px solid #81c784;}
+
+  /* Equation */
+  .equation{text-align:center;margin-bottom:12px;
+    font-family:'Fredoka One',cursive;font-size:clamp(22px,5vw,36px);
+    color:var(--txt);line-height:1.3;}
+  .eq-num{color:#2e7d32;}
+  .eq-op{color:#e53935;margin:0 6px;}
+  .eq-eaten{color:#e53935;}
+  .eq-result{color:#7c5cfc;display:inline-block;
+    transition:all .3s cubic-bezier(.34,1.56,.64,1);}
+  .eq-result.pop{animation:pop .3s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
+
+  /* Eat button */
+  .eat-btn{min-width:160px;min-height:56px;padding:12px 24px;border-radius:16px;border:none;
+    font-family:'Fredoka One',cursive;font-size:clamp(16px,3.5vw,20px);cursor:pointer;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 0 rgba(0,0,0,.2);
+    background:linear-gradient(135deg,#e53935,#b71c1c);color:#fff;
+    display:block;margin:0 auto;}
+  .eat-btn:hover{transform:translateY(-2px);}
+  .eat-btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.2);}
+  .eat-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+
+  /* Slider */
+  .slider-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:14px;}
+  .slider-group{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-width:120px;max-width:200px;}
+  .slider-label{font-size:13px;font-weight:800;color:#2e7d32;text-transform:uppercase;letter-spacing:.04em;}
+  .slider-val{font-family:'Fredoka One',cursive;font-size:28px;color:#e53935;}
+  input[type=range]{width:100%;-webkit-appearance:none;height:6px;border-radius:3px;
+    background:#dcedc8;outline:none;cursor:pointer;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;
+    border-radius:50%;background:#43a047;border:3px solid #fff;cursor:pointer;
+    box-shadow:0 2px 6px rgba(0,0,0,.2);}
+
+  /* Quiz */
+  .quiz-area{background:linear-gradient(135deg,#f1f8e9,#fff9c4);
+    border-radius:18px;padding:16px 18px;margin-bottom:14px;
+    border:2.5px solid #a5d6a7;}
+  .quiz-q{font-family:'Fredoka One',cursive;font-size:clamp(16px,4vw,22px);
+    color:var(--txt);margin-bottom:14px;text-align:center;line-height:1.5;}
+  .quiz-options{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .quiz-btn{min-width:70px;min-height:70px;border-radius:18px;
+    border:3px solid #ddd;background:#fff;
+    font-family:'Fredoka One',cursive;font-size:clamp(20px,5vw,30px);
+    cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);
+    box-shadow:0 4px 8px rgba(0,0,0,.1);color:var(--txt);}
+  .quiz-btn:hover{transform:scale(1.1);border-color:#43a047;}
+  .quiz-btn.correct{background:linear-gradient(135deg,#66bb6a,#43a047);
+    border-color:#2e7d32;color:#fff;animation:pop .4s ease;}
+  .quiz-btn.wrong{background:linear-gradient(135deg,#ef9a9a,#e57373);
+    border-color:#c62828;color:#fff;animation:shake .3s ease;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .quiz-result{text-align:center;margin-top:10px;font-family:'Fredoka One',cursive;
+    font-size:clamp(14px,3.5vw,18px);min-height:26px;}
+  .quiz-result.correct{color:#2e7d32;}
+  .quiz-result.wrong{color:#c62828;}
+
+  /* Stars */
+  .stars{display:flex;justify-content:center;gap:6px;margin-bottom:10px;}
+  .star{font-size:28px;opacity:.25;transition:all .3s;}
+  .star.earned{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+
+  /* Summary cards */
+  .summary-nums{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px;}
+  .sum-card{background:linear-gradient(135deg,#f1f8e9,#dcedc8);
+    border:2px solid #81c784;border-radius:12px;padding:8px 12px;
+    font-family:'Fredoka One',cursive;font-size:clamp(14px,3vw,18px);color:#2e7d32;
+    text-align:center;min-width:90px;}
+
+  /* Nav */
+  .controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:4px;}
+  .btn{min-width:64px;min-height:56px;padding:12px 20px;border-radius:16px;border:none;
+    font-family:'Fredoka One',cursive;font-size:clamp(15px,3.5vw,19px);cursor:pointer;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 0 rgba(0,0,0,.18);}
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.18);}
+  .btn-next{background:linear-gradient(135deg,#7c5cfc,#5c35d4);color:#fff;flex:1;max-width:220px;}
+  .btn-next:hover{transform:translateY(-2px);}
+  .btn-back{background:linear-gradient(135deg,#90a4ae,#607d8b);color:#fff;}
+  .btn-back:hover{transform:translateY(-2px);}
+  .btn-back:disabled,.btn-next:disabled{opacity:.3;cursor:not-allowed;transform:none;}
+
+  /* Confetti */
+  .confetti-container{position:fixed;top:0;left:0;right:0;bottom:0;
+    pointer-events:none;z-index:100;overflow:hidden;}
+  .confetti-piece{position:absolute;border-radius:2px;
+    animation:confetti-fall 2s ease-in forwards;}
+  @keyframes confetti-fall{
+    0%{transform:translateY(-20px) rotate(0deg);opacity:1}
+    100%{transform:translateY(100vh) rotate(720deg);opacity:0}
+  }
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="header">
+  <div><span class="age-badge">Ages 5–7</span></div>
+  <h1>The <span>Hungry Worm</span> 🐛 — Learning Subtraction!</h1>
+</div>
+<div class="card">
+  <!-- 5 steps = 5 dots: d0 d1 d2 d3 d4 -->
+  <div class="steps">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia-area">
+    <div class="nia-avatar">🌟</div>
+    <div class="nia-bubble" id="nia">
+      Welcome back to Priya's apple stall! A <strong>very hungry worm</strong> has arrived — and he wants to eat some apples! 🐛
+    </div>
+  </div>
+  <div id="mainArea"></div>
+  <div class="controls" id="ctrlRow">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>← Back</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let's go! →</button>
+  </div>
+</div>
+<div class="confetti-container" id="confetti"></div>
+
+<script>
+// ── State ────────────────────────────────────────────────
+var currentStep = 0;
+// Step 1 state
+var totalApples = 7;
+var eatenCount = 0;
+var eating = false;
+// Step 2 state
+var slTotal = 8;
+var slEaten = 3;
+// Step 3 state
+var quizIdx = 0;
+var quizCorrect = 0;
+
+// ── Content ──────────────────────────────────────────────
+// 5 steps → 5 NIA messages, 5 BTNS, dots d0-d4
+var NIA = [
+  "Welcome back to Priya's apple stall! A <strong>very hungry worm</strong> has arrived — and he wants to eat some apples! 🐛",
+  "There are <strong>7 apples</strong> on the stall. The worm is going to eat some of them! Tap <strong>Chomp!</strong> and watch what happens. 🍎",
+  "Now use the sliders to explore! Change how many apples there are — and how many the worm eats. Watch the sum change! 🌟",
+  "Quiz time! 🎉 Count the apples carefully and pick the right answer!",
+  "Amazing! 🏆 You have learned subtraction — taking things away to find what is left!"
+];
+
+var BTNS = [
+  "Let's go! →",
+  "Try it! →",
+  "Explore! →",
+  "Quiz time! →",
+  "Finish! ⭐"
+];
+
+var quizQuestions = [
+  {q:"🍎🍎🍎🍎🍎 — the worm eats 🍎🍎. How many are left?", total:5, eaten:2, answer:3, opts:[2,3,4,5]},
+  {q:"🍎🍎🍎🍎🍎🍎 — the worm eats 🍎🍎🍎. How many are left?", total:6, eaten:3, answer:3, opts:[2,3,4,5]},
+  {q:"🍎🍎🍎🍎🍎🍎🍎🍎 — the worm eats 🍎🍎🍎🍎🍎. How many are left?", total:8, eaten:5, answer:3, opts:[2,3,4,5]},
+  {q:"🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎 — the worm eats 🍎🍎🍎🍎🍎🍎. How many are left?", total:10, eaten:6, answer:4, opts:[3,4,5,6]},
+];
+
+// ── Helpers ──────────────────────────────────────────────
+function dots(s) {
+  for (var i = 0; i <= 4; i++) {
+    var d = document.getElementById('d' + i);
+    if (d) d.className = 'step-dot' + (i < s ? ' done' : i === s ? ' active' : '');
+  }
+}
+
+function confettiBurst() {
+  var c = document.getElementById('confetti');
+  c.innerHTML = '';
+  var cols = ['#ffe066','#6abf69','#f44336','#7c5cfc','#4fc3f7','#ff9800'];
+  for (var i = 0; i < 48; i++) {
+    var p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.cssText = 'left:' + (Math.random()*100) + '%;' +
+      'background:' + cols[Math.floor(Math.random()*cols.length)] + ';' +
+      'width:' + (8+Math.random()*8) + 'px;height:' + (8+Math.random()*8) + 'px;' +
+      'border-radius:' + (Math.random()>.5?'50%':'2px') + ';' +
+      'animation-delay:' + (Math.random()*.6) + 's;' +
+      'animation-duration:' + (1.5+Math.random()) + 's';
+    c.appendChild(p);
+  }
+  setTimeout(function(){ c.innerHTML = ''; }, 3000);
+}
+
+function buildAppleRow(count, eaten, clickable) {
+  var html = '';
+  for (var i = 0; i < count; i++) {
+    html += '<span class="apple-item" id="apple_' + i + '">🍎</span>';
+  }
+  return html;
+}
+
+// ── STEP 0 — Preface ─────────────────────────────────────
+function renderStep0() {
+  document.getElementById('mainArea').innerHTML =
+    '<div class="preface">' +
+    '<div class="preface-row"><div class="preface-icon">📘</div><div><strong>What you will learn:</strong> What subtraction means — taking things away from a group to find how many are left.</div></div>' +
+    '<div class="preface-row"><div class="preface-icon">🌍</div><div><strong>Why it matters:</strong> You subtract every day! Eating biscuits, giving away sweets, counting how many are left after sharing.</div></div>' +
+    '<div class="preface-row"><div class="preface-icon">🎯</div><div><strong>By the end:</strong> You will understand that subtraction means <em>taking away</em> — and be able to find what is left!</div></div>' +
+    '</div>' +
+    '<div style="text-align:center;padding:16px 0">' +
+    '<div style="font-size:80px;animation:bob 1.5s ease-in-out infinite">🐛</div>' +
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(16px,4vw,22px);color:#2e7d32;margin-top:10px">Meet Wormy the Hungry Worm!</div>' +
+    '<div style="font-size:clamp(13px,3vw,16px);font-weight:700;color:#555;margin-top:6px">He loves eating apples. Every apple he eats disappears from the stall!</div>' +
+    '</div>';
+}
+
+// ── STEP 1 — Interactive eat ──────────────────────────────
+function renderStep1() {
+  totalApples = 7;
+  eatenCount = 0;
+  eating = false;
+  renderEatScene();
+}
+
+function renderEatScene() {
+  var left = totalApples - eatenCount;
+  var resultText = left > 0 ? '?' : left.toString();
+  if (eatenCount > 0 && left >= 0) resultText = left.toString();
+
+  var apples = '';
+  for (var i = 0; i < left; i++) {
+    apples += '<span class="apple-item">🍎</span>';
+  }
+  if (left === 0) apples = '<span style="font-size:clamp(16px,3vw,20px);font-weight:700;color:#999">No apples left!</span>';
+
+  var html =
+    '<div class="equation">' +
+    '<span class="eq-num">' + totalApples + '</span>' +
+    '<span class="eq-op">−</span>' +
+    '<span class="eq-eaten">' + eatenCount + '</span>' +
+    '<span class="eq-op">=</span>' +
+    '<span class="eq-result" id="eqRes">' + resultText + '</span>' +
+    '</div>' +
+    '<div class="stall-scene">' +
+    '<div class="stall-roof"><span>🍎 Priya\'s Apple Stall 🍎</span></div>' +
+    '<div class="apple-row" id="appleRow">' + apples + '</div>' +
+    '<div class="worm-area">' +
+    '<span class="worm" id="worm">🐛</span>' +
+    '<span class="worm-label">Wormy has eaten <strong>' + eatenCount + '</strong> apple' + (eatenCount !== 1 ? 's' : '') + '</span>' +
+    '</div>' +
+    '</div>' +
+    '<button class="eat-btn" id="eatBtn" onclick="eatApple()" ' + (left <= 0 ? 'disabled' : '') + '>' +
+    (left > 0 ? '🐛 Chomp! Eat an apple!' : '🐛 All gone!') +
+    '</button>';
+
+  document.getElementById('mainArea').innerHTML = html;
+}
+
+function eatApple() {
+  if (eating) return;
+  var left = totalApples - eatenCount;
+  if (left <= 0) return;
+  eating = true;
+
+  // Animate worm chomping
+  var worm = document.getElementById('worm');
+  if (worm) { worm.classList.add('chomping'); setTimeout(function(){ if(worm) worm.classList.remove('chomping'); }, 900); }
+
+  // Animate last apple disappearing
+  var appleItems = document.querySelectorAll('.apple-item');
+  var lastApple = appleItems[appleItems.length - 1];
+  if (lastApple) {
+    lastApple.classList.add('eating');
+    setTimeout(function() {
+      eatenCount++;
+      eating = false;
+      renderEatScene();
+      var left2 = totalApples - eatenCount;
+      // Update nia message
+      if (left2 === 0) {
+        confettiBurst();
+        document.getElementById('nia').innerHTML = '🎉 Wormy ate all <strong>' + eatenCount + '</strong> apples! <em>' + totalApples + '</em> minus <em>' + eatenCount + '</em> equals <em>0</em>! Nothing left!';
+      } else {
+        document.getElementById('nia').innerHTML = 'Wormy ate <strong>' + eatenCount + '</strong> apple' + (eatenCount!==1?'s':'') + '! <em>' + totalApples + '</em> − <em>' + eatenCount + '</em> = <em>' + left2 + '</em> left!';
+      }
+      // Pop result
+      var res = document.getElementById('eqRes');
+      if (res) { res.classList.remove('pop'); void res.offsetWidth; res.classList.add('pop'); }
+    }, 450);
+  } else {
+    eating = false;
+  }
+}
+
+// ── STEP 2 — Sliders ─────────────────────────────────────
+function renderStep2() {
+  slTotal = 8;
+  slEaten = 3;
+  renderSliders();
+}
+
+function renderSliders() {
+  var left = Math.max(0, slTotal - slEaten);
+  var actualEaten = Math.min(slEaten, slTotal);
+
+  var applesToShow = '';
+  for (var i = 0; i < slTotal; i++) {
+    if (i < left) {
+      applesToShow += '<span class="apple-item">🍎</span>';
+    } else {
+      applesToShow += '<span class="apple-item" style="opacity:.2;filter:grayscale(1)">🍎</span>';
+    }
+  }
+
+  var html =
+    '<div class="equation">' +
+    '<span class="eq-num">' + slTotal + '</span>' +
+    '<span class="eq-op">−</span>' +
+    '<span class="eq-eaten">' + actualEaten + '</span>' +
+    '<span class="eq-op">=</span>' +
+    '<span class="eq-result">' + left + '</span>' +
+    '</div>' +
+    '<div class="stall-scene">' +
+    '<div class="stall-roof"><span>🍎 Priya\'s Apple Stall 🍎</span></div>' +
+    '<div class="apple-row">' + applesToShow + '</div>' +
+    '<div class="worm-area">' +
+    '<span class="worm">🐛</span>' +
+    '<span class="worm-label">Wormy ate <strong>' + actualEaten + '</strong> — <strong>' + left + '</strong> left!</span>' +
+    '</div>' +
+    '</div>' +
+    '<div class="slider-row">' +
+    '<div class="slider-group">' +
+    '<div class="slider-label">Total Apples</div>' +
+    '<div class="slider-val">' + slTotal + '</div>' +
+    '<input type="range" min="1" max="10" value="' + slTotal + '" oninput="updateSliders(1,this.value)">' +
+    '</div>' +
+    '<div class="slider-group">' +
+    '<div class="slider-label">Worm Eats</div>' +
+    '<div class="slider-val">' + actualEaten + '</div>' +
+    '<input type="range" min="0" max="' + slTotal + '" value="' + actualEaten + '" oninput="updateSliders(2,this.value)">' +
+    '</div>' +
+    '</div>';
+  document.getElementById('mainArea').innerHTML = html;
+}
+
+function updateSliders(which, val) {
+  if (which === 1) { slTotal = parseInt(val); if (slEaten > slTotal) slEaten = slTotal; }
+  else { slEaten = parseInt(val); }
+  renderSliders();
+  var left = Math.max(0, slTotal - slEaten);
+  document.getElementById('nia').innerHTML =
+    '<strong>' + slTotal + '</strong> apples − <strong>' + Math.min(slEaten,slTotal) + '</strong> eaten = <em>' + left + '</em> left! 🍎';
+}
+
+// ── STEP 3 — Quiz ─────────────────────────────────────────
+function renderStep3() {
+  quizIdx = 0;
+  quizCorrect = 0;
+  showQuizQ();
+}
+
+function showQuizQ() {
+  if (quizIdx >= quizQuestions.length) { showQuizEnd(); return; }
+  var q = quizQuestions[quizIdx];
+  var stars = '';
+  for (var i = 0; i < quizQuestions.length; i++)
+    stars += '<div class="star' + (i < quizCorrect ? ' earned' : '') + '">⭐</div>';
+  var opts = '';
+  q.opts.forEach(function(o) {
+    opts += '<button class="quiz-btn" onclick="answerQ(' + o + ',' + q.answer + ')">' + o + '</button>';
+  });
+  document.getElementById('mainArea').innerHTML =
+    '<div class="stars">' + stars + '</div>' +
+    '<div class="quiz-area">' +
+    '<div class="quiz-q">' + q.q + '</div>' +
+    '<div class="quiz-options">' + opts + '</div>' +
+    '<div class="quiz-result" id="qRes"></div>' +
+    '</div>';
+}
+
+function answerQ(chosen, correct) {
+  var btns = document.querySelectorAll('.quiz-btn');
+  btns.forEach(function(b) { b.disabled = true; });
+  var res = document.getElementById('qRes');
+  if (chosen === correct) {
+    btns.forEach(function(b) { if (parseInt(b.textContent) === correct) b.className = 'quiz-btn correct'; });
+    quizCorrect++;
+    if (res) { res.textContent = '✅ Brilliant! ' + correct + ' is correct!'; res.className = 'quiz-result correct'; }
+    document.getElementById('nia').innerHTML = '✅ <strong>Correct!</strong> Great counting! 🐛';
+  } else {
+    btns.forEach(function(b) {
+      if (parseInt(b.textContent) === chosen) b.className = 'quiz-btn wrong';
+      if (parseInt(b.textContent) === correct) b.className = 'quiz-btn correct';
+    });
+    if (res) { res.textContent = '❌ Not quite! The answer is ' + correct; res.className = 'quiz-result wrong'; }
+    document.getElementById('nia').innerHTML = '💛 Not quite! Count the remaining apples — the answer is <strong>' + correct + '</strong>!';
+  }
+  quizIdx++;
+  if(chosen === correct){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;showQuizQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxtOk=document.createElement('button');
+    nxtOk.textContent='Next \u2192';
+    nxtOk.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxtOk.onclick=function(){clearTimeout(_t);_doAdv();};
+    var _r=document.getElementById('quizResult')||document.getElementById('qResult')||document.getElementById('qRes');
+    if(_r&&_r.parentNode)_r.parentNode.appendChild(nxtOk);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent='Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){showQuizQ();};
+    var _r2=document.getElementById('quizResult')||document.getElementById('qResult')||document.getElementById('qRes');
+    if(_r2&&_r2.parentNode)_r2.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQuizEnd() {
+  var stars = '';
+  for (var i = 0; i < quizQuestions.length; i++)
+    stars += '<div class="star' + (i < quizCorrect ? ' earned' : '') + '">⭐</div>';
+  var msg = quizCorrect === 4 ? '🏆 PERFECT! You are a subtraction superstar!' :
+            quizCorrect >= 3 ? '🌟 Brilliant! Almost perfect!' :
+            quizCorrect >= 2 ? '👍 Good work! Keep practising!' : '💪 Keep counting — you will get there!';
+  document.getElementById('mainArea').innerHTML =
+    '<div class="stars">' + stars + '</div>' +
+    '<div style="text-align:center;padding:16px;background:linear-gradient(135deg,#f1f8e9,#fff9c4);border-radius:18px;border:2.5px solid #a5d6a7">' +
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(17px,4vw,24px);color:#2e7d32;margin-bottom:8px">' + msg + '</div>' +
+    '<div style="font-size:clamp(14px,3vw,17px);font-weight:700;color:#555">You got <strong style="color:#e53935">' + quizCorrect + '</strong> out of <strong>4</strong> correct!</div>' +
+    '</div>';
+  if (quizCorrect >= 3) confettiBurst();
+  document.getElementById('nia').innerHTML = quizCorrect === 4 ?
+    '🏆 <strong>Perfect score!</strong> You know your subtraction! Wormy is proud! 🐛' :
+    '🌟 Well done! Remember — subtraction means <em>taking away</em> to find what is left!';
+}
+
+// ── STEP 4 — Summary ──────────────────────────────────────
+function renderStep4() {
+  var facts = [[5,1],[5,2],[6,2],[6,3],[7,3],[7,4],[8,3],[8,5],[9,4],[10,6]];
+  var cards = facts.map(function(f) {
+    return '<div class="sum-card">' + f[0] + ' − ' + f[1] + ' = <strong>' + (f[0]-f[1]) + '</strong></div>';
+  }).join('');
+  document.getElementById('mainArea').innerHTML =
+    '<div style="text-align:center;padding:10px 0 14px">' +
+    '<div style="font-size:64px">🏆</div>' +
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(17px,4vw,24px);color:#2e7d32;margin-top:8px;margin-bottom:14px">You can subtract numbers!</div>' +
+    '</div>' +
+    '<div class="preface">' +
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>Subtraction means <strong>taking things away</strong> to find how many are left.</div></div>' +
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>The <strong>−</strong> sign means "take away" — remove some from the group!</div></div>' +
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>Addition and subtraction are <strong>opposites</strong>: 3 + 4 = 7 AND 7 − 4 = 3!</div></div>' +
+    '<div class="preface-row"><div class="preface-icon">🚀</div><div>Next — we will explore <strong>shapes</strong> all around us!</div></div>' +
+    '</div>' +
+    '<div class="summary-nums">' + cards + '</div>';
+  confettiBurst();
+}
+
+// ── Navigation ────────────────────────────────────────────
+var RENDERS = [renderStep0, renderStep1, renderStep2, renderStep3, renderStep4];
+
+function goStep(dir) {
+  currentStep = Math.max(0, Math.min(4, currentStep + dir));
+  dots(currentStep);
+  document.getElementById('nia').innerHTML = NIA[currentStep];
+  document.getElementById('btnBack').disabled = (currentStep === 0);
+  document.getElementById('btnNext').textContent = currentStep < 4 ? BTNS[currentStep] : '🔁 Play Again!';
+  document.getElementById('btnNext').disabled = false;
+  if (currentStep === 4) {
+    document.getElementById('btnNext').onclick = function(){ goStep(-4); };
+  } else {
+    document.getElementById('btnNext').onclick = function(){ goStep(1); };
+  }
+  RENDERS[currentStep]();
+}
+
+goStep(0);
+</script>
+</body>
+</html>

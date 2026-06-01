@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya — Why Fractions? (Ages 5–8)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap');
+
+  :root {
+    --bg: #fff8f0;
+    --panel: #ffffff;
+    --violet: #7c5cfc;
+    --sky: #38bdf8;
+    --em: #10b981;
+    --rose: #f43f5e;
+    --amber: #f59e0b;
+    --txt: #1a1a2e;
+    --muted: #6b7280;
+    --pizza: #f59e0b;
+    --crust: #d97706;
+    --sauce: #ef4444;
+    --cheese: #fde68a;
+    --nia: #7c5cfc;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-x: hidden;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .header-tag {
+    display: inline-block;
+    background: rgba(124,92,252,.12);
+    color: var(--violet);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+  .header h1 {
+    font-family: 'Baloo 2', cursive;
+    font-size: clamp(24px, 5vw, 36px);
+    color: var(--txt);
+  }
+  .header h1 span { color: var(--violet); }
+
+  /* ── Main card ── */
+  .card {
+    background: var(--panel);
+    border-radius: 28px;
+    padding: 32px;
+    max-width: 680px;
+    width: 100%;
+    box-shadow: 0 8px 40px rgba(0,0,0,.08), 0 2px 8px rgba(0,0,0,.04);
+    position: relative;
+  }
+
+  /* ── Nia speech bubble ── */
+  .nia-area {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .nia-avatar {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, var(--violet), #a78bfa);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(124,92,252,.3);
+    animation: niaBounce 2s ease-in-out infinite;
+  }
+  @keyframes niaBounce {
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-4px);}
+  }
+  .nia-bubble {
+    background: linear-gradient(135deg, rgba(124,92,252,.08), rgba(56,189,248,.06));
+    border: 1.5px solid rgba(124,92,252,.18);
+    border-radius: 18px 18px 18px 4px;
+    padding: 14px 18px;
+    font-size: clamp(14px, 3vw, 17px);
+    font-weight: 700;
+    color: var(--txt);
+    line-height: 1.5;
+    flex: 1;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+  }
+  .nia-bubble .highlight {
+    color: var(--violet);
+    font-weight: 900;
+  }
+
+  /* ── Scene ── */
+  .scene {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  /* ── Friends row ── */
+  .friends-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .friend {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all .4s ease;
+  }
+  .friend.visible { opacity: 1; transform: translateY(0); }
+  .friend-emoji { font-size: 36px; }
+  .friend-name {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+  .friend-plate {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    border: 2px dashed #d1d5db;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    transition: all .3s;
+    position: relative;
+  }
+  .friend-plate.has-slice {
+    background: #fffbeb;
+    border: 2px solid var(--amber);
+    border-style: solid;
+  }
+  .friend-fraction {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--violet);
+    opacity: 0;
+    transition: opacity .3s;
+  }
+  .friend-fraction.visible { opacity: 1; }
+
+  /* ── Pizza ── */
+  .pizza-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .pizza-svg-wrap {
+    position: relative;
+    cursor: pointer;
+    transition: transform .2s;
+  }
+  .pizza-svg-wrap:hover { transform: scale(1.03); }
+  .pizza-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  /* ── Fraction display ── */
+  .fraction-display {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+    min-height: 80px;
+  }
+  .fraction-box {
+    text-align: center;
+    opacity: 0;
+    transform: scale(.8);
+    transition: all .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  .fraction-box.visible { opacity: 1; transform: scale(1); }
+  .fraction-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+  }
+  .frac-num {
+    font-family: 'Baloo 2', cursive;
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--violet);
+    line-height: 1;
+  }
+  .frac-line {
+    width: 40px; height: 3px;
+    background: var(--txt);
+    border-radius: 2px;
+    margin: 2px 0;
+  }
+  .frac-den {
+    font-family: 'Baloo 2', cursive;
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--rose);
+    line-height: 1;
+  }
+  .frac-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-top: 6px;
+  }
+  .frac-arrow {
+    font-size: 28px;
+    color: var(--muted);
+    opacity: 0;
+    transition: opacity .3s;
+  }
+  .frac-arrow.visible { opacity: 1; }
+
+  /* ── Controls ── */
+  .controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .friends-selector {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .selector-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+  .num-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 2px solid var(--bdr, #e5e7eb);
+    background: white;
+    font-family: 'Baloo 2', cursive;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    color: var(--txt);
+    transition: all .2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .num-btn:hover { border-color: var(--violet); color: var(--violet); transform: scale(1.1); }
+  .num-btn.active { background: var(--violet); color: white; border-color: var(--violet); }
+
+  .action-btn {
+    padding: 14px 32px;
+    border-radius: 50px;
+    border: none;
+    background: linear-gradient(135deg, var(--violet), #a78bfa);
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(124,92,252,.35);
+    transition: all .2s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124,92,252,.45); }
+  .action-btn:active { transform: scale(.97); }
+  .action-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+  /* ── Insight card ── */
+  .insight {
+    background: linear-gradient(135deg, rgba(16,185,129,.08), rgba(56,189,248,.06));
+    border: 1.5px solid rgba(16,185,129,.2);
+    border-radius: 16px;
+    padding: 16px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--txt);
+    line-height: 1.6;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all .4s ease;
+    text-align: center;
+  }
+  .insight.visible { opacity: 1; transform: translateY(0); }
+  .insight strong { color: var(--em); }
+
+  /* ── Step indicator ── */
+  .steps {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .step-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    transition: all .3s;
+  }
+  .step-dot.active { background: var(--violet); transform: scale(1.3); }
+  .step-dot.done { background: var(--em); }
+
+  /* ── Confetti ── */
+  .confetti-piece {
+    position: fixed;
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    pointer-events: none;
+    animation: confettiFall 1.8s ease-in forwards;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(540deg); opacity: 0; }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 480px) {
+    .card { padding: 20px 16px; }
+    .friend-plate { width: 48px; height: 48px; }
+    .friend-emoji { font-size: 28px; }
+  }
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+
+<div class="header">
+  <div class="header-tag">Shikooya · Ages 5–8 · Concept Animation</div>
+  <h1>Why do we need <span>fractions</span>?</h1>
+</div>
+
+<div class="card">
+  <!-- Step dots -->
+  <div class="steps">
+    <div class="step-dot active" id="dot0"></div>
+    <div class="step-dot" id="dot1"></div>
+    <div class="step-dot" id="dot2"></div>
+    <div class="step-dot" id="dot3"></div>
+  </div>
+
+  <!-- Nia -->
+  <div class="nia-area">
+    <div class="nia-avatar">🦋</div>
+    <div class="nia-bubble" id="niaSpeech">
+      Hi! I'm Nia 👋 Let's share a pizza with your friends. How many friends are coming?
+    </div>
+  </div>
+
+  <div class="scene">
+
+    <!-- Friends selector -->
+    <div class="controls" id="selectorArea">
+      <div class="friends-selector">
+        <span class="selector-label">Friends:</span>
+        <button class="num-btn" onclick="setFriends(2)">2</button>
+        <button class="num-btn active" onclick="setFriends(3)">3</button>
+        <button class="num-btn" onclick="setFriends(4)">4</button>
+        <button class="num-btn" onclick="setFriends(6)">6</button>
+        <button class="num-btn" onclick="setFriends(8)">8</button>
+      </div>
+      <button class="action-btn" onclick="startCutting()" id="cutBtn">
+        🍕 Share the pizza!
+      </button>
+    </div>
+
+    <!-- Pizza -->
+    <div class="pizza-wrap">
+      <div class="pizza-svg-wrap" id="pizzaWrap">
+        <svg id="pizzaSvg" width="220" height="220" viewBox="0 0 220 220">
+          <!-- Shadow -->
+          <ellipse cx="110" cy="210" rx="85" ry="10" fill="rgba(0,0,0,.08)"/>
+          <!-- Crust -->
+          <circle cx="110" cy="110" r="100" fill="#d97706"/>
+          <!-- Sauce -->
+          <circle cx="110" cy="110" r="90" fill="#ef4444"/>
+          <!-- Cheese -->
+          <circle cx="110" cy="110" r="78" fill="#fde68a"/>
+          <!-- Toppings -->
+          <circle cx="90" cy="85" r="7" fill="#7c3f00" opacity=".7"/>
+          <circle cx="130" cy="95" r="6" fill="#7c3f00" opacity=".7"/>
+          <circle cx="100" cy="125" r="8" fill="#7c3f00" opacity=".7"/>
+          <circle cx="125" cy="130" r="5" fill="#7c3f00" opacity=".7"/>
+          <circle cx="80" cy="115" r="6" fill="#7c3f00" opacity=".7"/>
+          <!-- Cut lines drawn by JS -->
+          <g id="cutLines"></g>
+          <!-- Highlight -->
+          <ellipse cx="85" cy="75" rx="22" ry="14" fill="rgba(255,255,255,.18)" transform="rotate(-20,85,75)"/>
+        </svg>
+      </div>
+      <div class="pizza-label" id="pizzaLabel">One whole pizza 🍕</div>
+    </div>
+
+    <!-- Friends row -->
+    <div class="friends-row" id="friendsRow"></div>
+
+    <!-- Fraction display -->
+    <div class="fraction-display" id="fracDisplay" style="display:none">
+      <div class="fraction-box" id="fracBox">
+        <div class="fraction-visual">
+          <div class="frac-num" id="fracNum">1</div>
+          <div class="frac-line"></div>
+          <div class="frac-den" id="fracDen">3</div>
+        </div>
+        <div class="frac-label">Each friend gets</div>
+      </div>
+      <div class="frac-arrow" id="fracArrow">✨</div>
+      <div class="fraction-box" id="fracExplain" style="max-width:200px;text-align:left">
+        <div style="font-size:13px;font-weight:700;line-height:1.6;color:var(--txt)">
+          <span style="color:var(--rose);font-size:16px;font-weight:900" id="denExplain">3</span>
+          <span> = number of equal parts</span><br>
+          <span style="color:var(--violet);font-size:16px;font-weight:900">1</span>
+          <span> = how many each friend gets</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insight -->
+    <div class="insight" id="insight">
+      🌟 A <strong>fraction</strong> is just a <strong>sharing story</strong>!<br>
+      The bottom number = how many friends.<br>
+      The top number = how many slices each person gets.
+    </div>
+
+    <!-- Reset -->
+    <button class="action-btn" onclick="reset()" id="resetBtn" style="display:none;background:linear-gradient(135deg,#10b981,#38bdf8)">
+      🔄 Try again with different friends!
+    </button>
+
+  </div>
+</div>
+
+<script>
+  let numFriends = 3;
+  let step = 0;
+  let cutting = false;
+
+  const FRIEND_EMOJIS = ['👦','👧','🧒','👶','🧑','👦','👧','🧒'];
+  const FRIEND_NAMES = ['Alex','Emma','Sam','Leo','Mia','Jake','Lily','Tom'];
+  const COLOURS = ['#7c5cfc','#f43f5e','#10b981','#f59e0b','#38bdf8','#a78bfa','#fb7185','#34d399'];
+
+  const NIА_LINES = [
+    '',
+    n => `Perfect! ${n} friends are coming. Let's cut the pizza into ${n} equal pieces — one for each friend!`,
+    n => `Look! Each friend gets exactly <span class="highlight">1 out of ${n} pieces</span>. We write that as a fraction!`,
+    n => `The bottom number (${n}) tells us how many equal pieces. The top number (1) tells us how many each friend gets. That's all a fraction is!`,
+  ];
+
+  function setFriends(n) {
+    if (cutting) return;
+    numFriends = n;
+    document.querySelectorAll('.num-btn').forEach(b => {
+      b.classList.toggle('active', parseInt(b.textContent) === n);
+    });
+    buildFriendsRow();
+    document.getElementById('cutLines').innerHTML = '';
+    document.getElementById('pizzaLabel').textContent = 'One whole pizza 🍕';
+  }
+
+  function buildFriendsRow() {
+    const row = document.getElementById('friendsRow');
+    row.innerHTML = '';
+    for (let i = 0; i < numFriends; i++) {
+      const div = document.createElement('div');
+      div.className = 'friend';
+      div.id = 'friend' + i;
+      div.innerHTML = `
+        <div class="friend-emoji">${FRIEND_EMOJIS[i % FRIEND_EMOJIS.length]}</div>
+        <div class="friend-name">${FRIEND_NAMES[i % FRIEND_NAMES.length]}</div>
+        <div class="friend-plate" id="plate${i}"></div>
+        <div class="friend-fraction" id="frac${i}"></div>
+      `;
+      row.appendChild(div);
+      setTimeout(() => div.classList.add('visible'), i * 80);
+    }
+  }
+
+  function drawCutLines(n) {
+    const g = document.getElementById('cutLines');
+    g.innerHTML = '';
+    const cx = 110, cy = 110, r = 100;
+    for (let i = 0; i < n; i++) {
+      const angle = (i * 2 * Math.PI / n) - Math.PI / 2;
+      const x2 = cx + r * Math.cos(angle);
+      const y2 = cy + r * Math.sin(angle);
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', cx); line.setAttribute('y1', cy);
+      line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+      line.setAttribute('stroke', 'rgba(255,255,255,.7)');
+      line.setAttribute('stroke-width', '3');
+      line.setAttribute('stroke-dasharray', '0 ' + (r + 5));
+      line.style.transition = `stroke-dasharray ${0.4 + i * 0.1}s ease ${i * 0.1}s`;
+      g.appendChild(line);
+      setTimeout(() => {
+        line.setAttribute('stroke-dasharray', r + 5 + ' 0');
+      }, 50);
+    }
+  }
+
+  function updateDots(s) {
+    for (let i = 0; i <= 3; i++) {
+      const dot = document.getElementById('dot' + i);
+      if (i < s) dot.className = 'step-dot done';
+      else if (i === s) dot.className = 'step-dot active';
+      else dot.className = 'step-dot';
+    }
+  }
+
+  function startCutting() {
+    if (cutting) return;
+    cutting = true;
+    step = 1;
+    updateDots(1);
+
+    // Disable selector
+    document.getElementById('cutBtn').disabled = true;
+    document.querySelectorAll('.num-btn').forEach(b => b.disabled = true);
+
+    // Nia speaks
+    setNia(NIА_LINES[1](numFriends));
+
+    // Draw cut lines
+    setTimeout(() => {
+      drawCutLines(numFriends);
+      document.getElementById('pizzaLabel').textContent = `${numFriends} equal slices! 🎉`;
+    }, 600);
+
+    // Distribute slices
+    setTimeout(() => {
+      step = 2;
+      updateDots(2);
+      setNia(NIА_LINES[2](numFriends));
+      distributeSlices();
+    }, 1800);
+
+    // Show fraction
+    setTimeout(() => {
+      step = 3;
+      updateDots(3);
+      setNia(NIА_LINES[3](numFriends));
+      showFraction();
+    }, 3200);
+
+    // Show insight and reset
+    setTimeout(() => {
+      document.getElementById('insight').classList.add('visible');
+      document.getElementById('resetBtn').style.display = 'flex';
+      spawnConfetti();
+    }, 4400);
+  }
+
+  function distributeSlices() {
+    for (let i = 0; i < numFriends; i++) {
+      setTimeout(() => {
+        const plate = document.getElementById('plate' + i);
+        const fracEl = document.getElementById('frac' + i);
+        if (plate) {
+          plate.classList.add('has-slice');
+          plate.textContent = '🍕';
+        }
+        if (fracEl) {
+          fracEl.textContent = `1/${numFriends}`;
+          fracEl.classList.add('visible');
+        }
+      }, i * 200);
+    }
+  }
+
+  function showFraction() {
+    const fd = document.getElementById('fracDisplay');
+    fd.style.display = 'flex';
+    document.getElementById('fracNum').textContent = '1';
+    document.getElementById('fracDen').textContent = numFriends;
+    document.getElementById('denExplain').textContent = numFriends;
+    setTimeout(() => {
+      document.getElementById('fracBox').classList.add('visible');
+    }, 100);
+    setTimeout(() => {
+      document.getElementById('fracArrow').classList.add('visible');
+    }, 400);
+    setTimeout(() => {
+      document.getElementById('fracExplain').classList.add('visible');
+    }, 700);
+  }
+
+  function setNia(text) {
+    document.getElementById('niaSpeech').innerHTML = text;
+  }
+
+  function reset() {
+    cutting = false;
+    step = 0;
+    updateDots(0);
+    document.getElementById('cutLines').innerHTML = '';
+    document.getElementById('pizzaLabel').textContent = 'One whole pizza 🍕';
+    document.getElementById('fracDisplay').style.display = 'none';
+    document.getElementById('fracBox').classList.remove('visible');
+    document.getElementById('fracArrow').classList.remove('visible');
+    document.getElementById('fracExplain').classList.remove('visible');
+    document.getElementById('insight').classList.remove('visible');
+    document.getElementById('resetBtn').style.display = 'none';
+    document.getElementById('cutBtn').disabled = false;
+    document.querySelectorAll('.num-btn').forEach(b => b.disabled = false);
+    setNia("Hi! I'm Nia 👋 Let's share a pizza with your friends. How many friends are coming?");
+    buildFriendsRow();
+  }
+
+  function spawnConfetti() {
+    const colours = ['#7c5cfc','#f43f5e','#10b981','#f59e0b','#38bdf8'];
+    for (let i = 0; i < 40; i++) {
+      setTimeout(() => {
+        const p = document.createElement('div');
+        p.className = 'confetti-piece';
+        p.style.cssText = `left:${Math.random()*100}vw;top:-10px;background:${colours[Math.floor(Math.random()*colours.length)]};animation-delay:${Math.random()*0.5}s;animation-duration:${1.5+Math.random()}s;border-radius:${Math.random()>0.5?'50%':'2px'}`;
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 2500);
+      }, i * 40);
+    }
+  }
+
+  // Initialise
+  buildFriendsRow();
+</script>
+</body>
+</html>

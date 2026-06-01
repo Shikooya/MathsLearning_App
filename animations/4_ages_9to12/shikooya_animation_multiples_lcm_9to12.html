@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya - Multiples and LCM (Ages 9-12)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
+  :root{--ink:#0f1117;--ink2:#4b5563;--muted:#9ca3af;--bg:#f9f8f4;--card:#fff;
+    --accent:#4f46e5;--accent2:#f59e0b;--green:#059669;--red:#dc2626;
+    --rule:rgba(0,0,0,.06);--sh:0 1px 12px rgba(0,0,0,.06);--r:18px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px;color:var(--ink);}
+  .shell{width:100%;max-width:620px;}
+  .top{text-align:center;margin-bottom:24px;}
+  .badge{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);display:inline-block;margin-bottom:12px;}
+  .top h1{font-family:'DM Serif Display',serif;font-size:clamp(24px,5vw,34px);
+    color:var(--ink);line-height:1.1;margin-bottom:6px;}
+  .top h1 em{font-style:italic;color:var(--accent);}
+  .top p{font-size:13px;color:var(--muted);font-weight:500;}
+  .stepper{display:flex;gap:5px;justify-content:center;margin-bottom:24px;}
+  .step-dot{width:5px;height:5px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .step-dot.active{background:var(--accent2);transform:scale(1.8);}
+  .step-dot.done{background:var(--accent);}
+  .nia{display:flex;gap:12px;align-items:center;background:var(--card);
+    border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px;
+    margin-bottom:20px;box-shadow:var(--sh);min-height:60px;}
+  .nia-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+    animation:bob 3s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .nia-text{font-size:14px;line-height:1.55;color:var(--ink2);flex:1;}
+  .nia-text strong{color:var(--accent);font-weight:700;}
+  .nia-text em{color:var(--accent2);font-style:normal;font-weight:700;}
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);
+    padding:22px;margin-bottom:16px;box-shadow:var(--sh);}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:14px;}
+  /* Number line for multiples */
+  .nl-wrap{overflow-x:auto;padding:4px 0;}
+  /* Multiple chips */
+  .mult-row{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;}
+  .mult-chip{padding:5px 10px;border-radius:8px;font-family:'DM Serif Display',serif;
+    font-size:16px;border:1.5px solid var(--rule);background:var(--bg);
+    color:var(--muted);transition:all .3s;}
+  .mult-chip.a{background:rgba(124,58,237,.12);border-color:var(--accent);color:var(--accent);}
+  .mult-chip.b{background:rgba(3,105,161,.12);border-color:#0369a1;color:#0369a1;}
+  .mult-chip.meet{background:var(--green);border-color:var(--green);color:#fff;
+    transform:scale(1.15);box-shadow:0 4px 12px rgba(5,150,105,.3);}
+  /* Step working */
+  .s-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;
+    font-size:13px;color:var(--ink2);line-height:1.6;}
+  .s-row:last-child{margin-bottom:0;}
+  .s-num{width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;
+    font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:1px;}
+  /* Fraction display */
+  .frac{display:inline-flex;flex-direction:column;align-items:center;
+    font-family:'DM Serif Display',serif;vertical-align:middle;line-height:1;}
+  .frac .num{border-bottom:2px solid currentColor;padding:0 4px 2px;}
+  .frac .den{padding:2px 4px 0;}
+  .frac-md{font-size:clamp(20px,4vw,26px);}
+  /* Slide nav */
+  .slide-nav{display:flex;gap:6px;justify-content:center;margin-top:14px;}
+  .sdot{width:6px;height:6px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .sdot.on{background:var(--accent);transform:scale(1.4);}
+  .snav{display:flex;gap:8px;justify-content:center;margin-top:12px;}
+  .sbtn{padding:8px 20px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;
+    font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+  .sbtn.prev{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);}
+  .sbtn.prev:disabled{opacity:.3;cursor:not-allowed;}
+  .sbtn.nxt{background:var(--accent);color:#fff;}
+  /* Puzzle */
+  .puz-q{font-family:'DM Serif Display',serif;font-size:clamp(17px,4vw,22px);
+    text-align:center;line-height:1.4;margin-bottom:16px;color:var(--ink);}
+  .prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .prog-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .prog-pips{display:flex;gap:5px;}
+  .prog-pip{width:8px;height:8px;border-radius:50%;background:var(--rule);border:1.5px solid #d1d5db;transition:all .3s;}
+  .prog-pip.dp{background:var(--accent);border-color:var(--accent);}
+  .prog-pip.cp{background:var(--accent2);border-color:var(--accent2);transform:scale(1.3);}
+  .res{text-align:center;margin-top:10px;font-size:14px;font-weight:700;min-height:20px;}
+  .res.ok{color:var(--green);}
+  .res.no{color:var(--red);}
+  .stars{display:flex;justify-content:center;gap:5px;margin-bottom:16px;}
+  .star{font-size:20px;opacity:.18;transition:all .3s;}
+  .star.on{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  .nav{display:flex;gap:10px;margin-top:4px;}
+  .btn{min-height:50px;padding:0 22px;border-radius:14px;border:none;
+    font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;
+    cursor:pointer;transition:all .2s;}
+  .btn:active{transform:scale(.97);}
+  .btn-back{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);min-width:50px;}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-next{background:var(--accent);color:#fff;flex:1;box-shadow:0 4px 14px rgba(79,70,229,.2);}
+  .btn-next:hover{background:#6d28d9;transform:translateY(-1px);}
+  .cc{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .cp{position:absolute;border-radius:2px;animation:cf 2s ease-in forwards;}
+  @keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+  @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="shell">
+  <div class="top">
+    <div class="badge">Ages 9 - 12</div>
+    <h1><em>Multiples</em> and LCM — The Meeting Point</h1>
+    <p>Skip counting, common multiples, and why they matter for fractions</p>
+  </div>
+  <div class="stepper">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia">
+    <div class="nia-dot">&#127775;</div>
+    <div class="nia-text" id="nia">
+      A <strong>multiple</strong> of 4 is any number in the 4 times table — 4, 8, 12, 16... Multiples and factors are two sides of the same coin.
+    </div>
+  </div>
+  <div id="main"></div>
+  <div class="nav">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>&#8592;</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let&apos;s go &#8594;</button>
+  </div>
+</div>
+<div class="cc" id="cc"></div>
+<script>
+var step=0,qIdx=0,qScore=0,puzzleLevel=0,puzzleScore=0,puzzleResults=[],levelAnswered=false,qHistory=[];
+
+// ── Helpers ───────────────────────────────────────────────
+function gcd(a,b){while(b){var t=b;b=a%b;a=t;}return a;}
+function lcm(a,b){return Math.abs(a*b)/gcd(a,b);}
+
+function frac(n,d,sz){
+  sz=sz||'frac-md';
+  return '<span class="frac '+sz+'"><span class="num">'+n+'</span><span class="den">'+d+'</span></span>';
+}
+
+// ── Option renderer (inline styles — nothing can override) ─
+var OPT_COLS=['#7c3aed','#0369a1','#059669','#b45309'];
+var OPT_LBLS=['A','B','C','D'];
+
+function renderOpts(opts,idPfx,clickFn,disMap){
+  var allShort=opts.every(function(o){return String(o).length<=5;});
+  var html='';
+  if(allShort){
+    html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">';
+    opts.forEach(function(o,i){
+      var dis=disMap?disMap[i]:'';
+      var bg='#ffffff';var bc='#e5e7eb';var tc='#0f1117';
+      if(dis==='correct'){bg='rgba(5,150,105,.12)';bc='#059669';tc='#059669';}
+      else if(dis==='wrong'){bg='rgba(220,38,38,.08)';bc='#dc2626';tc='#dc2626';}
+      html+='<button id="'+idPfx+i+'" data-val="'+o+'" '+
+        (clickFn&&!dis?'onclick="'+clickFn+'('+i+')"':'')+
+        ' style="min-height:80px;border-radius:16px;border:2px solid '+bc+';background:'+bg+';'+
+        'cursor:'+(dis?'default':'pointer')+';display:flex;align-items:center;justify-content:center;'+
+        'font-family:DM Serif Display,serif;font-size:36px;color:'+tc+';padding:12px;'+
+        'border-left:5px solid '+OPT_COLS[i%OPT_COLS.length]+';'+
+        'transition:all .25s cubic-bezier(.34,1.56,.64,1)">'+o+'</button>';
+    });
+    html+='</div>';
+  } else {
+    html='<div style="display:flex;flex-direction:column;gap:8px;margin:12px 0">';
+    opts.forEach(function(o,i){
+      var dis=disMap?disMap[i]:'';
+      var bg='#ffffff';var bc='#e5e7eb';var tc='#0f1117';var lc=OPT_COLS[i%OPT_COLS.length];
+      if(dis==='correct'){bg='rgba(5,150,105,.12)';bc='#059669';tc='#059669';lc='#059669';}
+      else if(dis==='wrong'){bg='rgba(220,38,38,.08)';bc='#dc2626';tc='#dc2626';lc='#dc2626';}
+      html+='<button id="'+idPfx+i+'" data-val="'+o+'" '+
+        (clickFn&&!dis?'onclick="'+clickFn+'('+i+')"':'')+
+        ' style="min-height:54px;border-radius:14px;border:1.5px solid '+bc+';background:'+bg+';'+
+        'cursor:'+(dis?'default':'pointer')+';display:flex;align-items:center;gap:14px;'+
+        'padding:12px 16px;width:100%;box-sizing:border-box;transition:all .2s">'+
+        '<div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;'+
+        'justify-content:center;font-size:13px;font-weight:700;color:#fff;background:'+lc+'">'+OPT_LBLS[i]+'</div>'+
+        '<div style="font-family:DM Sans,sans-serif;font-size:14px;font-weight:600;color:'+tc+';line-height:1.4;flex:1;text-align:left">'+o+'</div>'+
+        '</button>';
+    });
+    html+='</div>';
+  }
+  return html;
+}
+
+function markOpts(idPfx,chosen,correct){
+  [0,1,2,3].forEach(function(i){
+    var b=document.getElementById(idPfx+i);if(!b)return;
+    var bv=b.getAttribute('data-val');
+    var isAns=Array.isArray(correct)?correct.indexOf(bv)>=0:bv===correct;
+    b.onclick=null;b.style.cursor='default';
+    if(bv===chosen&&isAns){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';b.style.color='#059669';}
+    else if(bv===chosen&&!isAns){b.style.background='rgba(220,38,38,.08)';b.style.borderColor='#dc2626';b.style.color='#dc2626';}
+    else if(isAns){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';}
+  });
+}
+
+// ── Puzzles ───────────────────────────────────────────────
+var PUZZLES=[
+  {q:'What is the LCM of 3 and 5?',
+   opts:['10','12','15','20'],ans:'15',
+   explain:'Multiples of 3: 3,6,9,12,15... Multiples of 5: 5,10,15... First meeting: 15.'},
+  {q:'What is the LCM of 6 and 8?',
+   opts:['14','24','48','16'],ans:'24',
+   explain:'Multiples of 6: 6,12,18,24... Multiples of 8: 8,16,24... First meeting: 24.'},
+  {q:'A bus comes every 4 minutes, another every 6 minutes. How many minutes until they arrive together?',
+   opts:['10','12','24','8'],ans:'12',
+   explain:'LCM(4,6) = 12. Both buses arrive together every 12 minutes.'},
+  {q:'To add 1/4 + 1/6, what common denominator should you use?',
+   opts:['10','24','12','8'],ans:'12',
+   explain:'LCM(4,6) = 12. Convert to twelfths: 3/12 + 2/12 = 5/12.'},
+];
+
+// ── Quiz ──────────────────────────────────────────────────
+var QS=[
+  {q:'Which of these is a multiple of 7?',
+   opts:['42','45','48','50'],ans:'42'},
+  {q:'What is the LCM of 4 and 10?',
+   opts:['14','20','40','8'],ans:'20'},
+  {q:'HCF(8,12) = 4. So LCM(8,12) = ?',
+   opts:['24','32','48','16'],ans:'24'},
+  {q:'What is the LCM of 3 and 4?',
+   opts:['7','12','6','24'],ans:'12'},
+];
+
+var NIA=[
+  'A <strong>multiple</strong> of 4 is any number in the 4 times table — 4, 8, 12, 16... Multiples and factors are two sides of the same coin.',
+  'Two methods to find the LCM. See both — use whichever fits.',
+  'LCM is the key to adding fractions with different denominators.',
+  'Four puzzles. Apply the LCM methods.',
+  'Four questions. Think carefully.',
+];
+var BTNS=['Finding the LCM','LCM and fractions','Practice','Quiz','Summary'];
+
+function dots(s){for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<s?' done':i===s?' active':'');}}
+
+function burst(){
+  var c=document.getElementById('cc');c.innerHTML='';
+  var cols=['#7c3aed','#059669','#0369a1','#f59e0b','#dc2626','#0891b2'];
+  for(var i=0;i<48;i++){
+    var p=document.createElement('div');p.className='cp';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[i%cols.length]+
+      ';width:'+(5+Math.random()*7)+'px;height:'+(5+Math.random()*7)+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+
+      ';animation-delay:'+(Math.random()*.5)+'s;animation-duration:'+(1.5+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){c.innerHTML='';},3000);
+}
+
+// ── STEP 0: Preface ───────────────────────────────────────
+function renderStep0(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">What is a multiple?</div>'+
+        '<div style="background:rgba(124,58,237,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:14px;padding:16px;margin-bottom:14px">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Multiples of 4</div>'+
+          '<div class="mult-row">'+[4,8,12,16,20,24,28].map(function(n){return '<div class="mult-chip a">'+n+'</div>';}).join('')+'<div class="mult-chip" style="color:var(--muted)">...</div>'+
+          '</div>'+
+          '<div style="font-size:12px;font-weight:700;color:#0369a1;text-transform:uppercase;letter-spacing:.08em;margin:10px 0 8px">Multiples of 6</div>'+
+          '<div class="mult-row">'+[6,12,18,24,30,36].map(function(n){return '<div class="mult-chip b">'+n+'</div>';}).join('')+'<div class="mult-chip" style="color:var(--muted)">...</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px;font-size:13px;color:var(--ink2);font-weight:500;line-height:1.8">'+
+          'If 3 x 4 = 12, then:<br>'+
+          '&#8226; 3 and 4 are <strong style="color:var(--accent)">factors</strong> of 12<br>'+
+          '&#8226; 12 is a <strong style="color:#0369a1">multiple</strong> of both 3 and 4<br>'+
+          'Factors divide <em>in</em>. Multiples go <em>out</em>.'+
+        '</div></div>',
+      nia:'Factors divide into a number. Multiples are what a number divides into — the <strong>opposite relationship</strong>. If 4 x 3 = 12, then 12 is a multiple of 4 and a multiple of 3.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Why LCM matters</div>'+
+        '<div style="display:flex;flex-direction:column;gap:10px">'+
+          '<div style="background:rgba(124,58,237,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:14px">'+
+            '<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px">Adding fractions</div>'+
+            '<div style="font-family:DM Serif Display,serif;font-size:clamp(18px,4vw,24px);color:var(--ink);margin-bottom:6px">'+frac(1,4)+' + '+frac(1,6)+' = ?</div>'+
+            '<div style="font-size:13px;color:var(--ink2)">We need equal-sized pieces. LCM(4,6) = <strong style="color:var(--accent)">12</strong>. Convert both to twelfths.</div>'+
+          '</div>'+
+          '<div style="background:rgba(3,105,161,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:14px">'+
+            '<div style="font-size:12px;font-weight:700;color:#0369a1;margin-bottom:8px">Synchronising events</div>'+
+            '<div style="font-size:13px;color:var(--ink2);line-height:1.7">Bus A comes every <strong>4 minutes</strong>. Bus B every <strong>6 minutes</strong>.<br>LCM(4,6) = <strong style="color:#0369a1">12</strong> — they arrive together every 12 minutes.</div>'+
+          '</div>'+
+        '</div></div>',
+      nia:'LCM stands for <strong>Lowest Common Multiple</strong> — the smallest number that two numbers both divide into. Essential for adding fractions and solving real-world timing problems.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s0b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s0n()">'+(sl<S.length-1?'Next &#8594;':'Find LCM &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+  }
+  window.s0n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s0b=function(){if(sl>0){sl--;show();}};
+  show();
+}
+
+// ── STEP 1: Finding the LCM ───────────────────────────────
+function renderStep1(){
+  var sl=0;
+  var animStep=0;
+  var mults4=[4,8,12,16,20,24];
+  var mults6=[6,12,18,24];
+
+  var S=[
+    // Slide 1: Listing method animated
+    {
+      nia:'List multiples of both numbers. The <strong>first number they share</strong> is the LCM.',
+      render:function(){
+        return '<div style="animation:fi .3s ease">'+
+          '<div class="panel-title">Method 1 — List and find the meeting point</div>'+
+          '<div id="lcmAnim">'+buildLCMAnim(animStep)+'</div>'+
+          '<div class="snav" style="margin-top:12px">'+
+            '<button class="sbtn prev" onclick="lcmBack()" '+(animStep===0&&sl===0?'disabled':'')+'>&#8592;</button>'+
+            '<button class="sbtn nxt" id="lcmNextBtn" onclick="lcmNext()">'+(animStep<5?'Next &#8594;':'Method 2 &#8594;')+'</button>'+
+          '</div>';
+      }
+    },
+    // Slide 2: HCF method
+    {
+      nia:'<strong>Method 2</strong> — use the HCF. LCM(a,b) = (a x b) / HCF(a,b). Faster for large numbers.',
+      render:function(){
+        return '<div style="animation:fi .3s ease">'+
+          '<div class="panel-title">Method 2 — Use the HCF</div>'+
+          '<div style="background:rgba(124,58,237,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:14px;padding:16px;margin-bottom:12px;text-align:center">'+
+            '<div style="font-family:DM Serif Display,serif;font-size:clamp(18px,4vw,24px);color:var(--accent);margin-bottom:6px">LCM(a, b) = (a x b) / HCF(a, b)</div>'+
+          '</div>'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px;margin-bottom:10px">'+
+            '<div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:10px">Example: LCM(12, 18)</div>'+
+            '<div class="s-row"><div class="s-num">1</div><div>Find HCF(12, 18) = <strong style="color:var(--accent)">6</strong></div></div>'+
+            '<div class="s-row"><div class="s-num">2</div><div>Multiply: 12 x 18 = <strong>216</strong></div></div>'+
+            '<div class="s-row"><div class="s-num">3</div><div>Divide by HCF: 216 / 6 = <strong style="color:var(--green)">36</strong></div></div>'+
+            '<div style="font-family:DM Serif Display,serif;font-size:22px;color:var(--green);text-align:center;margin-top:8px">LCM(12, 18) = 36</div>'+
+          '</div>'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px;font-size:13px;color:var(--ink2);font-weight:500">'+
+            'Check: listing multiples of 12 and 18 would take a while. The HCF method gives the answer in three steps.'+
+          '</div>'+
+          '<div class="snav" style="margin-top:12px">'+
+            '<button class="sbtn prev" onclick="s1b()">&#8592; Back</button>'+
+            '<button class="sbtn nxt" onclick="s1n()">LCM and fractions &#8594;</button>'+
+          '</div>';
+      }
+    },
+  ];
+
+  function buildLCMAnim(step){
+    var steps=[
+      {show4:[],show6:[],meet:null,msg:'We want to find LCM(4, 6). Start listing multiples of each.'},
+      {show4:[4],show6:[],meet:null,msg:'Multiples of 4: <strong>4</strong>...'},
+      {show4:[4,8],show6:[6],meet:null,msg:'Multiples of 4: 4, 8... &nbsp; Multiples of 6: <strong>6</strong>...'},
+      {show4:[4,8,12],show6:[6,12],meet:12,msg:'12 appears in <strong>both</strong> lists! That is the LCM.'},
+      {show4:[4,8,12],show6:[6,12],meet:12,msg:'LCM(4, 6) = <strong style="color:var(--green)">12</strong>. The first number they share.'},
+    ];
+    var s=steps[Math.min(step,steps.length-1)];
+    var r='<div style="margin-bottom:12px">'+
+      '<div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Multiples of 4</div>'+
+      '<div class="mult-row">'+mults4.slice(0,Math.max(1,s.show4.length)).map(function(n){
+        return '<div class="mult-chip'+(s.meet===n?' meet':s.show4.indexOf(n)>=0?' a':'')+'">'+(s.show4.indexOf(n)>=0||s.meet===n?n:'?')+'</div>';
+      }).join('')+'</div>'+
+      '<div style="font-size:11px;font-weight:700;color:#0369a1;text-transform:uppercase;letter-spacing:.08em;margin:10px 0 6px">Multiples of 6</div>'+
+      '<div class="mult-row">'+mults6.slice(0,Math.max(1,s.show6.length)).map(function(n){
+        return '<div class="mult-chip'+(s.meet===n?' meet':s.show6.indexOf(n)>=0?' b':'')+'">'+(s.show6.indexOf(n)>=0||s.meet===n?n:'?')+'</div>';
+      }).join('')+'</div>'+
+      '</div>'+
+      '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:10px;font-size:13px;color:var(--ink2);font-weight:500;min-height:40px">'+s.msg+'</div>';
+    return r;
+  }
+
+  function show(){
+    var isSlide0=(sl===0);
+    if(isSlide0){
+      var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+      document.getElementById('main').innerHTML='<div class="panel">'+S[sl].render()+
+        '<div class="slide-nav">'+sdots+'</div></div>';
+    } else {
+      var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+      document.getElementById('main').innerHTML='<div class="panel">'+S[sl].render()+
+        '<div class="slide-nav">'+sdots+'</div></div>';
+    }
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;animStep=0;show();}else{goStep(-1);}};}
+  }
+
+  window.lcmNext=function(){
+    if(animStep<4){animStep++;var el=document.getElementById('lcmAnim');if(el)el.innerHTML=buildLCMAnim(animStep);}
+    else{sl=1;show();}
+  };
+  window.lcmBack=function(){
+    if(animStep>0){animStep--;var el=document.getElementById('lcmAnim');if(el)el.innerHTML=buildLCMAnim(animStep);}
+    else if(sl>0){sl--;show();}
+    else{goStep(-1);}
+  };
+  window.s1n=function(){goStep(1);};
+  window.s1b=function(){sl=0;animStep=0;show();};
+  show();
+}
+
+// ── STEP 2: LCM and fractions ──────────────────────────────
+function renderStep2(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Adding 1/4 + 1/6 — using the LCM</div>'+
+        '<div style="text-align:center;font-family:DM Serif Display,serif;font-size:clamp(24px,5vw,32px);margin-bottom:16px">'+
+          frac(1,4)+' <span style="color:var(--muted);margin:0 8px">+</span> '+frac(1,6)+
+        '</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px">'+
+          '<div class="s-row"><div class="s-num">1</div><div>LCM(4, 6) = <strong style="color:var(--accent)">12</strong> &mdash; use 12 as the common denominator</div></div>'+
+          '<div class="s-row"><div class="s-num">2</div><div>Convert: '+frac(1,4)+' = '+frac(3,12)+' &nbsp;(multiply top and bottom by 3)</div></div>'+
+          '<div class="s-row"><div class="s-num">3</div><div>Convert: '+frac(1,6)+' = '+frac(2,12)+' &nbsp;(multiply top and bottom by 2)</div></div>'+
+          '<div class="s-row"><div class="s-num">4</div><div>Add: '+frac(3,12)+' + '+frac(2,12)+' = <strong style="color:var(--green)">'+frac(5,12)+'</strong></div></div>'+
+        '</div>'+
+        '<div style="background:rgba(5,150,105,.06);border:1px solid rgba(79,70,229,.2);border-radius:12px;padding:12px;text-align:center;font-family:DM Serif Display,serif;font-size:clamp(20px,4vw,28px);color:var(--green);margin-top:12px">'+
+          frac(1,4)+' + '+frac(1,6)+' = '+frac(5,12)+
+        '</div></div>',
+      nia:'The LCM gives us the <strong>smallest common denominator</strong> — the most efficient choice. Using a larger denominator would work but give a fraction that needs simplifying afterwards.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Two more examples</div>'+
+        '<div style="display:flex;flex-direction:column;gap:10px">'+
+          [
+            {a:{n:1,d:3},b:{n:1,d:5},lcm:15,ra:{n:5,d:15},rb:{n:3,d:15},res:{n:8,d:15}},
+            {a:{n:1,d:2},b:{n:1,d:8},lcm:8,ra:{n:4,d:8},rb:{n:1,d:8},res:{n:5,d:8}},
+          ].map(function(ex){
+            return '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px">'+
+              '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">'+
+                '<span style="font-family:DM Serif Display,serif;font-size:20px">'+frac(ex.a.n,ex.a.d)+' + '+frac(ex.b.n,ex.b.d)+'</span>'+
+                '<span style="font-size:12px;color:var(--muted);font-weight:600">LCM('+ex.a.d+','+ex.b.d+') = <strong style="color:var(--accent)">'+ex.lcm+'</strong></span>'+
+              '</div>'+
+              '<div style="font-family:DM Serif Display,serif;font-size:18px;color:var(--ink2)">'+
+                '= '+frac(ex.ra.n,ex.ra.d)+' + '+frac(ex.rb.n,ex.rb.d)+
+                ' = <strong style="color:var(--green)">'+frac(ex.res.n,ex.res.d)+'</strong>'+
+              '</div>'+
+              '</div>';
+          }).join('')+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px;font-size:13px;color:var(--ink2);font-weight:600;margin-top:4px">'+
+          'The LCM is always the common denominator when adding or subtracting fractions.'+
+        '</div></div>',
+      nia:'Notice: when one denominator is already a multiple of the other (like 2 and 8), the LCM is simply the larger one. No need to find a new number.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s2b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s2n()">'+(sl<S.length-1?'Next &#8594;':'Practice &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s2n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s2b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 3: Puzzles ───────────────────────────────────────
+function renderStep3(){puzzleLevel=0;puzzleScore=0;puzzleResults=[];levelAnswered=false;showPuzzle();}
+
+function showPuzzle(){
+  if(puzzleLevel>=PUZZLES.length){showPuzzleDone();return;}
+  var pz=PUZZLES[puzzleLevel];levelAnswered=false;
+  var pips='';for(var i=0;i<PUZZLES.length;i++)pips+='<div class="prog-pip'+(i<puzzleLevel?' dp':i===puzzleLevel?' cp':'')+'" ></div>';
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="prog-row"><span class="prog-label">Puzzle '+(puzzleLevel+1)+' of '+PUZZLES.length+'</span><div class="prog-pips">'+pips+'</div></div>'+
+    '<div class="puz-q">'+pz.q+'</div>'+
+    renderOpts(pz.opts,'popt','pickPuz',null)+
+    '<div class="res" id="pzRes"></div></div>';
+  document.getElementById('nia').innerHTML='Apply the method. Pick your answer.';
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){
+    if(puzzleLevel>0){puzzleLevel--;if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}levelAnswered=false;showPuzzle();}
+    else{goStep(-1);}
+  };}
+}
+
+function pickPuz(idx){
+  if(levelAnswered)return;levelAnswered=true;
+  var pz=PUZZLES[puzzleLevel];
+  var chosen=document.getElementById('popt'+idx)?document.getElementById('popt'+idx).getAttribute('data-val'):'';
+  var ok=Array.isArray(pz.ans)?pz.ans.indexOf(chosen)>=0:(chosen===pz.ans);
+  puzzleResults[puzzleLevel]=ok;
+  markOpts('popt',chosen,pz.ans);
+  var res=document.getElementById('pzRes');
+  if(ok){puzzleScore++;if(res){res.textContent='Correct. '+pz.explain;res.className='res ok';}document.getElementById('nia').innerHTML='Correct. '+pz.explain;}
+  else{if(res){res.textContent='Not quite. '+pz.explain;res.className='res no';}document.getElementById('nia').innerHTML=pz.explain;}
+  puzzleLevel++;
+  var isLast=(puzzleLevel>=PUZZLES.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showPuzzleDone():showPuzzle();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showPuzzleDone():showPuzzle();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showPuzzleDone(){
+  var perfect=(puzzleScore>=PUZZLES.length);
+  if(perfect)burst();
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){
+    puzzleLevel=PUZZLES.length-1;
+    if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}
+    levelAnswered=false;showPuzzle();
+  };}
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div style="font-size:48px;margin-bottom:14px">'+(perfect?'&#127919;':'&#128077;')+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'All four puzzles correct!':'Practice complete \u2014 '+puzzleScore+' of '+PUZZLES.length+' correct.')+
+    '</div>'+
+    (perfect?'':'<p style="font-size:14px;color:var(--muted)">Tap &#8592; to retry any puzzle.</p>')+
+    '</div>';
+  document.getElementById('nia').innerHTML=perfect?'All four LCM puzzles solved. Ready for the quiz.':'Good effort. Use &#8592; to review before the quiz.';
+}
+
+// ── STEP 4: Quiz ──────────────────────────────────────────
+function renderStep4(){qIdx=0;qScore=0;qHistory=[];document.getElementById('nia').innerHTML=NIA[4];showQ();}
+
+function showQ(){
+  if(qIdx>=QS.length){showQEnd();return;}
+  var q=QS[qIdx];
+  var nia=document.getElementById('nia');if(nia)nia.innerHTML='Pick your answer.';
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div class="puz-q">'+q.q+'</div>'+
+    renderOpts(q.opts,'qopt','pickQ',null)+
+    '<div class="res" id="qRes"></div></div>';
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){if(qIdx>0&&qHistory.length>0){showQPrev(qIdx-1);}else{goStep(-1);};};}
+}
+
+function showQPrev(idx){
+  if(idx<0||!qHistory[idx])return;
+  var q=QS[idx];var h=qHistory[idx];
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<h.score?' on':'')+'">&#11088;</div>';
+  var disMap={};
+  q.opts.forEach(function(o,i){
+    if(o===h.chosen&&h.wasCorrect)disMap[i]='correct';
+    else if(o===h.chosen&&!h.wasCorrect)disMap[i]='wrong';
+    else if(o===h.correct&&!h.wasCorrect)disMap[i]='correct';
+    else disMap[i]='';
+  });
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:8px">Question '+(idx+1)+' \u2014 reviewed</div>'+
+    '<div class="puz-q">'+q.q+'</div>'+
+    renderOpts(q.opts,'qopt',null,disMap)+
+    '<div style="display:flex;gap:8px;justify-content:center;margin-top:14px">'+
+    '<button onclick="showQPrev('+(idx-1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);opacity:'+(idx===0?.3:1)+'" '+(idx===0?'disabled':'')+'>&#8592; Prev</button>'+
+    (idx<qIdx-1?'<button onclick="showQPrev('+(idx+1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted)">Next &#8594;</button>':
+     '<button onclick="showQ()" style="padding:8px 16px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:700;cursor:pointer">Continue quiz &#8594;</button>')+
+    '</div></div>';
+  document.getElementById('nia').innerHTML=(h.wasCorrect?'Correct! ':'Answer was <strong>'+h.correct+'</strong>. ')+'Reviewing question '+(idx+1)+'.';
+}
+
+function pickQ(idx){
+  var q=QS[qIdx];
+  [0,1,2,3].forEach(function(i){var b=document.getElementById('qopt'+i);if(b){b.onclick=null;b.style.cursor='default';}});
+  var chosen=document.getElementById('qopt'+idx)?document.getElementById('qopt'+idx).getAttribute('data-val'):'';
+  var ok=(chosen===q.ans);
+  qHistory[qIdx]={chosen:chosen,correct:q.ans,wasCorrect:ok,score:qScore+(ok?1:0)};
+  markOpts('qopt',chosen,q.ans);
+  var res=document.getElementById('qRes');
+  if(ok){qScore++;if(res){res.textContent='Correct.';res.className='res ok';}document.getElementById('nia').innerHTML='Correct.';}
+  else{if(res){res.textContent='Answer: '+q.ans;res.className='res no';}document.getElementById('nia').innerHTML='Answer: <strong>'+q.ans+'</strong>.';}
+  qIdx++;
+  var isLast=(qIdx>=QS.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showQEnd():showQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showQEnd():showQ();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQEnd(){
+  var perfect=(qScore===QS.length);if(perfect)burst();
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div class="stars" style="margin-bottom:20px">'+stars+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'Perfect.':qScore>=3?'Almost perfect.':qScore>=2?'Good work.':'Keep going.')+
+    '</div>'+
+    '<div style="font-size:14px;color:var(--muted);margin-bottom:20px">'+qScore+' of '+QS.length+' correct</div>'+
+    '<button onclick="goStep(-4)" style="padding:10px 28px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)">Start again</button>'+
+    '</div>';
+  document.getElementById('nia').innerHTML=(perfect?'<strong>Perfect.</strong> ':'')+'LCM: smallest shared multiple. List method for small numbers, HCF method for large. LCM = common denominator when adding fractions.';
+}
+
+// ── STEP 5 (index 4): Summary ─────────────────────────────
+function renderStep4summary(){
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="panel-title">Finding the LCM</div>'+
+    '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">'+
+    [
+      {n:'Method 1',d:'List multiples of each number. Find the first they share.',e:'LCM(4,6): 4,8,<u>12</u>... and 6,<u>12</u>... = 12'},
+      {n:'Method 2',d:'Use the HCF: LCM(a,b) = (a x b) / HCF(a,b).',e:'LCM(12,18): (12x18)/6 = 36'},
+    ].map(function(r){
+      return '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px">'+
+        '<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px">'+r.n+'</div>'+
+        '<div style="font-size:13px;color:var(--ink2);margin-bottom:4px">'+r.d+'</div>'+
+        '<div style="font-family:DM Serif Display,serif;font-size:15px;color:var(--ink)">'+r.e+'</div>'+
+        '</div>';
+    }).join('')+
+    '</div>'+
+    '<div class="panel-title">LCM in fractions</div>'+
+    '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">'+
+    '<div class="s-row"><div class="s-num">1</div><div>Find LCM of the two denominators.</div></div>'+
+    '<div class="s-row"><div class="s-num">2</div><div>Convert each fraction to that denominator.</div></div>'+
+    '<div class="s-row"><div class="s-num">3</div><div>Add or subtract the numerators.</div></div>'+
+    '</div>'+
+    '<div style="padding-top:14px;border-top:1px solid var(--rule);font-size:13px;color:var(--ink2);font-weight:500">'+
+      'Next: <strong style="color:var(--ink)">Fractions Advanced</strong> \u2014 you now have all the tools.'+
+    '</div></div>';
+}
+
+var RS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4,renderStep4summary];
+
+function goStep(dir){
+  step=Math.max(0,Math.min(5,step+dir));
+  var dotStep=Math.min(step,4);
+  for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<dotStep?' done':i===dotStep?' active':'');}
+  document.getElementById('nia').innerHTML=NIA[Math.min(step,NIA.length-1)];
+  document.getElementById('btnBack').disabled=(step===0);
+  var bl=['Finding the LCM','LCM and fractions','Practice','Quiz','Summary','Start again'];
+  document.getElementById('btnNext').textContent=(bl[step]||'Next')+' \u2192';
+  if(step>=5){document.getElementById('btnNext').onclick=function(){goStep(-5);};}
+  else{document.getElementById('btnNext').onclick=function(){goStep(1);};}
+  if(step!==3&&step!==4){
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=(step===0);bb.onclick=function(){goStep(-1);};}
+  }
+  RS[Math.min(step,RS.length-1)]();
+}
+goStep(0);
+</script>
+</body>
+</html>

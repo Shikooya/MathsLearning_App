@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya - Factors and HCF (Ages 9-12)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
+  :root{--ink:#0f1117;--ink2:#4b5563;--muted:#9ca3af;--bg:#f9f8f4;--card:#fff;
+    --accent:#4f46e5;--accent2:#f59e0b;--green:#059669;--red:#dc2626;
+    --rule:rgba(0,0,0,.06);--sh:0 1px 12px rgba(0,0,0,.06);--r:18px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px;color:var(--ink);}
+  .shell{width:100%;max-width:620px;}
+  .top{text-align:center;margin-bottom:24px;}
+  .badge{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);display:inline-block;margin-bottom:12px;}
+  .top h1{font-family:'DM Serif Display',serif;font-size:clamp(24px,5vw,34px);
+    color:var(--ink);line-height:1.1;margin-bottom:6px;}
+  .top h1 em{font-style:italic;color:var(--accent);}
+  .top p{font-size:13px;color:var(--muted);font-weight:500;}
+  .stepper{display:flex;gap:5px;justify-content:center;margin-bottom:24px;}
+  .step-dot{width:5px;height:5px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .step-dot.active{background:var(--accent2);transform:scale(1.8);}
+  .step-dot.done{background:var(--accent);}
+  .nia{display:flex;gap:12px;align-items:center;background:var(--card);
+    border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px;
+    margin-bottom:20px;box-shadow:var(--sh);min-height:60px;}
+  .nia-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+    animation:bob 3s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .nia-text{font-size:14px;line-height:1.55;color:var(--ink2);flex:1;}
+  .nia-text strong{color:var(--accent);font-weight:700;}
+  .nia-text em{color:var(--accent2);font-style:normal;font-weight:700;}
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);
+    padding:22px;margin-bottom:16px;box-shadow:var(--sh);}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:14px;}
+  /* Dot grid */
+  .dot-grid{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin:10px 0;}
+  .dot-item{width:28px;height:28px;border-radius:50%;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;color:#fff;
+    font-size:11px;font-weight:700;transition:all .3s;}
+  /* Factor pair rows */
+  .pair-row{display:flex;align-items:center;gap:10px;padding:8px 0;
+    border-bottom:1px solid var(--rule);font-size:14px;color:var(--ink2);}
+  .pair-row:last-child{border-bottom:none;}
+  .pair-badge{width:24px;height:24px;border-radius:6px;background:var(--accent);
+    color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;
+    justify-content:center;flex-shrink:0;}
+  .pair-badge.no{background:#e5e7eb;color:var(--muted);}
+  /* Factor chips */
+  .factor-chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+  .chip{padding:5px 12px;border-radius:20px;font-size:13px;font-weight:700;
+    border:1.5px solid var(--rule);background:var(--bg);color:var(--ink);
+    transition:all .3s;}
+  .chip.shared{background:rgba(15,118,110,.12);border-color:var(--accent);color:var(--accent);}
+  .chip.hcf{background:var(--accent);color:#fff;transform:scale(1.1);}
+  /* Step working */
+  .s-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;
+    font-size:13px;color:var(--ink2);line-height:1.6;}
+  .s-row:last-child{margin-bottom:0;}
+  .s-num{width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;
+    font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:1px;}
+  /* Slide nav */
+  .slide-nav{display:flex;gap:6px;justify-content:center;margin-top:14px;}
+  .sdot{width:6px;height:6px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .sdot.on{background:var(--accent);transform:scale(1.4);}
+  .snav{display:flex;gap:8px;justify-content:center;margin-top:12px;}
+  .sbtn{padding:8px 20px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;
+    font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+  .sbtn.prev{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);}
+  .sbtn.prev:disabled{opacity:.3;cursor:not-allowed;}
+  .sbtn.nxt{background:var(--accent);color:#fff;}
+  /* Animated factor finder */
+  .test-row{display:flex;align-items:center;gap:8px;padding:6px 0;
+    border-bottom:1px solid var(--rule);animation:fi .3s ease;}
+  .test-row:last-child{border-bottom:none;}
+  .test-n{font-family:'DM Serif Display',serif;font-size:18px;color:var(--ink);
+    width:24px;text-align:center;flex-shrink:0;}
+  .test-rule{font-size:11px;color:var(--muted);flex:1;font-weight:500;}
+  .test-result{font-size:13px;font-weight:700;}
+  .test-result.yes{color:var(--green);}
+  .test-result.no{color:var(--red);}
+  .test-pair{font-family:'DM Serif Display,serif;font-size:14px;color:var(--accent);font-weight:600;}
+
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  .res{text-align:center;margin-top:10px;font-size:14px;font-weight:700;min-height:20px;}
+  .res.ok{color:var(--green);}
+  .res.no{color:var(--red);}
+  .prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .prog-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .prog-pips{display:flex;gap:5px;}
+  .prog-pip{width:8px;height:8px;border-radius:50%;background:var(--rule);border:1.5px solid #d1d5db;transition:all .3s;}
+  .prog-pip.dp{background:var(--accent);border-color:var(--accent);}
+  .prog-pip.cp{background:var(--accent2);border-color:var(--accent2);transform:scale(1.3);}
+  .stars{display:flex;justify-content:center;gap:5px;margin-bottom:16px;}
+  .star{font-size:20px;opacity:.18;transition:all .3s;}
+  .star.on{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+  .nav{display:flex;gap:10px;margin-top:4px;}
+  .btn{min-height:50px;padding:0 22px;border-radius:14px;border:none;
+    font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;
+    cursor:pointer;transition:all .2s;}
+  .btn:active{transform:scale(.97);}
+  .btn-back{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);min-width:50px;}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-next{background:var(--accent);color:#fff;flex:1;box-shadow:0 4px 14px rgba(79,70,229,.2);}
+  .btn-next:hover{background:#0d6b63;transform:translateY(-1px);}
+  .cc{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .cp{position:absolute;border-radius:2px;animation:cf 2s ease-in forwards;}
+  @keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+  @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* Puzzles / Quiz */
+  .puz-q{font-family:'DM Serif Display',serif;font-size:clamp(17px,4vw,22px);
+    text-align:center;line-height:1.4;margin-bottom:16px;color:var(--ink);}
+  .opts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+  .opt{min-width:80px;min-height:52px;border-radius:12px;border:1.5px solid var(--rule);
+    background:var(--bg);font-family:'DM Sans',sans-serif;font-size:clamp(13px,3vw,16px);
+    font-weight:600;cursor:pointer;color:var(--ink);padding:8px 12px;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);}
+  .opt:hover{border-color:var(--accent);transform:translateY(-1px);}
+  .opt.correct{background:rgba(5,150,105,.1);border-color:var(--green);color:var(--green);animation:pop .4s ease;}
+  .opt.wrong{background:rgba(220,38,38,.06);border-color:var(--red);color:var(--red);animation:shake .3s ease;}
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="shell">
+  <div class="top">
+    <div class="badge">Ages 9 - 12</div>
+    <h1><em>Factors</em> and HCF — Breaking Numbers Apart</h1>
+    <p>Finding what divides a number, and what two numbers share</p>
+  </div>
+  <div class="stepper">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia">
+    <div class="nia-dot">&#127775;</div>
+    <div class="nia-text" id="nia">
+      A <strong>factor</strong> of 12 is any number that divides into 12 exactly. Arrange 12 objects into equal rows — every possible arrangement reveals a factor pair.
+    </div>
+  </div>
+  <div id="main"></div>
+  <div class="nav">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>&#8592;</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let&apos;s go &#8594;</button>
+  </div>
+</div>
+<div class="cc" id="cc"></div>
+<script>
+var step=0,qIdx=0,qScore=0,puzzleLevel=0,puzzleScore=0,puzzleResults=[],levelAnswered=false,qHistory=[];
+var factorStep=0;
+
+// ── Helpers ───────────────────────────────────────────────
+function getFactors(n){
+  var f=[];
+  for(var i=1;i<=Math.sqrt(n)+0.01;i++){
+    if(n%i===0){f.push(i);if(i!==n/i)f.push(n/i);}
+  }
+  return f.sort(function(a,b){return a-b;});
+}
+
+function divRule(n,d){
+  // Returns a short description of why n is/isn't divisible by d
+  switch(d){
+    case 2: return (n%2===0?'Even (last digit '+String(n).slice(-1)+')':'Last digit '+String(n).slice(-1)+' is odd');
+    case 3: var s=String(n).split('').reduce(function(a,c){return a+parseInt(c);},0);
+            return 'Digit sum = '+s+(s%3===0?' (divisible by 3)':' (not divisible by 3)');
+    case 4: var lt=n%100; return 'Last two digits = '+lt+(lt%4===0?' (divisible by 4)':' (not)');
+    case 5: return (n%5===0?'Ends in '+String(n).slice(-1):'Ends in '+String(n).slice(-1)+', not 0 or 5');
+    default: return n%d===0?'Divides exactly':'Does not divide exactly';
+  }
+}
+
+// ── Puzzles ───────────────────────────────────────────────
+var PUZZLES=[
+  {q:'How many factors does 20 have?',
+   opts:['4','5','6','8'],ans:'6',
+   explain:'Factors of 20: 1, 2, 4, 5, 10, 20. That is 6 factors.'},
+  {q:'What are the common factors of 12 and 16?',
+   opts:['1, 2, 3, 4','1, 2, 4','1, 4, 8','2, 4, 6'],ans:'1, 2, 4',
+   explain:'Factors of 12: 1,2,3,4,6,12. Factors of 16: 1,2,4,8,16. Common: 1, 2, 4.'},
+  {q:'What is the HCF of 24 and 36?',
+   opts:['6','8','12','18'],ans:'12',
+   explain:'Factors of 24: 1,2,3,4,6,8,12,24. Factors of 36: 1,2,3,4,6,9,12,18,36. Largest common = 12.'},
+  {q:'Use the HCF to simplify 18/24.',
+   opts:['2/3','3/4','6/8','9/12'],ans:'3/4',
+   explain:'HCF(18,24) = 6. Divide top and bottom by 6: 18/6 = 3, 24/6 = 4. Answer: 3/4.'},
+];
+
+// ── Quiz ──────────────────────────────────────────────────
+var QS=[
+  {q:'Which of these is NOT a factor of 30?',
+   opts:['6','8','10','15'],ans:'8'},
+  {q:'What is the HCF of 16 and 20?',
+   opts:['2','4','8','16'],ans:'4'},
+  {q:'Why do we stop testing factors at the square root of a number?',
+   opts:['It is faster','After that, factor pairs repeat','Larger numbers are not factors','The rule only works up to that point'],
+   ans:'After that, factor pairs repeat'},
+  {q:'10x + 15 factorised using the HCF is:',
+   opts:['2(5x + 15)','5(2x + 3)','10(x + 5)','3(x + 5)'],ans:'5(2x + 3)'},
+];
+
+var NIA=[
+  'A <strong>factor</strong> of 12 is any number that divides into 12 exactly. Every equal-row arrangement reveals a factor pair.',
+  'Work through every number from 1 upward. Use divisibility rules to test quickly. Stop when the pair meets.',
+  'Common factors are numbers that divide into BOTH values. The <strong>HCF</strong> is the largest one.',
+  'Four puzzles. Apply the factor-finding method.',
+  'Four questions on factors and HCF.',
+];
+var BTNS=['Finding factors','Common factors and HCF','Practice','Quiz','Summary'];
+
+function dots(s){for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<s?' done':i===s?' active':'');}}
+
+function burst(){
+  var c=document.getElementById('cc');c.innerHTML='';
+  var cols=['#0f766e','#059669','#0369a1','#f59e0b','#7c3aed','#dc2626'];
+  for(var i=0;i<48;i++){
+    var p=document.createElement('div');p.className='cp';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[i%cols.length]+
+      ';width:'+(5+Math.random()*7)+'px;height:'+(5+Math.random()*7)+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+
+      ';animation-delay:'+(Math.random()*.5)+'s;animation-duration:'+(1.5+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){c.innerHTML='';},3000);
+}
+
+// ── STEP 0: Preface ───────────────────────────────────────
+function renderStep0(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">What is a factor?</div>'+
+        '<div style="background:rgba(15,118,110,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:14px;padding:16px;margin-bottom:14px;text-align:center">'+
+          '<div style="font-size:13px;color:var(--ink2);font-weight:600;margin-bottom:12px">12 objects — arranged in every possible equal-row way</div>'+
+          '<div style="display:flex;flex-direction:column;gap:8px">'+
+          [[1,12],[2,6],[3,4]].map(function(p){
+            var dots='';for(var i=0;i<p[0];i++){
+              dots+='<div style="display:flex;gap:4px;justify-content:center;margin-bottom:3px">';
+              for(var j=0;j<p[1];j++)dots+='<div style="width:18px;height:18px;border-radius:50%;background:var(--accent)"></div>';
+              dots+='</div>';
+            }
+            return '<div style="background:var(--card);border-radius:10px;padding:10px;border:1px solid var(--rule)">'+
+              dots+
+              '<div style="font-size:12px;color:var(--accent);font-weight:700;margin-top:6px">'+p[0]+' row of '+p[1]+' &nbsp;&rarr;&nbsp; factors: <strong>'+p[0]+'</strong> and <strong>'+p[1]+'</strong></div>'+
+              '</div>';
+          }).join('')+
+          '</div>'+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px;text-align:center;font-size:13px;color:var(--ink2);font-weight:600;line-height:1.7">'+
+          'Factors of 12: <strong style="color:var(--accent)">1, 2, 3, 4, 6, 12</strong><br>'+
+          'Every number always has at least two factors: <strong>1</strong> and <strong>itself</strong>.'+
+        '</div></div>',
+      nia:'Every equal-row arrangement of 12 objects reveals a <strong>factor pair</strong>. Both numbers in the pair are factors of 12.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Why factors matter</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px">'+
+        [
+          {n:'1',col:'#4f46e5',t:'Factorising algebra',d:'6x + 9 = 3(2x + 3)',sub:'The 3 pulled outside is the HCF of 6 and 9'},
+          {n:'2',col:'#0369a1',t:'Simplifying fractions',d:'8/12 = 2/3',sub:'Divide top and bottom by HCF(8,12) = 4'},
+          {n:'3',col:'#059669',t:'Adding fractions',d:'1/4 + 1/6 = ?',sub:'Need the LCM of 4 and 6 — coming next topic'},
+        ].map(function(r){
+          return '<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--bg);border:1px solid var(--rule);border-radius:12px">'+
+            '<div style="width:26px;height:26px;border-radius:7px;background:'+r.col+';color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+r.n+'</div>'+
+            '<div><div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px">'+r.t+'</div>'+
+              '<div style="font-family:DM Serif Display,serif;font-size:16px;color:'+r.col+';margin-bottom:2px">'+r.d+'</div>'+
+              '<div style="font-size:11px;color:var(--muted)">'+r.sub+'</div>'+
+            '</div></div>';
+        }).join('')+
+        '</div></div>',
+      nia:'Factors are the foundation of three key skills — <strong>factorising algebra</strong>, <strong>simplifying fractions</strong>, and finding common denominators. Understanding factors unlocks all of these.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s0b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s0n()">'+(sl<S.length-1?'Next &#8594;':'Find factors &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+  }
+  window.s0n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s0b=function(){if(sl>0){sl--;show();}};
+  show();
+}
+
+// ── STEP 1: Finding factors animated ─────────────────────
+function renderStep1(){
+  factorStep=0;
+  var sl=0;
+  var S=[
+    // Slide 1: The method
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">The method — three rules</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px">'+
+        [
+          {n:'1',t:'Start at 1',d:'1 always divides every number. Write down the pair: 1 and the number itself.'},
+          {n:'2',t:'Test each number upward',d:'Use your divisibility rules to test 2, 3, 4, 5... quickly. When a number divides exactly, you have found a factor pair.'},
+          {n:'3',t:'Stop at the square root',d:'Once the two numbers in a pair meet or cross, you have found all factor pairs. No need to test further.'},
+        ].map(function(r){
+          return '<div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--bg);border:1px solid var(--rule);border-radius:12px">'+
+            '<div style="width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+r.n+'</div>'+
+            '<div><div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px">'+r.t+'</div>'+
+              '<div style="font-size:12px;color:var(--ink2);line-height:1.6">'+r.d+'</div></div>'+
+            '</div>';
+        }).join('')+
+        '</div></div>',
+      nia:'Test numbers from 1 upward. Use divisibility rules to test quickly. Stop when the pair meets — you have found them all.'
+    },
+    // Slide 2: Animated walkthrough of 24
+    {
+      html:'<div id="factorSlide2" style="animation:fi .3s ease">'+buildFactor24(0)+'</div>',
+      nia:'Finding all factors of 24. Tap <em>Next step</em> to test each number.'
+    },
+    // Slide 3: Square root insight
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Why stop at the square root?</div>'+
+        '<div style="background:rgba(15,118,110,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:14px;padding:16px;margin-bottom:14px">'+
+          '<div style="font-family:DM Serif Display,serif;font-size:22px;color:var(--accent);text-align:center;margin-bottom:10px">&#8730;24 &asymp; 4.9</div>'+
+          '<div style="display:flex;flex-direction:column;gap:6px">'+
+          [[1,24],[2,12],[3,8],[4,6]].map(function(p,i){
+            var crossed=(i>=2);
+            return '<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;background:'+(crossed?'rgba(245,158,11,.08)':'rgba(15,118,110,.06)')+'">'+
+              '<div style="font-family:DM Serif Display,serif;font-size:16px;color:var(--ink);width:80px">'+p[0]+' x '+p[1]+'</div>'+
+              '<div style="font-size:12px;color:'+(crossed?'var(--accent2)':'var(--accent)')+';font-weight:600">'+
+                (crossed?'&#8593; larger number found first &#8212; pair already recorded':'&#10003; new pair')+
+              '</div></div>';
+          }).join('')+
+          '</div>'+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px;font-size:13px;color:var(--ink2);font-weight:500;line-height:1.7">'+
+          'We stop when the <strong style="color:var(--ink)">smaller</strong> number in the pair reaches the square root. At 4 x 6, the smaller number (4) is below √24 ≈ 4.9 — so this is the last new pair. Testing 5: does not divide 24. Testing 6: gives 6 x 4, already recorded. <strong style="color:var(--ink)">Stop.</strong>'+
+        '</div></div>',
+      nia:'Once you pass the square root, every new pair is just a repeat of one you have already found. That is why you can stop there.'
+    },
+  ];
+
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    var isSlide2=(sl===1);
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      (isSlide2?
+        '<div class="snav" id="factorNav">'+
+          '<button class="sbtn prev" onclick="s1b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+          '<button class="sbtn nxt" id="factorNextBtn" onclick="factorNext()">Next step &#8594;</button>'+
+        '</div>':
+        '<div class="snav">'+
+          '<button class="sbtn prev" onclick="s1b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+          '<button class="sbtn nxt" onclick="s1n()">'+(sl<S.length-1?'Next &#8594;':'Common factors &#8594;')+'</button>'+
+        '</div>')+
+      '</div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    if(isSlide2){factorStep=0;updateFactor24();}
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=(sl===0&&step===1);bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+
+  window.s1n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s1b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  window.factorNext=function(){
+    if(factorStep<5){factorStep++;updateFactor24();}
+    else{sl++;show();}
+  };
+  show();
+}
+
+// Factor 24 walkthrough data
+var F24=[
+  {n:1,  divides:true,  rule:'1 divides every number',         pair:[1,24]},
+  {n:2,  divides:true,  rule:'Even number (ends in 4)',         pair:[2,12]},
+  {n:3,  divides:true,  rule:'Digit sum = 6, divisible by 3',  pair:[3,8]},
+  {n:4,  divides:true,  rule:'Last two digits 24 / 4 = 6',     pair:[4,6]},
+  {n:5,  divides:false, rule:'Ends in 4, not 0 or 5',          pair:null},
+  {n:6,  divides:false, rule:'6 x 4 already found — stop here!',pair:null,stop:true},
+];
+
+function buildFactor24(upTo){
+  var rows='';
+  for(var i=0;i<=Math.min(upTo,F24.length-1);i++){
+    var f=F24[i];
+    rows+='<div class="test-row">'+
+      '<div class="test-n">'+f.n+'</div>'+
+      '<div class="test-rule">'+f.rule+'</div>'+
+      '<div class="test-result '+(f.divides?'yes':(f.stop?'yes':'no'))+'">'+(f.divides?'&#10003; '+f.pair[0]+' x '+f.pair[1]:(f.stop?'&#9632; Stop':'&#10005;'))+'</div>'+
+      '</div>';
+  }
+  // Show found factors so far
+  var found=[];
+  for(var j=0;j<=Math.min(upTo,F24.length-1);j++){
+    if(F24[j].pair){found.push(F24[j].pair[0]);if(F24[j].pair[1]!==F24[j].pair[0])found.push(F24[j].pair[1]);}
+  }
+  found.sort(function(a,b){return a-b;});
+  var chips=found.length?'<div class="factor-chips">'+found.map(function(f){return '<div class="chip shared">'+f+'</div>';}).join('')+'</div>':'';
+
+  return '<div class="panel-title">Finding all factors of 24</div>'+
+    '<div style="margin-bottom:10px">'+rows+'</div>'+
+    (chips?'<div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:6px">Factors found so far:</div>'+chips:'');
+}
+
+function updateFactor24(){
+  var slide2=document.getElementById('factorSlide2');
+  if(slide2) slide2.innerHTML=buildFactor24(factorStep);
+  var btn=document.getElementById('factorNextBtn');
+  var isDone=(factorStep>=F24.length-1);
+  if(btn) btn.textContent=isDone?'Square root insight \u2192':'Next step \u2192';
+  var nias=[
+    'Starting with 1. Every number is divisible by 1.',
+    '2 divides 24 exactly. Factor pair: 2 and 12.',
+    '3 divides 24 (digit sum = 6). Factor pair: 3 and 8.',
+    '4 divides 24 (last two digits). Factor pair: 4 and 6.',
+    '5 does not divide 24 (does not end in 0 or 5).',
+    'At 6, the pair 6 x 4 is already recorded. <strong>Stop here.</strong> Factors of 24: 1, 2, 3, 4, 6, 8, 12, 24.',
+  ];
+  document.getElementById('nia').innerHTML=nias[Math.min(factorStep,nias.length-1)];
+}
+
+// ── STEP 2: Common factors and HCF ───────────────────────
+function renderStep2(){
+  var sl=0;
+  var f12=getFactors(12);
+  var f18=getFactors(18);
+  var common=f12.filter(function(x){return f18.indexOf(x)>=0;});
+  var hcf=Math.max.apply(null,common);
+
+  var f16=getFactors(16);
+  var f20=getFactors(20);
+  var common2=f16.filter(function(x){return f20.indexOf(x)>=0;});
+  var hcf2=Math.max.apply(null,common2);
+
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Finding common factors of 12 and 18</div>'+
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px">'+
+            '<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Factors of 12</div>'+
+            '<div class="factor-chips">'+f12.map(function(f){
+              var isC=common.indexOf(f)>=0;
+              return '<div class="chip'+(isC?' shared':'')+'" style="'+(isC?'':'')+'">'+f+'</div>';
+            }).join('')+'</div>'+
+          '</div>'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px">'+
+            '<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Factors of 18</div>'+
+            '<div class="factor-chips">'+f18.map(function(f){
+              var isC=common.indexOf(f)>=0;
+              return '<div class="chip'+(isC?' shared':'')+'" >'+f+'</div>';
+            }).join('')+'</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="background:rgba(15,118,110,.06);border:1.5px solid rgba(15,118,110,.25);border-radius:12px;padding:14px">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Common factors (highlighted above)</div>'+
+          '<div class="factor-chips">'+common.map(function(f){
+            return '<div class="chip'+(f===hcf?' hcf':' shared')+'">'+f+(f===hcf?' &#9650;':'')+'</div>';
+          }).join('')+'</div>'+
+          '<div style="font-size:13px;color:var(--ink2);margin-top:8px;font-weight:500">The <strong style="color:var(--accent)">HCF</strong> is the <strong>largest</strong> common factor.</div>'+
+        '</div></div>',
+      nia:'Find factors of each number, then spot which ones appear in <strong>both</strong> lists. Those are the common factors. The <em>largest</em> one is the HCF.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Using the HCF</div>'+
+        '<div style="display:flex;flex-direction:column;gap:10px">'+
+          '<div style="background:rgba(15,118,110,.05);border:1px solid rgba(79,70,229,.2);border-radius:12px;padding:14px">'+
+            '<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px">Simplifying fractions</div>'+
+            '<div class="s-row"><div class="s-num">1</div><div>HCF(12, 18) = <strong style="color:var(--accent)">6</strong></div></div>'+
+            '<div class="s-row"><div class="s-num">2</div><div>Divide top and bottom by 6: &nbsp; 12/6 = 2, &nbsp; 18/6 = 3</div></div>'+
+            '<div class="s-row"><div class="s-num">3</div><div style="font-family:DM Serif Display,serif;font-size:20px;color:var(--green)">12/18 = 2/3</div></div>'+
+          '</div>'+
+          '<div style="background:rgba(79,70,229,.05);border:1px solid rgba(79,70,229,.2);border-radius:12px;padding:14px">'+
+            '<div style="font-size:12px;font-weight:700;color:#4f46e5;margin-bottom:8px">Factorising an expression</div>'+
+            '<div class="s-row"><div class="s-num" style="background:#4f46e5">1</div><div>HCF(8, 12) = <strong style="color:#4f46e5">4</strong></div></div>'+
+            '<div class="s-row"><div class="s-num" style="background:#4f46e5">2</div><div>8 / 4 = 2, &nbsp; 12 / 4 = 3</div></div>'+
+            '<div class="s-row"><div class="s-num" style="background:#4f46e5">3</div><div style="font-family:DM Serif Display,serif;font-size:20px;color:#4f46e5">8x + 12 = 4(2x + 3)</div></div>'+
+          '</div>'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px">'+
+            '<div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px">Your turn: HCF(16, 20)</div>'+
+            '<div class="factor-chips">'+
+              '<div style="font-size:12px;color:var(--ink2)">Factors of 16: '+f16.join(', ')+'</div>'+
+            '</div>'+
+            '<div class="factor-chips">'+
+              '<div style="font-size:12px;color:var(--ink2)">Factors of 20: '+f20.join(', ')+'</div>'+
+            '</div>'+
+            '<div style="font-family:DM Serif Display,serif;font-size:18px;color:var(--accent);margin-top:8px">HCF(16, 20) = <strong>'+hcf2+'</strong></div>'+
+          '</div>'+
+        '</div></div>',
+      nia:'The HCF has two powerful uses: <strong>simplifying fractions</strong> and <strong>factorising expressions</strong>. Both divide by the same number — the largest one that fits.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s2b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s2n()">'+(sl<S.length-1?'Next &#8594;':'Practice &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s2n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s2b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 3: Puzzles ───────────────────────────────────────
+
+function showPuzzle(){
+  if(puzzleLevel>=PUZZLES.length){showPuzzleDone();return;}
+  var pz=PUZZLES[puzzleLevel];levelAnswered=false;
+  var pips='';for(var i=0;i<PUZZLES.length;i++)pips+='<div class="prog-pip'+(i<puzzleLevel?' dp':i===puzzleLevel?' cp':'')+'" ></div>';
+  var _opts=pz.opts;
+  var _allShort=_opts.every(function(o){return String(o).length<=5;});
+  var _optsHTML='';
+  var _TCOLS=['#4f46e5','#0369a1','#059669','#b45309'];
+  var _LCOLS=['#4f46e5','#0369a1','#059669','#b45309'];
+  var _LBLS=['A','B','C','D'];
+  if(_allShort){
+    _optsHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">';
+    _opts.forEach(function(o,i){
+      _optsHTML+='<button id="popt'+i+'" data-val="'+o+'" onclick="pickPuz('+i+')" '+
+        'style="min-height:80px;border-radius:16px;border:2px solid #e5e7eb;background:#ffffff;'+
+        'cursor:pointer;display:flex;align-items:center;justify-content:center;'+
+        'font-family:DM Serif Display,serif;font-size:36px;color:#0f1117;padding:12px;'+
+        'border-left:5px solid '+_TCOLS[i%_TCOLS.length]+';'+
+        'transition:all .25s cubic-bezier(.34,1.56,.64,1)">'+o+'</button>';
+    });
+    _optsHTML+='</div>';
+  } else {
+    _optsHTML='<div style="display:flex;flex-direction:column;gap:8px;margin:12px 0">';
+    _opts.forEach(function(o,i){
+      _optsHTML+='<button id="popt'+i+'" data-val="'+o+'" onclick="pickPuz('+i+')" '+
+        'style="min-height:54px;border-radius:14px;border:1.5px solid #e5e7eb;background:#ffffff;'+
+        'cursor:pointer;display:flex;align-items:center;gap:14px;padding:12px 16px;'+
+        'transition:all .2s;text-align:left;width:100%;box-sizing:border-box">'+
+        '<div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;'+
+        'display:flex;align-items:center;justify-content:center;'+
+        'font-size:13px;font-weight:700;color:#fff;background:'+_LCOLS[i%_LCOLS.length]+'">'+_LBLS[i]+'</div>'+
+        '<div style="font-family:DM Sans,sans-serif;font-size:14px;font-weight:600;color:#0f1117;line-height:1.4;flex:1">'+o+'</div>'+
+        '</button>';
+    });
+    _optsHTML+='</div>';
+  }
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="prog-row"><span class="prog-label">Puzzle '+(puzzleLevel+1)+' of '+PUZZLES.length+'</span><div class="prog-pips">'+pips+'</div></div>'+
+    '<div class="puz-q">'+pz.q+'</div>'+
+    _optsHTML+
+    '<div class="res" id="pzRes"></div></div>';
+  document.getElementById('nia').innerHTML='Apply the method. Pick your answer.';
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){
+    if(puzzleLevel>0){puzzleLevel--;if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}levelAnswered=false;showPuzzle();}
+    else{goStep(-1);}
+  };}
+}
+
+function pickPuz(idx){
+  if(levelAnswered)return;levelAnswered=true;
+  var pz=PUZZLES[puzzleLevel];
+  var btns=document.querySelectorAll('#popt0,#popt1,#popt2,#popt3');
+  btns.forEach(function(b){b.onclick=null;b.style.cursor='default';});
+  var chosen=document.getElementById('popt'+idx)?document.getElementById('popt'+idx).getAttribute('data-val'):'';
+  var ok=Array.isArray(pz.ans)?pz.ans.indexOf(chosen)>=0:(chosen===pz.ans);
+  puzzleResults[puzzleLevel]=ok;
+  // Style the chosen and correct buttons
+  btns.forEach(function(b){
+    var bv=b.getAttribute('data-val');
+    var isAns=Array.isArray(pz.ans)?pz.ans.indexOf(bv)>=0:bv===pz.ans;
+    if(bv===chosen&&ok){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';b.style.color='#059669';}
+    else if(bv===chosen&&!ok){b.style.background='rgba(220,38,38,.08)';b.style.borderColor='#dc2626';b.style.color='#dc2626';}
+    else if(isAns){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';}
+  });
+  var res=document.getElementById('pzRes');
+  if(ok){puzzleScore++;if(res){res.textContent='Correct. '+pz.explain;res.className='res ok';}document.getElementById('nia').innerHTML='Correct. '+pz.explain;}
+  else{if(res){res.textContent='Not quite. '+pz.explain;res.className='res no';}document.getElementById('nia').innerHTML=pz.explain;}
+  puzzleLevel++;
+  var isLast=(puzzleLevel>=PUZZLES.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showPuzzleDone():showPuzzle();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showPuzzleDone():showPuzzle();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showPuzzleDone(){
+  var perfect=(puzzleScore>=PUZZLES.length);
+  if(perfect)burst();
+  var bb=document.getElementById('btnBack');
+  if(bb){
+    bb.disabled=false;
+    bb.onclick=function(){
+      puzzleLevel=PUZZLES.length-1;
+      if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}
+      levelAnswered=false;showPuzzle();
+    };
+  }
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div style="font-size:48px;margin-bottom:14px">'+(perfect?'&#127919;':'&#128077;')+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'All four puzzles correct!':'Practice complete — '+puzzleScore+' of '+PUZZLES.length+' correct.')+
+    '</div>'+
+    (perfect?'':'<p style="font-size:14px;color:var(--muted)">Tap &#8592; to retry any puzzle.</p>')+
+    '</div>';
+  document.getElementById('nia').innerHTML=perfect?'All four rules applied correctly. Ready for the quiz.':'Good effort. Use &#8592; to review before the quiz.';
+}
+
+function showQ(){
+  if(qIdx>=QS.length){showQEnd();return;}
+  var q=QS[qIdx];
+  var nia=document.getElementById('nia');if(nia)nia.innerHTML='Pick your answer.';
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  var _opts=q.opts;
+  var _allShort=_opts.every(function(o){return String(o).length<=5;});
+  var _optsHTML='';
+  var _TCOLS=['#4f46e5','#0369a1','#059669','#b45309'];
+  var _LCOLS=['#4f46e5','#0369a1','#059669','#b45309'];
+  var _LBLS=['A','B','C','D'];
+  if(_allShort){
+    _optsHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">';
+    _opts.forEach(function(o,i){
+      _optsHTML+='<button id="qopt'+i+'" data-val="'+o+'" onclick="pickQ('+i+')" '+
+        'style="min-height:80px;border-radius:16px;border:2px solid #e5e7eb;background:#ffffff;'+
+        'cursor:pointer;display:flex;align-items:center;justify-content:center;'+
+        'font-family:DM Serif Display,serif;font-size:36px;color:#0f1117;padding:12px;'+
+        'border-left:5px solid '+_TCOLS[i%_TCOLS.length]+';'+
+        'transition:all .25s cubic-bezier(.34,1.56,.64,1)">'+o+'</button>';
+    });
+    _optsHTML+='</div>';
+  } else {
+    _optsHTML='<div style="display:flex;flex-direction:column;gap:8px;margin:12px 0">';
+    _opts.forEach(function(o,i){
+      _optsHTML+='<button id="qopt'+i+'" data-val="'+o+'" onclick="pickQ('+i+')" '+
+        'style="min-height:54px;border-radius:14px;border:1.5px solid #e5e7eb;background:#ffffff;'+
+        'cursor:pointer;display:flex;align-items:center;gap:14px;padding:12px 16px;'+
+        'transition:all .2s;text-align:left;width:100%;box-sizing:border-box">'+
+        '<div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;'+
+        'display:flex;align-items:center;justify-content:center;'+
+        'font-size:13px;font-weight:700;color:#fff;background:'+_LCOLS[i%_LCOLS.length]+'">'+_LBLS[i]+'</div>'+
+        '<div style="font-family:DM Sans,sans-serif;font-size:14px;font-weight:600;color:#0f1117;line-height:1.4;flex:1">'+o+'</div>'+
+        '</button>';
+    });
+    _optsHTML+='</div>';
+  }
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div class="puz-q">'+q.q+'</div>'+
+    _optsHTML+
+    '<div class="res" id="qRes"></div></div>';
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){if(qIdx>0&&qHistory.length>0){showQPrev(qIdx-1);}else{goStep(-1);};};}
+}
+
+function showQPrev(idx){
+  if(idx<0||!qHistory[idx])return;
+  var q=QS[idx];var h=qHistory[idx];
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<h.score?' on':'')+'">&#11088;</div>';
+  var _opts=q.opts;
+  var _allShort=_opts.every(function(o){return String(o).length<=5;});
+  var _TCOLS=['#4f46e5','#0369a1','#059669','#b45309'];
+  var _LCOLS=['#4f46e5','#0369a1','#059669','#b45309'];
+  var _LBLS=['A','B','C','D'];
+  var _optsHTML='';
+  if(_allShort){
+    _optsHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">';
+    _opts.forEach(function(o,i){
+      var bg='#ffffff';var bc='#e5e7eb';var tc='#0f1117';
+      if(o===h.chosen&&h.wasCorrect){bg='rgba(5,150,105,.12)';bc='#059669';tc='#059669';}
+      else if(o===h.chosen&&!h.wasCorrect){bg='rgba(220,38,38,.08)';bc='#dc2626';tc='#dc2626';}
+      else if(o===h.correct&&!h.wasCorrect){bg='rgba(5,150,105,.12)';bc='#059669';}
+      _optsHTML+='<button disabled style="min-height:80px;border-radius:16px;border:2px solid '+bc+';background:'+bg+';'+
+        'display:flex;align-items:center;justify-content:center;'+
+        'font-family:DM Serif Display,serif;font-size:36px;color:'+tc+';padding:12px;'+
+        'border-left:5px solid '+_TCOLS[i%_TCOLS.length]+'">'+o+'</button>';
+    });
+    _optsHTML+='</div>';
+  } else {
+    _optsHTML='<div style="display:flex;flex-direction:column;gap:8px;margin:12px 0">';
+    _opts.forEach(function(o,i){
+      var bg='#ffffff';var bc='#e5e7eb';var tc='#0f1117';var lc=_LCOLS[i%_LCOLS.length];
+      if(o===h.chosen&&h.wasCorrect){bg='rgba(5,150,105,.12)';bc='#059669';lc='#059669';tc='#059669';}
+      else if(o===h.chosen&&!h.wasCorrect){bg='rgba(220,38,38,.08)';bc='#dc2626';lc='#dc2626';tc='#dc2626';}
+      else if(o===h.correct&&!h.wasCorrect){bg='rgba(5,150,105,.12)';bc='#059669';lc='#059669';}
+      _optsHTML+='<button disabled style="min-height:54px;border-radius:14px;border:1.5px solid '+bc+';background:'+bg+';'+
+        'display:flex;align-items:center;gap:14px;padding:12px 16px;width:100%;box-sizing:border-box">'+
+        '<div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;background:'+lc+'">'+_LBLS[i]+'</div>'+
+        '<div style="font-size:14px;font-weight:600;color:'+tc+';line-height:1.4;flex:1">'+o+'</div>'+
+        '</button>';
+    });
+    _optsHTML+='</div>';
+  }
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:8px">Question '+(idx+1)+' — reviewed</div>'+
+    '<div class="puz-q">'+q.q+'</div>'+
+    _optsHTML+
+    '<div style="display:flex;gap:8px;justify-content:center;margin-top:14px">'+
+    '<button onclick="showQPrev('+(idx-1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);opacity:'+(idx===0?.3:1)+'" '+(idx===0?'disabled':'')+'>&#8592; Prev</button>'+
+    (idx<qIdx-1?'<button onclick="showQPrev('+(idx+1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted)">Next &#8594;</button>':
+     '<button onclick="showQ()" style="padding:8px 16px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:700;cursor:pointer">Continue quiz &#8594;</button>')+
+    '</div></div>';
+  document.getElementById('nia').innerHTML=(h.wasCorrect?'Correct! ':'Answer was <strong>'+h.correct+'</strong>. ')+'Reviewing question '+(idx+1)+'.';
+}
+
+function pickQ(idx){
+  var q=QS[qIdx];
+  var btns=document.querySelectorAll('#qopt0,#qopt1,#qopt2,#qopt3');
+  btns.forEach(function(b){b.onclick=null;b.style.cursor='default';});
+  var chosen=document.getElementById('qopt'+idx)?document.getElementById('qopt'+idx).getAttribute('data-val'):'';
+  var ok=(chosen===q.ans);
+  qHistory[qIdx]={chosen:chosen,correct:q.ans,wasCorrect:ok,score:qScore+(ok?1:0)};
+  btns.forEach(function(b){
+    var bv=b.getAttribute('data-val');
+    if(bv===chosen&&ok){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';b.style.color='#059669';}
+    else if(bv===chosen&&!ok){b.style.background='rgba(220,38,38,.08)';b.style.borderColor='#dc2626';b.style.color='#dc2626';}
+    else if(bv===q.ans){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';}
+  });
+  var res=document.getElementById('qRes');
+  if(ok){qScore++;if(res){res.textContent='Correct.';res.className='res ok';}document.getElementById('nia').innerHTML='Correct.';}
+  else{if(res){res.textContent='Answer: '+q.ans;res.className='res no';}document.getElementById('nia').innerHTML='Answer: <strong>'+q.ans+'</strong>.';}
+  qIdx++;
+  var isLast=(qIdx>=QS.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showQEnd():showQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showQEnd():showQ();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQEnd(){
+  var perfect=(qScore===QS.length);if(perfect)burst();
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div class="stars" style="margin-bottom:20px">'+stars+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'Perfect.':qScore>=3?'Almost perfect.':qScore>=2?'Good work.':'Keep going.')+
+    '</div>'+
+    '<div style="font-size:14px;color:var(--muted);margin-bottom:20px">'+qScore+' of '+QS.length+' correct</div>'+
+    '<button onclick="goStep(-4)" style="padding:10px 28px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)">Start again</button>'+
+    '</div>';
+  document.getElementById('nia').innerHTML=(perfect?'<strong>Perfect.</strong> ':'')+'You know the divisibility rules. Next: use them to find factors quickly.';
+}
+
+function renderStep3(){puzzleLevel=0;puzzleScore=0;puzzleResults=[];levelAnswered=false;showPuzzle();}
+
+
+
+
+
+
+
+// ── STEP 4: Quiz ──────────────────────────────────────────
+function renderStep4(){qIdx=0;qScore=0;qHistory=[];document.getElementById('nia').innerHTML=NIA[4];showQ();}
+
+
+
+
+
+
+
+
+
+// ── STEP 5 (index 4): Summary ─────────────────────────────
+function renderStep4summary(){
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="panel-title">Finding all factors</div>'+
+    '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">'+
+    ['Start at 1 — always a factor pair with the number itself.',
+     'Test each number upward using divisibility rules.',
+     'Stop when the pair meets or crosses the square root.',
+     'List all factors in order: smallest to largest.'].map(function(t,i){
+      return '<div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink2)">'+
+        '<div style="width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">'+(i+1)+'</div>'+
+        '<div>'+t+'</div></div>';
+    }).join('')+
+    '</div>'+
+    '<div class="panel-title" style="margin-top:4px">HCF — Highest Common Factor</div>'+
+    '<div style="display:flex;flex-direction:column;gap:6px">'+
+    ['Find factors of each number separately.',
+     'Identify numbers that appear in both lists.',
+     'The HCF is the largest of these common factors.',
+     'Use HCF to simplify fractions and to factorise algebraic expressions.'].map(function(t,i){
+      return '<div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink2)">'+
+        '<div style="width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">'+(i+1)+'</div>'+
+        '<div>'+t+'</div></div>';
+    }).join('')+
+    '</div>'+
+    '<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--rule);font-size:13px;color:var(--ink2);font-weight:500">'+
+      'Next: <strong style="color:var(--ink)">Multiples and LCM</strong> \u2014 the other side of the same relationship.'+
+    '</div></div>';
+}
+
+var RS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4,renderStep4summary];
+
+function goStep(dir){
+  step=Math.max(0,Math.min(5,step+dir));
+  var dotStep=Math.min(step,4);
+  for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<dotStep?' done':i===dotStep?' active':'');}
+  document.getElementById('nia').innerHTML=NIA[Math.min(step,NIA.length-1)];
+  document.getElementById('btnBack').disabled=(step===0);
+  var bl=['Finding factors','Common factors & HCF','Practice','Quiz','Summary','Start again'];
+  document.getElementById('btnNext').textContent=(bl[step]||'Next')+' \u2192';
+  if(step>=5){document.getElementById('btnNext').onclick=function(){goStep(-5);};}
+  else{document.getElementById('btnNext').onclick=function(){goStep(1);};}
+  if(step!==2&&step!==3&&step!==4){
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=(step===0);bb.onclick=function(){goStep(-1);};}
+  }
+  if(step===2){
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){goStep(-1);};}
+  }
+  RS[Math.min(step,RS.length-1)]();
+}
+goStep(0);
+</script>
+</body>
+</html>

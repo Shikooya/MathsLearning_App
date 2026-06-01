@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya — Area & Perimeter (Ages 8–10)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap');
+  :root{--bg:#f0fff4;--panel:#fff;--violet:#7c5cfc;--sky:#38bdf8;--em:#10b981;--rose:#f43f5e;--txt:#1a1a2e;--muted:#6b7280;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+  .header{text-align:center;margin-bottom:16px;}
+  .header-tag{display:inline-block;background:rgba(16,185,129,.12);color:var(--em);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:6px;}
+  .header h1{font-family:'Baloo 2',cursive;font-size:clamp(18px,5vw,28px);color:var(--txt);}
+  .header h1 span{color:var(--em);}
+  .card{background:var(--panel);border-radius:28px;padding:22px;max-width:700px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,.08);}
+  .steps{display:flex;gap:8px;justify-content:center;margin-bottom:14px;}
+  .step-dot{width:10px;height:10px;border-radius:50%;background:#e5e7eb;transition:all .3s;}
+  .step-dot.active{background:var(--em);transform:scale(1.3);}
+  .step-dot.done{background:var(--violet);}
+  .nia-area{display:flex;align-items:flex-start;gap:11px;margin-bottom:16px;min-height:62px;}
+  .nia-avatar{width:44px;height:44px;background:linear-gradient(135deg,var(--em),var(--sky));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;box-shadow:0 4px 12px rgba(16,185,129,.3);animation:nb 2s ease-in-out infinite;}
+  @keyframes nb{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+  .nia-bubble{background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(56,189,248,.06));border:1.5px solid rgba(16,185,129,.2);border-radius:16px 16px 16px 4px;padding:12px 15px;font-size:clamp(12px,2.5vw,14px);font-weight:700;color:var(--txt);line-height:1.6;flex:1;}
+  .stats-row{display:flex;gap:12px;justify-content:center;margin-bottom:14px;flex-wrap:wrap;}
+  .stat-card{flex:1;min-width:130px;max-width:190px;border-radius:12px;padding:10px 12px;text-align:center;opacity:.28;transition:opacity .4s;}
+  .stat-card.lit{opacity:1;}
+  .stat-p{background:rgba(244,63,94,.08);border:2px solid rgba(244,63,94,.25);}
+  .stat-a{background:rgba(56,189,248,.08);border:2px solid rgba(56,189,248,.25);}
+  .sicon{font-size:17px;margin-bottom:2px;}
+  .slbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:1px;}
+  .stat-p .slbl{color:#f43f5e;} .stat-a .slbl{color:#38bdf8;}
+  .sval{font-family:'Baloo 2',cursive;font-size:26px;font-weight:800;line-height:1;}
+  .stat-p .sval{color:#f43f5e;} .stat-a .sval{color:#38bdf8;}
+  .sunit{font-size:10px;color:var(--muted);font-weight:700;}
+  .canvas-wrap{display:flex;justify-content:center;margin-bottom:8px;}
+  canvas{border-radius:10px;max-width:100%;touch-action:none;}
+  .drag-hint{font-size:11px;font-weight:700;color:var(--muted);text-align:center;margin-bottom:12px;}
+  .btn-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;}
+  .mbtn{padding:9px 17px;border-radius:50px;border:2px solid transparent;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;}
+  .mbtn:disabled{opacity:.3;cursor:not-allowed;}
+  .mbtn:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1);}
+  .mbtn.bp{background:#fff0f3;border-color:#fca5a5;color:#f43f5e;}
+  .mbtn.bp.on{background:#f43f5e;color:#fff;border-color:#f43f5e;}
+  .mbtn.ba{background:#eff9ff;border-color:#93c5fd;color:#38bdf8;}
+  .mbtn.ba.on{background:#38bdf8;color:#fff;border-color:#38bdf8;}
+  .mbtn.br{background:#fff;border-color:#e5e7eb;color:var(--muted);}
+  .mbtn.br:not(:disabled):hover{border-color:var(--violet);color:var(--violet);}
+  .insight{background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(56,189,248,.06));border:1.5px solid rgba(16,185,129,.25);border-radius:14px;padding:12px 16px;font-size:13px;font-weight:700;color:var(--txt);line-height:1.7;opacity:0;transform:translateY(8px);transition:all .5s;text-align:center;}
+  .insight.show{opacity:1;transform:translateY(0);}
+  .insight strong{color:var(--em);}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="header">
+  <div class="header-tag">Shikooya · Ages 8–10 · Concept Animation</div>
+  <h1>What is the difference between <span>area & perimeter</span>?</h1>
+</div>
+<div class="card">
+  <div class="steps">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+  </div>
+  <div class="nia-area">
+    <div class="nia-avatar">🦋</div>
+    <div class="nia-bubble" id="nia">You have a garden 🌿 Drag the <strong>orange handle ⤡</strong> (bottom-right) to resize it. Then click <strong>Step 1</strong> to explore the fence and <strong>Step 2</strong> for the grass inside!</div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card stat-p" id="sp"><div class="sicon">🚶</div><div class="slbl">Perimeter</div><div class="sval" id="vp">—</div><div class="sunit">metres of fence</div></div>
+    <div class="stat-card stat-a" id="sa"><div class="sicon">🌱</div><div class="slbl">Area</div><div class="sval" id="va">—</div><div class="sunit">square metres</div></div>
+  </div>
+  <div class="canvas-wrap"><canvas id="c" width="620" height="400"></canvas></div>
+  <div class="drag-hint">Drag the <strong>orange handle ⤡</strong> to make the garden bigger or smaller</div>
+  <div class="btn-row">
+    <button class="mbtn bp" id="bp" onclick="doPerim()">🚶 Step 1 — The Fence (Perimeter)</button>
+    <button class="mbtn ba" id="ba" onclick="doArea()" disabled>🌱 Step 2 — The Grass (Area)</button>
+    <button class="mbtn br" id="br" onclick="doReset()" style="display:none">🔄 Reset</button>
+  </div>
+  <div class="insight" id="ins">🌟 <strong>Same garden — two completely different measurements!</strong><br>Perimeter = the boundary unfolded into a <strong>straight line</strong> = fencing to buy 🪵<br>Area = all the numbered squares <strong>counted up</strong> = grass seed to buy 🌱</div>
+</div>
+<script>
+const cv=document.getElementById('c'),ct=cv.getContext('2d');
+let W=8,H=5,SC=42;
+let phase=0,busy=false,drag=null;
+let walkerT=0,unfoldT=0,areaT=0;
+
+// Garden origin — lower portion of canvas, leaving room above for unfolded line
+function gox(){ return (cv.width-W*SC)/2; }
+function goy(){ return 110; } // fixed — leaves 110px above for the line
+
+const MSGS=[
+  "You have a garden 🌿 Drag the <strong>orange corners</strong> to resize it. Then click <strong>Step 1</strong> to explore the fence and <strong>Step 2</strong> for the grass inside!",
+  "🚶 Nia walks <strong>all the way around the outside</strong>. Watch the boundary light up. Then watch what happens — the fence will <strong>peel off</strong> and unfold!",
+  "✨ Watch the fence <strong>peel off the garden and unfold into a straight line</strong> above! The garden stays intact — the line shows that perimeter is just the boundary laid flat. It's a <strong>length</strong>, not a shape! Now try Step 2 →",
+  "🌱 Watch numbered squares fill the garden. Each is <strong>1 square metre</strong>. Count them all and you have the <strong>area</strong>!",
+  "✨ Drag corners to try different sizes. Notice how perimeter and area <strong>change at different rates</strong>!"
+];
+function nia(i){ document.getElementById('nia').innerHTML=MSGS[i]; }
+function dots(s){ for(let i=0;i<=3;i++){ const d=document.getElementById('d'+i); d.className='step-dot'+(i<s?' done':i===s?' active':''); }}
+function updStats(){
+  document.getElementById('vp').textContent=phase>=1?2*(W+H)+'m':'—';
+  document.getElementById('va').textContent=phase>=3?W*H+'m²':'—';
+  document.getElementById('sp').classList.toggle('lit',phase>=1);
+  document.getElementById('sa').classList.toggle('lit',phase>=3);
+}
+
+// ── Perimeter segments (clockwise from top-left) ──────────
+// Each segment: { colour, from, to, len }
+function getSegs(){
+  const px=gox(),py=goy(),pw=W*SC,ph=H*SC;
+  return[
+    {col:'#f43f5e',f:[px,py],      t:[px+pw,py],     l:pw, m:W, lbl:'Top: '+W+'m'},
+    {col:'#7c5cfc',f:[px+pw,py],   t:[px+pw,py+ph],  l:ph, m:H, lbl:'Right: '+H+'m'},
+    {col:'#10b981',f:[px+pw,py+ph],t:[px,py+ph],     l:pw, m:W, lbl:'Bottom: '+W+'m'},
+    {col:'#f59e0b',f:[px,py+ph],   t:[px,py],         l:ph, m:H, lbl:'Left: '+H+'m'},
+  ];
+}
+
+// Line always fits canvas: scale total perimeter px to maxLineW
+function getLineLayout(){
+  const maxW=cv.width-60;
+  const totalM=2*(W+H);
+  const pxPerM=maxW/totalM;
+  const segs=getSegs().map(s=>({...s,lpx:s.m*pxPerM}));
+  const totalPx=segs.reduce((a,s)=>a+s.lpx,0);
+  const lineY=46;
+  const lineX0=(cv.width-totalPx)/2;
+  return{segs,totalPx,lineY,lineX0,pxPerM};
+}
+
+function walkerPos(t){
+  const segs=getSegs();
+  const total=segs.reduce((a,s)=>a+s.l,0);
+  const dist=t*total;
+  let walked=0,wx=segs[0].f[0],wy=segs[0].f[1];
+  for(const s of segs){
+    const rem=dist-walked; if(rem<=0)break;
+    const take=Math.min(rem,s.l),tt=take/s.l;
+    wx=s.f[0]+(s.t[0]-s.f[0])*tt;
+    wy=s.f[1]+(s.t[1]-s.f[1])*tt;
+    walked+=take;
+  }
+  return{x:wx,y:wy};
+}
+
+// Animate a single point from polygon→line using quadratic bezier arc
+function unfoldPoint(si, tAlong, ut){
+  const segs=getSegs();
+  const L=getLineLayout();
+  const s=segs[si];
+  // Source: position on polygon
+  const polyX=s.f[0]+(s.t[0]-s.f[0])*tAlong;
+  const polyY=s.f[1]+(s.t[1]-s.f[1])*tAlong;
+  // Destination: position on straight line
+  let xOff=0; for(let i=0;i<si;i++) xOff+=L.segs[i].lpx;
+  const destX=L.lineX0+xOff+L.segs[si].lpx*tAlong;
+  const destY=L.lineY;
+  // Ease
+  const e=ut<0.5?4*ut*ut*ut:(1-Math.pow(-2*ut+2,3))/2;
+  // Arc peak: always goes UP above both source and dest
+  const peakY=Math.min(polyY,destY)-80;
+  const midX=(polyX+destX)/2;
+  const t1=e,t0=1-e;
+  return{
+    x:t0*t0*polyX+2*t0*t1*midX+t1*t1*destX,
+    y:t0*t0*polyY+2*t0*t1*peakY+t1*t1*destY
+  };
+}
+
+function draw(){
+  ct.clearRect(0,0,cv.width,cv.height);
+  const px=gox(),py=goy(),pw=W*SC,ph=H*SC;
+
+  // ── Background ──────────────────────────────────────────
+  ct.fillStyle='#bfdbfe'; ct.fillRect(0,0,cv.width,py+10);
+  ct.fillStyle='#d4b483'; ct.fillRect(0,py+10,cv.width,cv.height);
+
+  // ── Clean grass ─────────────────────────────────────────
+  const gr=ct.createLinearGradient(px,py,px,py+ph);
+  gr.addColorStop(0,'#4ade80'); gr.addColorStop(1,'#16a34a');
+  ct.fillStyle=gr; ct.beginPath(); ct.roundRect(px,py,pw,ph,4); ct.fill();
+
+  // ── Area squares ────────────────────────────────────────
+  if(phase>=3&&areaT>0){
+    const total=W*H, revealed=Math.min(Math.floor(areaT),total);
+    for(let i=0;i<revealed;i++){
+      const col=i%W,row=Math.floor(i/W);
+      const sx=px+col*SC,sy=py+row*SC;
+      ct.fillStyle='rgba(56,189,248,.16)'; ct.fillRect(sx+1,sy+1,SC-2,SC-2);
+      ct.strokeStyle='rgba(56,189,248,.38)'; ct.lineWidth=1; ct.strokeRect(sx+1,sy+1,SC-2,SC-2);
+      ct.fillStyle='rgba(30,64,175,.32)';
+      ct.font=`bold ${Math.min(13,SC*0.28)}px Baloo 2,cursive`;
+      ct.textAlign='center'; ct.textBaseline='middle';
+      ct.fillText(i+1,sx+SC/2,sy+SC/2);
+    }
+    // Partial
+    if(areaT<total){
+      const i=Math.floor(areaT),frac=areaT-i;
+      if(i<total){ const col=i%W,row=Math.floor(i/W); ct.fillStyle='rgba(56,189,248,.16)'; ct.fillRect(px+col*SC+1,py+row*SC+1,(SC-2)*frac,SC-2); }
+    }
+    if(areaT>=W*H&&phase>=4){
+      ct.fillStyle='rgba(255,255,255,.92)'; ct.font=`bold ${Math.min(18,pw/7)}px Baloo 2,cursive`;
+      ct.textAlign='center'; ct.textBaseline='middle';
+      ct.fillText(W+'×'+H+'='+W*H+'m²',px+pw/2,py+ph/2);
+    }
+  }
+
+  // ── Fence (always on top of grass) ──────────────────────
+  drawFence(px,py,pw,ph);
+
+  // ── Walker path ─────────────────────────────────────────
+  if(phase>=1&&walkerT>0&&unfoldT===0){
+    const segs=getSegs();
+    const total=2*(W*SC+H*SC),dist=walkerT*total;
+    ct.save(); ct.strokeStyle='rgba(244,63,94,.7)'; ct.lineWidth=4; ct.lineCap='round';
+    ct.setLineDash([10,6]); ct.shadowColor='rgba(244,63,94,.3)'; ct.shadowBlur=6;
+    ct.beginPath(); ct.moveTo(segs[0].f[0],segs[0].f[1]);
+    let walked=0;
+    for(const s of segs){
+      const rem=dist-walked; if(rem<=0)break;
+      const take=Math.min(rem,s.l),tt=take/s.l;
+      ct.lineTo(s.f[0]+(s.t[0]-s.f[0])*tt,s.f[1]+(s.t[1]-s.f[1])*tt);
+      walked+=take;
+    }
+    ct.stroke(); ct.setLineDash([]); ct.restore();
+    // Walker emoji
+    const wp=walkerPos(walkerT);
+    ct.font='22px serif'; ct.textAlign='center'; ct.textBaseline='bottom';
+    ct.fillText('🚶',wp.x,wp.y-2);
+    // Counter
+    if(walkerT>0.1){
+      const shown=Math.round(walkerT*2*(W+H));
+      ct.fillStyle='#f43f5e'; ct.font='bold 12px Nunito,sans-serif';
+      ct.textAlign='center'; ct.textBaseline='middle';
+      ct.fillText(shown+'m so far…',cv.width/2,py-18);
+    }
+  }
+
+  // ── Unfolding animation ─────────────────────────────────
+  if(unfoldT>0){
+    const segs=getSegs();
+    const L=getLineLayout();
+    const STEPS=50;
+    // Sequential — each segment gets exactly 25% of total time
+    // Seg 0: 0.00→0.25, Seg 1: 0.25→0.50, Seg 2: 0.50→0.75, Seg 3: 0.75→1.00
+    const segStart=[0.00,0.25,0.50,0.75];
+    const segDur=0.25;
+
+    segs.forEach((seg,si)=>{
+      const rawT=Math.max(0,Math.min(1,(unfoldT-segStart[si])/segDur));
+      if(rawT<=0) return;
+
+      // Draw flying arc
+      if(rawT<1){
+        ct.save();
+        ct.beginPath();
+        let first=true;
+        for(let step=0;step<=STEPS;step++){
+          const tAlong=step/STEPS;
+          const p=unfoldPoint(si,tAlong,rawT);
+          if(first){ct.moveTo(p.x,p.y);first=false;}
+          else ct.lineTo(p.x,p.y);
+        }
+        ct.strokeStyle=seg.col;
+        ct.lineWidth=6; ct.lineCap='round'; ct.lineJoin='round';
+        ct.shadowColor=seg.col+'99'; ct.shadowBlur=10;
+        ct.stroke(); ct.restore();
+      }
+
+      // Draw landed flat bar (once rawT>=1 OR while animating to show where it will land)
+      let xOff=0;
+      for(let i=0;i<si;i++) xOff+=L.segs[i].lpx;
+      const barX=L.lineX0+xOff;
+      const barW=L.segs[si].lpx;
+      const barY=L.lineY;
+
+      if(rawT>=1){
+        // Fully landed — solid bar
+        ct.fillStyle=seg.col;
+        ct.beginPath(); ct.roundRect(barX,barY-6,barW,12,3); ct.fill();
+        if(barW>36){
+          ct.fillStyle='rgba(255,255,255,.95)';
+          ct.font='bold 10px Nunito,sans-serif';
+          ct.textAlign='center'; ct.textBaseline='middle';
+          ct.fillText(seg.lbl,barX+barW/2,barY);
+        }
+      } else {
+        // Ghost target — shows where it will land
+        ct.fillStyle=seg.col+'22';
+        ct.beginPath(); ct.roundRect(barX,barY-6,barW,12,3); ct.fill();
+        ct.strokeStyle=seg.col+'55'; ct.lineWidth=1.5;
+        ct.setLineDash([4,4]);
+        ct.strokeRect(barX,barY-6,barW,12);
+        ct.setLineDash([]);
+      }
+    });
+
+    // Total label when all landed
+    if(unfoldT>=1){
+      ct.fillStyle='#1e293b';
+      ct.font='bold 13px Baloo 2,cursive';
+      ct.textAlign='center'; ct.textBaseline='bottom';
+      ct.fillText('Total = '+2*(W+H)+'m  —  perimeter is just the boundary straightened out!',cv.width/2,L.lineY-14);
+    }
+  }
+
+  // ── Dimension labels ────────────────────────────────────
+  ct.fillStyle='#1e40af'; ct.font='bold 12px Nunito,sans-serif';
+  ct.textAlign='center'; ct.textBaseline='middle';
+  ct.fillText(W+'m',px+pw/2,py+ph+28);
+  ct.save(); ct.translate(px-28,py+ph/2); ct.rotate(-Math.PI/2); ct.fillText(H+'m',0,0); ct.restore();
+
+  // ── Bottom-right drag handle only ─────────────────────────
+  const brx=px+pw, bry=py+ph;
+  // ── Drag arrows — bold and clearly visible ──────────────
+  // Right arrow (x-axis)
+  ct.save();
+  ct.fillStyle='#f59e0b';
+  ct.strokeStyle='#92400e';
+  ct.lineWidth=2;
+  // Arrow shaft right
+  ct.beginPath();
+  ct.roundRect(brx+14,bry-4,28,8,4);
+  ct.fill(); ct.stroke();
+  // Arrow head right
+  ct.beginPath();
+  ct.moveTo(brx+44,bry-10);
+  ct.lineTo(brx+56,bry);
+  ct.lineTo(brx+44,bry+10);
+  ct.closePath();
+  ct.fill(); ct.stroke();
+  // Down arrow (y-axis)
+  // Arrow shaft down
+  ct.beginPath();
+  ct.roundRect(brx-4,bry+14,8,28,4);
+  ct.fill(); ct.stroke();
+  // Arrow head down
+  ct.beginPath();
+  ct.moveTo(brx-10,bry+44);
+  ct.lineTo(brx,bry+56);
+  ct.lineTo(brx+10,bry+44);
+  ct.closePath();
+  ct.fill(); ct.stroke();
+  ct.restore();
+  // Orange handle
+  ct.beginPath(); ct.arc(brx,bry,13,0,Math.PI*2);
+  ct.fillStyle='#f59e0b'; ct.fill();
+  ct.strokeStyle='#92400e'; ct.lineWidth=2.5; ct.stroke();
+  ct.fillStyle='#78350f'; ct.font='bold 11px sans-serif';
+  ct.textAlign='center'; ct.textBaseline='middle'; ct.fillText('⤡',brx,bry);
+}
+
+function drawFence(px,py,pw,ph){
+  ct.fillStyle='rgba(0,0,0,.06)'; ct.fillRect(px+3,py+3,pw,ph);
+  ct.fillStyle='#d97706';
+  const pW=9,pGap=14;
+  for(let x=px;x<px+pw;x+=pGap){
+    ct.beginPath(); ct.moveTo(x,py-12); ct.lineTo(x+pW/2,py-18); ct.lineTo(x+pW,py-12); ct.lineTo(x+pW,py); ct.lineTo(x,py); ct.closePath(); ct.fill();
+    ct.strokeStyle='#92400e'; ct.lineWidth=1; ct.stroke();
+    ct.beginPath(); ct.moveTo(x,py+ph); ct.lineTo(x+pW,py+ph); ct.lineTo(x+pW,py+ph+12); ct.lineTo(x+pW/2,py+ph+18); ct.lineTo(x,py+ph+12); ct.closePath(); ct.fill(); ct.stroke();
+  }
+  for(let y=py+8;y<py+ph;y+=15){ ct.fillStyle='#d97706'; ct.fillRect(px-6,y-3,6,5); ct.fillRect(px+pw,y-3,6,5); }
+  ct.strokeStyle='#92400e'; ct.lineWidth=3.5; ct.strokeRect(px,py,pw,ph);
+}
+
+// ── Step 1: Walk then unfold ──────────────────────────────
+function doPerim(){
+  if(busy)return; busy=true; phase=1; walkerT=0; unfoldT=0;
+  dots(1); nia(1); updStats();
+  document.getElementById('bp').classList.add('on');
+  document.getElementById('ba').disabled=false;
+
+  // Phase 1a: walker
+  let t0=null;
+  const walkDur=6500;
+  function walkStep(ts){
+    if(!t0)t0=ts;
+    walkerT=Math.min((ts-t0)/walkDur,1); draw();
+    if(walkerT<1){ requestAnimationFrame(walkStep); return; }
+    // Walker done — pause then unfold
+    setTimeout(function(){
+      nia(2);
+      let t1=null;
+      const unfoldDur=5500;
+      function unfoldStep(ts2){
+        if(!t1)t1=ts2;
+        unfoldT=Math.min((ts2-t1)/unfoldDur,1); draw();
+        if(unfoldT<1){ requestAnimationFrame(unfoldStep); return; }
+        busy=false; phase=2; updStats();
+      }
+      requestAnimationFrame(unfoldStep);
+    }, 500);
+  }
+  requestAnimationFrame(walkStep);
+}
+
+// ── Step 2: Area squares ──────────────────────────────────
+function doArea(){
+  if(busy)return; busy=true; phase=3; areaT=0;
+  dots(2); nia(3); updStats();
+  document.getElementById('ba').classList.add('on');
+  const total=W*H;
+  let t0=null,dur=total*300;
+  requestAnimationFrame(function a(ts){ if(!t0)t0=ts; areaT=Math.min(((ts-t0)/dur)*total,total); draw();
+    if(areaT<total)requestAnimationFrame(a);
+    else{ phase=4; busy=false; dots(3); nia(4); updStats(); document.getElementById('br').style.display='flex'; document.getElementById('ins').classList.add('show'); draw(); }});
+}
+
+function doReset(){
+  W=8;H=5;phase=0;busy=false;walkerT=0;unfoldT=0;areaT=0;
+  dots(0);nia(0);updStats();
+  ['bp','ba'].forEach(id=>document.getElementById(id).classList.remove('on'));
+  document.getElementById('ba').disabled=true;
+  document.getElementById('br').style.display='none';
+  document.getElementById('ins').classList.remove('show');
+  draw();
+}
+
+// ── Drag corners ──────────────────────────────────────────
+function getP(e){ const r=cv.getBoundingClientRect(),sx=cv.width/r.width,sy=cv.height/r.height; return{x:((e.clientX||(e.touches&&e.touches[0].clientX)||0)-r.left)*sx,y:((e.clientY||(e.touches&&e.touches[0].clientY)||0)-r.top)*sy};}
+function nearC(p){ const px=gox(),py=goy(),pw=W*SC,ph=H*SC; const hx=px+pw,hy=py+ph; return Math.hypot(p.x-hx,p.y-hy)<22?'br':null;}
+cv.addEventListener('mousedown',e=>{drag=nearC(getP(e));});
+cv.addEventListener('touchstart',e=>{e.preventDefault();drag=nearC(getP(e));},{passive:false});
+cv.addEventListener('mouseup',()=>drag=null);
+cv.addEventListener('touchend',()=>drag=null);
+function onMv(e){
+  if(!drag)return; e.preventDefault();
+  const p=getP(e),px=gox(),py=goy();
+  const min=2,max=11;
+  // Bottom-right: x controls width, y controls height
+  W=Math.max(min,Math.min(max,Math.round((p.x-px)/SC)));
+  H=Math.max(min,Math.min(max,Math.round((p.y-py)/SC)));
+  if(phase>=3)areaT=Math.min(areaT,W*H);
+  if(phase>=2){unfoldT=1;} // keep line shown
+  updStats();draw();
+}
+cv.addEventListener('mousemove',onMv);
+cv.addEventListener('touchmove',e=>{e.preventDefault();onMv(e);},{passive:false});
+
+draw();
+</script>
+</body>
+</html>

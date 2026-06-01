@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya — Geometry (Ages 9–12)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
+  :root{
+    --ink:#0f1117;--ink2:#3a3d4a;--muted:#8b8fa8;
+    --bg:#f7f6f2;--card:#ffffff;
+    --accent:#4f46e5;--accent2:#f59e0b;
+    --green:#059669;--red:#dc2626;
+    --rule:rgba(0,0,0,.07);--sh:0 2px 16px rgba(0,0,0,.07);
+    --r:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:20px;color:var(--ink);}
+  .shell{width:100%;max-width:680px;}
+  .top{text-align:center;margin-bottom:20px;}
+  .top .badge{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);border:1.5px solid var(--rule);border-radius:20px;
+    padding:4px 14px;display:inline-block;margin-bottom:10px;}
+  .top h1{font-family:'DM Serif Display',serif;font-size:clamp(24px,5vw,34px);color:var(--ink);line-height:1.15;}
+  .top h1 em{font-style:italic;color:var(--accent);}
+  .top p{font-size:13px;color:var(--muted);margin-top:6px;}
+  .stepper{display:flex;gap:6px;justify-content:center;margin-bottom:20px;}
+  .step-dot{width:6px;height:6px;border-radius:50%;background:var(--rule);border:1.5px solid #ccc;transition:all .3s;}
+  .step-dot.active{background:var(--accent2);border-color:var(--accent2);transform:scale(1.6);}
+  .step-dot.done{background:var(--accent);border-color:var(--accent);}
+  .nia{display:flex;gap:12px;align-items:flex-start;background:var(--card);
+    border:1.5px solid var(--rule);border-radius:var(--r);padding:14px 16px;
+    margin-bottom:20px;box-shadow:var(--sh);min-height:64px;}
+  .nia-dot{width:36px;height:36px;border-radius:50%;flex-shrink:0;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:18px;
+    animation:bob 3s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  .nia-text{font-size:clamp(13px,2.8vw,15px);line-height:1.65;color:var(--ink2);flex:1;}
+  .nia-text strong{color:var(--accent);font-weight:700;}
+  .nia-text em{color:var(--accent2);font-style:normal;font-weight:700;}
+  .panel{background:var(--card);border:1.5px solid var(--rule);border-radius:var(--r);
+    padding:22px;margin-bottom:16px;box-shadow:var(--sh);}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:14px;}
+  .pf-row{display:flex;gap:12px;align-items:flex-start;padding:10px 0;
+    border-bottom:1px solid var(--rule);font-size:clamp(13px,2.5vw,14px);line-height:1.7;color:var(--ink2);}
+  .pf-row:last-child{border-bottom:none;padding-bottom:0;}
+  .pf-row:first-child{padding-top:0;}
+  .pf-icon{font-size:18px;flex-shrink:0;margin-top:2px;}
+  /* Shape cards */
+  .shape-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+  .shape-card{background:var(--bg);border:1.5px solid var(--rule);border-radius:14px;
+    padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);}
+  .shape-card:hover{transform:translateY(-2px);border-color:var(--accent);}
+  .shape-card.active-shape{border-color:var(--accent);background:rgba(124,58,237,.05);}
+  .shape-name{font-size:13px;font-weight:700;color:var(--ink);margin-top:8px;}
+  .shape-fact{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4;}
+  /* Angle arc */
+  .angle-scene{text-align:center;padding:14px 0;}
+  .angle-val{font-family:'DM Serif Display',serif;font-size:clamp(40px,9vw,60px);
+    color:var(--accent);line-height:1;transition:all .2s;}
+  .angle-label{font-size:13px;color:var(--muted);font-weight:600;margin-top:4px;}
+  /* Slider */
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:6px;
+    border-radius:3px;background:var(--rule);outline:none;cursor:pointer;touch-action:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;
+    border-radius:50%;background:var(--accent);border:3px solid #fff;cursor:grab;
+    box-shadow:0 2px 8px rgba(124,58,237,.3);}
+  input[type=range]::-webkit-slider-thumb:active{cursor:grabbing;}
+  input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;
+    background:var(--accent);border:3px solid #fff;cursor:grab;}
+  /* Quiz */
+  .quiz-q{font-family:'DM Serif Display',serif;font-size:clamp(17px,4vw,22px);
+    text-align:center;line-height:1.4;margin-bottom:16px;color:var(--ink);}
+  .quiz-opts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+  .quiz-opt{min-width:80px;min-height:52px;border-radius:12px;border:1.5px solid var(--rule);
+    background:var(--bg);font-family:'DM Sans',sans-serif;font-size:clamp(13px,3vw,15px);
+    font-weight:600;cursor:pointer;color:var(--ink);padding:8px 12px;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);}
+  .quiz-opt:hover{border-color:var(--accent);transform:translateY(-1px);}
+  .quiz-opt.correct{background:rgba(5,150,105,.1);border-color:var(--green);color:var(--green);animation:pop .4s ease;}
+  .quiz-opt.wrong{background:rgba(220,38,38,.06);border-color:var(--red);color:var(--red);animation:shake .3s ease;}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .quiz-result{text-align:center;margin-top:10px;font-size:14px;font-weight:700;min-height:20px;}
+  .quiz-result.correct{color:var(--green);}
+  .quiz-result.wrong{color:var(--red);}
+  .stars-row{display:flex;justify-content:center;gap:6px;margin-bottom:14px;}
+  .star{font-size:22px;opacity:.2;transition:all .3s;}
+  .star.earned{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+  .prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .prog-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .prog-pips{display:flex;gap:5px;}
+  .prog-pip{width:10px;height:10px;border-radius:50%;background:var(--rule);border:1.5px solid #ccc;transition:all .3s;}
+  .prog-pip.dp{background:var(--accent);border-color:var(--accent);}
+  .prog-pip.cp{background:var(--accent2);border-color:var(--accent2);transform:scale(1.3);}
+  .nav-row{display:flex;gap:10px;}
+  .btn{min-height:52px;padding:0 22px;border-radius:14px;border:none;
+    font-family:'DM Sans',sans-serif;font-size:clamp(14px,3vw,16px);font-weight:700;
+    cursor:pointer;transition:all .2s;}
+  .btn:active{transform:scale(.97);}
+  .btn-back{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);min-width:52px;}
+  .btn-back:hover{border-color:#aaa;color:var(--ink);}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-next{background:var(--accent);color:#fff;flex:1;box-shadow:0 4px 14px rgba(124,58,237,.25);}
+  .btn-next:hover{background:#6d28d9;transform:translateY(-1px);}
+  .cc{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .cp{position:absolute;border-radius:2px;animation:cf 2s ease-in forwards;}
+  @keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+  @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="shell">
+  <div class="top">
+    <div class="badge">Ages 9–12</div>
+    <h1>The Language of <em>Shapes</em> — Geometry</h1>
+    <p>Angles, triangles, quadrilaterals and their properties</p>
+  </div>
+  <div class="stepper">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia">
+    <div class="nia-dot">🌟</div>
+    <div class="nia-text" id="nia">
+      Geometry is the mathematics of <strong>shape, space and size</strong>. Architects use it to design buildings. Engineers use it to build bridges. Artists use it to create perspective. Every shape has properties we can measure and predict.
+    </div>
+  </div>
+  <div id="mainArea"></div>
+  <div class="nav-row">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>←</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let's explore →</button>
+  </div>
+</div>
+<div class="cc" id="confetti"></div>
+<script>
+var currentStep=0,quizIdx=0,quizCorrect=0,activeShape=0,angleVal=90;
+
+// ── Shape data ─────────────────────────────────────────────
+var SHAPES=[
+  {
+    name:'Equilateral Triangle',
+    sides:3, angles:3, sumAngles:180,
+    eachAngle:60,
+    props:['All 3 sides equal','All 3 angles = 60°','3 lines of symmetry'],
+    fact:'The strongest shape in engineering — used in bridges and roof trusses.',
+    col:'#7c3aed',
+    svg:function(){
+      return '<svg viewBox="0 0 120 110" width="90" height="80" xmlns="http://www.w3.org/2000/svg">'+
+        '<polygon points="60,8 112,100 8,100" fill="rgba(124,58,237,.12)" stroke="#7c3aed" stroke-width="2.5"/>'+
+        '<text x="60" y="72" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="DM Sans,sans-serif" font-weight="700">60°</text>'+
+        '<text x="18" y="98" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="DM Sans,sans-serif">60°</text>'+
+        '<text x="102" y="98" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="DM Sans,sans-serif">60°</text>'+
+        '</svg>';
+    }
+  },
+  {
+    name:'Right-Angled Triangle',
+    sides:3, angles:3, sumAngles:180,
+    eachAngle:null,
+    props:['One angle = exactly 90°','Other two angles add to 90°','Hypotenuse is the longest side'],
+    fact:'The basis of Pythagoras theorem — used in every construction project.',
+    col:'#0369a1',
+    svg:function(){
+      return '<svg viewBox="0 0 120 110" width="90" height="80" xmlns="http://www.w3.org/2000/svg">'+
+        '<polygon points="10,100 10,10 110,100" fill="rgba(3,105,161,.12)" stroke="#0369a1" stroke-width="2.5"/>'+
+        '<rect x="10" y="88" width="12" height="12" fill="none" stroke="#0369a1" stroke-width="2"/>'+
+        '<text x="26" y="90" font-size="10" fill="#0369a1" font-family="DM Sans,sans-serif">90°</text>'+
+        '<text x="48" y="112" text-anchor="middle" font-size="10" fill="#0369a1" font-family="DM Sans,sans-serif">hypotenuse</text>'+
+        '</svg>';
+    }
+  },
+  {
+    name:'Square',
+    sides:4, angles:4, sumAngles:360,
+    eachAngle:90,
+    props:['All 4 sides equal','All 4 angles = 90°','4 lines of symmetry'],
+    fact:'A square is a special rectangle AND a special rhombus.',
+    col:'#059669',
+    svg:function(){
+      return '<svg viewBox="0 0 120 120" width="80" height="80" xmlns="http://www.w3.org/2000/svg">'+
+        '<rect x="15" y="15" width="90" height="90" fill="rgba(5,150,105,.12)" stroke="#059669" stroke-width="2.5"/>'+
+        '<rect x="15" y="15" width="12" height="12" fill="none" stroke="#059669" stroke-width="1.5"/>'+
+        '<rect x="93" y="15" width="12" height="12" fill="none" stroke="#059669" stroke-width="1.5"/>'+
+        '<rect x="15" y="93" width="12" height="12" fill="none" stroke="#059669" stroke-width="1.5"/>'+
+        '<rect x="93" y="93" width="12" height="12" fill="none" stroke="#059669" stroke-width="1.5"/>'+
+        '<text x="60" y="65" text-anchor="middle" font-size="11" fill="#059669" font-family="DM Sans,sans-serif" font-weight="700">90° each</text>'+
+        '</svg>';
+    }
+  },
+  {
+    name:'Rectangle',
+    sides:4, angles:4, sumAngles:360,
+    eachAngle:90,
+    props:['Opposite sides equal','All 4 angles = 90°','2 lines of symmetry'],
+    fact:'Every door, window and screen is a rectangle — the most common quadrilateral.',
+    col:'#d97706',
+    svg:function(){
+      return '<svg viewBox="0 0 140 100" width="100" height="72" xmlns="http://www.w3.org/2000/svg">'+
+        '<rect x="10" y="15" width="120" height="70" fill="rgba(217,119,6,.12)" stroke="#d97706" stroke-width="2.5"/>'+
+        '<rect x="10" y="15" width="11" height="11" fill="none" stroke="#d97706" stroke-width="1.5"/>'+
+        '<rect x="119" y="15" width="11" height="11" fill="none" stroke="#d97706" stroke-width="1.5"/>'+
+        '<rect x="10" y="74" width="11" height="11" fill="none" stroke="#d97706" stroke-width="1.5"/>'+
+        '<rect x="119" y="74" width="11" height="11" fill="none" stroke="#d97706" stroke-width="1.5"/>'+
+        '</svg>';
+    }
+  },
+  {
+    name:'Parallelogram',
+    sides:4, angles:4, sumAngles:360,
+    eachAngle:null,
+    props:['Opposite sides parallel and equal','Opposite angles equal','No lines of symmetry'],
+    fact:'A leaning rectangle — opposite angles are equal but not 90°.',
+    col:'#dc2626',
+    svg:function(){
+      return '<svg viewBox="0 0 140 90" width="100" height="70" xmlns="http://www.w3.org/2000/svg">'+
+        '<polygon points="30,10 130,10 110,80 10,80" fill="rgba(220,38,38,.1)" stroke="#dc2626" stroke-width="2.5"/>'+
+        '</svg>';
+    }
+  },
+  {
+    name:'Regular Hexagon',
+    sides:6, angles:6, sumAngles:720,
+    eachAngle:120,
+    props:['All 6 sides equal','All 6 angles = 120°','6 lines of symmetry'],
+    fact:'Honeybees build hexagonal cells — the most efficient shape for packing.',
+    col:'#0891b2',
+    svg:function(){
+      var pts=''; var cx=60; var cy=60; var r=48;
+      for(var i=0;i<6;i++){
+        var a=(Math.PI/180)*(60*i-30);
+        pts+=(cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1)+' ';
+      }
+      return '<svg viewBox="0 0 120 120" width="80" height="80" xmlns="http://www.w3.org/2000/svg">'+
+        '<polygon points="'+pts.trim()+'" fill="rgba(8,145,178,.1)" stroke="#0891b2" stroke-width="2.5"/>'+
+        '<text x="60" y="65" text-anchor="middle" font-size="11" fill="#0891b2" font-family="DM Sans,sans-serif" font-weight="700">120° each</text>'+
+        '</svg>';
+    }
+  },
+];
+
+// ── Angle types ────────────────────────────────────────────
+function angleType(a){
+  if(a===0) return {name:'Zero angle',col:'#9ca3af'};
+  if(a<90) return {name:'Acute angle',col:'#059669'};
+  if(a===90) return {name:'Right angle',col:'#0369a1'};
+  if(a<180) return {name:'Obtuse angle',col:'#d97706'};
+  if(a===180) return {name:'Straight line',col:'#7c3aed'};
+  if(a<360) return {name:'Reflex angle',col:'#dc2626'};
+  return {name:'Full rotation',col:'#374151'};
+}
+
+function drawAngle(deg){
+  var W=220; var H=180; var cx=100; var cy=130; var r=70; var arcR=36;
+  var rad=(deg*Math.PI)/180;
+  var ex=cx+r; var ey=cy;
+  var ax=cx+r*Math.cos(-rad); var ay=cy+r*Math.sin(-rad);
+  var at=angleType(deg);
+  var laf=deg>180?1:0;
+  var arcX=cx+arcR*Math.cos(-rad); var arcY=cy+arcR*Math.sin(-rad);
+  var s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block;max-width:260px;margin:0 auto" xmlns="http://www.w3.org/2000/svg">';
+  // Angle arc fill
+  if(deg>0&&deg<360){
+    s+='<path d="M '+cx+' '+cy+' L '+(cx+arcR)+' '+cy+' A '+arcR+' '+arcR+' 0 '+laf+' 0 '+arcX+' '+arcY+' Z" fill="'+at.col+'" opacity="0.2"/>';
+    s+='<path d="M '+(cx+arcR)+' '+cy+' A '+arcR+' '+arcR+' 0 '+laf+' 0 '+arcX+' '+arcY+'" fill="none" stroke="'+at.col+'" stroke-width="2"/>';
+  }
+  if(deg===90){
+    s+='<rect x="'+cx+'" y="'+(cy-20)+'" width="20" height="20" fill="none" stroke="'+at.col+'" stroke-width="2"/>';
+  }
+  // Rays
+  s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+ex+'" y2="'+ey+'" stroke="#374151" stroke-width="2.5" stroke-linecap="round"/>';
+  if(deg>0) s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+ax.toFixed(1)+'" y2="'+ay.toFixed(1)+'" stroke="'+at.col+'" stroke-width="2.5" stroke-linecap="round"/>';
+  // Vertex dot
+  s+='<circle cx="'+cx+'" cy="'+cy+'" r="5" fill="#374151"/>';
+  // Degree label near arc
+  var la=(-rad/2); var lx=cx+54*Math.cos(la); var ly=cy+54*Math.sin(la);
+  if(deg>5&&deg<355) s+='<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" font-size="11" font-family="DM Sans,sans-serif" font-weight="700" fill="'+at.col+'">'+deg+'°</text>';
+  s+='</svg>';
+  return s;
+}
+
+// ── Quiz ───────────────────────────────────────────────────
+var QUIZ_QS=[
+  {q:'How many degrees do the angles of any triangle add up to?',
+   opts:['90°','180°','270°','360°'],answer:'180°'},
+  {q:'What type of angle is 135°?',
+   opts:['Acute','Right','Obtuse','Reflex'],answer:'Obtuse'},
+  {q:'A regular hexagon has interior angles of:',
+   opts:['90°','108°','120°','135°'],answer:'120°'},
+  {q:'How many degrees in a full rotation?',
+   opts:['90°','180°','270°','360°'],answer:'360°'},
+];
+
+var NIA=[
+  "Geometry is the mathematics of <strong>shape, space and size</strong>. Architects use it to design buildings. Engineers use it to build bridges. Artists use it to create perspective. Every shape has properties we can measure and predict.",
+  "Explore the <strong>angle explorer</strong> — drag the slider and watch the angle change. Notice how the type changes: acute, right, obtuse, straight, reflex.",
+  "Tap each shape to explore its <strong>properties</strong> — sides, angles, symmetry. The angle sum of any polygon follows a beautiful pattern!",
+  "Quiz time. Four questions on shapes and angles.",
+  "You understand geometry — the mathematics that describes every shape in the world around you."
+];
+var BTNS=["Angle explorer →","Explore shapes →","Quiz →","Summary →","🔁 Play again"];
+var RENDERS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4];
+
+function dots(s){for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<s?' done':i===s?' active':'');}}
+
+function confettiBurst(){
+  var c=document.getElementById('confetti');c.innerHTML='';
+  var cols=['#7c3aed','#0369a1','#059669','#dc2626','#d97706','#0891b2'];
+  for(var i=0;i<48;i++){
+    var p=document.createElement('div');p.className='cp';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[Math.floor(Math.random()*cols.length)]+
+      ';width:'+(6+Math.random()*7)+'px;height:'+(6+Math.random()*7)+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+
+      ';animation-delay:'+(Math.random()*.6)+'s;animation-duration:'+(1.6+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){c.innerHTML='';},3000);
+}
+
+// ── STEP 0 — Preface slides ────────────────────────────────
+function renderStep0(){
+  var slide=0;
+  var SLIDES=[
+    {
+      render:function(){
+        return '<div style="animation:fi .35s ease">'+
+          '<div class="panel-title">Geometry is everywhere</div>'+
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">'+
+          [
+            {icon:'🏛️',t:'Architecture',d:'Columns, arches, domes — all geometry'},
+            {icon:'🌍',t:'Maps & Navigation',d:'Angles and coordinates describe every location'},
+            {icon:'🌀',t:'Nature',d:'Snowflakes, honeycombs, spiral shells'},
+            {icon:'⚙️',t:'Engineering',d:'Triangles make the strongest structures'},
+            {icon:'🎨',t:'Art & Design',d:'Perspective, symmetry, proportion'},
+            {icon:'📱',t:'Technology',d:'Screens, chips — all built on grids of shapes'},
+          ].map(function(c){
+            return '<div style="background:var(--bg);border:1.5px solid var(--rule);border-radius:12px;padding:12px">'+
+              '<div style="font-size:22px;margin-bottom:5px">'+c.icon+'</div>'+
+              '<div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px">'+c.t+'</div>'+
+              '<div style="font-size:11px;color:var(--muted)">'+c.d+'</div>'+
+              '</div>';
+          }).join('')+
+          '</div></div>';
+      },
+      nia:'Geometry is the mathematics of <strong>shape and space</strong>. It appears in nature, art, engineering and technology. Understanding shapes and their properties is one of the most practical skills in mathematics.'
+    },
+    {
+      render:function(){
+        return '<div style="animation:fi .35s ease">'+
+          '<div class="panel-title">Angles — the key measurement of geometry</div>'+
+          '<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px">'+
+          [
+            {deg:45,name:'Acute',desc:'Less than 90°',col:'#059669'},
+            {deg:90,name:'Right',desc:'Exactly 90°',col:'#0369a1'},
+            {deg:135,name:'Obtuse',desc:'Between 90° and 180°',col:'#d97706'},
+            {deg:180,name:'Straight',desc:'Exactly 180°',col:'#7c3aed'},
+          ].map(function(a){
+            return '<div style="flex:1;min-width:120px;background:var(--bg);border:1.5px solid var(--rule);border-radius:12px;padding:12px;text-align:center">'+
+              drawAngle(a.deg)+
+              '<div style="font-size:13px;font-weight:700;color:'+a.col+';margin-top:6px">'+a.name+'</div>'+
+              '<div style="font-size:11px;color:var(--muted)">'+a.desc+'</div>'+
+              '</div>';
+          }).join('')+
+          '</div></div>';
+      },
+      nia:'Angles are measured in <strong>degrees (°)</strong>. A full rotation is 360°. A right angle is 90°. Acute angles are less than 90°, obtuse angles are between 90° and 180°.'
+    },
+    {
+      render:function(){
+        return '<div style="animation:fi .35s ease">'+
+          '<div class="panel-title">The angle sum rule</div>'+
+          '<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px">'+
+          [
+            {n:3,sum:180,name:'Triangle',col:'#7c3aed'},
+            {n:4,sum:360,name:'Quadrilateral',col:'#059669'},
+            {n:5,sum:540,name:'Pentagon',col:'#d97706'},
+            {n:6,sum:720,name:'Hexagon',col:'#0891b2'},
+          ].map(function(sh){
+            return '<div style="flex:1;min-width:110px;background:var(--bg);border:1.5px solid var(--rule);border-radius:12px;padding:12px;text-align:center">'+
+              '<div style="font-family:DM Serif Display,serif;font-size:28px;color:'+sh.col+'">'+sh.sum+'°</div>'+
+              '<div style="font-size:12px;font-weight:700;color:var(--ink);margin-top:2px">'+sh.name+'</div>'+
+              '<div style="font-size:11px;color:var(--muted);margin-top:2px">'+sh.n+' sides</div>'+
+              '</div>';
+          }).join('')+
+          '</div>'+
+          '<div style="background:rgba(124,58,237,.06);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:14px;text-align:center">'+
+            '<div style="font-family:DM Serif Display,serif;font-size:clamp(16px,4vw,20px);color:var(--accent);margin-bottom:6px">Sum of angles = (n - 2) × 180°</div>'+
+            '<div style="font-size:13px;color:var(--ink2);font-weight:600">where n = number of sides<br>Triangle: (3-2)×180 = 180°. Hexagon: (6-2)×180 = 720°.</div>'+
+          '</div>'+
+          '</div>';
+      },
+      nia:'Every polygon follows a beautiful rule: the angles add up to <strong>(n - 2) × 180°</strong>. A triangle (3 sides): 1 × 180 = 180°. A hexagon (6 sides): 4 × 180 = 720°. Always.'
+    },
+  ];
+
+  function renderSlide(){
+    var s=SLIDES[slide];
+    var sdots='';
+    for(var i=0;i<SLIDES.length;i++)
+      sdots+='<div style="width:7px;height:7px;border-radius:50%;background:'+(i===slide?'var(--accent)':'#ddd')+';transition:all .3s;'+(i===slide?'transform:scale(1.4)':'')+';margin:0 2px"></div>';
+    document.getElementById('mainArea').innerHTML=
+      '<div class="panel">'+s.render()+
+        '<div style="display:flex;gap:6px;justify-content:center;align-items:center;margin-top:16px">'+sdots+'</div>'+
+        '<div style="display:flex;gap:8px;justify-content:center;margin-top:12px">'+
+          '<button onclick="s0Prev()" style="padding:8px 18px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:DM Sans,sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);opacity:'+(slide===0?.3:1)+'" '+(slide===0?'disabled':'')+'>← Back</button>'+
+          '<button onclick="s0Next()" style="padding:8px 22px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer">'+
+            (slide<SLIDES.length-1?'Next →':'Explore angles →')+
+          '</button>'+
+        '</div>'+
+      '</div>';
+    document.getElementById('nia').innerHTML=s.nia;
+  }
+  window.s0Next=function(){if(slide<SLIDES.length-1){slide++;renderSlide();}else{goStep(1);}};
+  window.s0Prev=function(){if(slide>0){slide--;renderSlide();}};
+  renderSlide();
+}
+
+// ── STEP 1 — Angle explorer ────────────────────────────────
+function renderStep1(){
+  angleVal=90;
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel">'+
+    '<div class="panel-title">Angle explorer — drag to change the angle</div>'+
+    '<div id="angleSVG">'+drawAngle(90)+'</div>'+
+    '<div class="angle-scene">'+
+    '<div class="angle-val" id="angleVal">90°</div>'+
+    '<div class="angle-label" id="angleLabel">Right angle</div>'+
+    '</div>'+
+    '<div style="padding:0 4px;margin-bottom:10px">'+
+    '<input type="range" id="angleSlider" min="0" max="360" step="1" value="90">'+
+    '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-weight:600;margin-top:4px">'+
+    '<span>0°</span><span>90°</span><span>180°</span><span>270°</span><span>360°</span>'+
+    '</div></div>'+
+    '<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center">'+
+    [0,45,90,135,180,270,360].map(function(a){
+      return '<button onclick="setAngle('+a+')" style="padding:6px 12px;border-radius:8px;border:1.5px solid var(--rule);background:var(--bg);font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;cursor:pointer;color:var(--ink)">'+a+'°</button>';
+    }).join('')+
+    '</div>'+
+    '</div>';
+  var sl=document.getElementById('angleSlider');
+  if(sl) sl.addEventListener('input',function(){setAngle(parseInt(this.value));});
+  setAngle(90);
+}
+
+function setAngle(a){
+  angleVal=a;
+  var at=angleType(a);
+  var svg=document.getElementById('angleSVG');
+  if(svg) svg.innerHTML=drawAngle(a);
+  var av=document.getElementById('angleVal');
+  if(av){av.textContent=a+'°';av.style.color=at.col;}
+  var al=document.getElementById('angleLabel');
+  if(al){al.textContent=at.name;al.style.color=at.col;}
+  var sl=document.getElementById('angleSlider');
+  if(sl) sl.value=a;
+  var nia=document.getElementById('nia');
+  if(nia){
+    var msgs={
+      0:'0° — a zero angle. Both rays point in the same direction.',
+      45:'45° — an <strong>acute angle</strong>. Sharp, less than 90°.',
+      90:'90° — a <strong>right angle</strong>. The corner of a square. Used in every building.',
+      135:'135° — an <strong>obtuse angle</strong>. Between 90° and 180°. Wider than a right angle.',
+      180:'180° — a <strong>straight line</strong>. The angle lies flat. Two right angles.',
+      270:'270° — a <strong>reflex angle</strong>. Greater than 180°. More than half a full rotation.',
+      360:'360° — a <strong>full rotation</strong>. One complete turn. Back to the start.',
+    };
+    nia.innerHTML=msgs[a]||('<strong>'+a+'°</strong> — '+at.name+'. '+
+      (a<90?'Acute: less than 90°.':a<180?'Obtuse: between 90° and 180°.':'Reflex: greater than 180°.'));
+  }
+}
+
+// ── STEP 2 — Shape explorer ────────────────────────────────
+function renderStep2(){
+  activeShape=0;
+  buildShapeExplorer();
+}
+
+function buildShapeExplorer(){
+  var sh=SHAPES[activeShape];
+  var cards=SHAPES.map(function(s,i){
+    return '<div class="shape-card'+(i===activeShape?' active-shape':'')+'" onclick="selectShape('+i+')">'+
+      s.svg()+
+      '<div class="shape-name">'+s.name+'</div>'+
+      '</div>';
+  }).join('');
+
+  var props=sh.props.map(function(p){
+    return '<div style="display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--rule);font-size:13px;color:var(--ink2)">'+
+      '<div style="width:6px;height:6px;border-radius:50%;background:'+sh.col+';flex-shrink:0;margin-top:5px"></div>'+
+      '<div>'+p+'</div></div>';
+  }).join('');
+
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel">'+
+    '<div class="panel-title">Tap a shape to explore its properties</div>'+
+    '<div class="shape-grid">'+cards+'</div>'+
+    '<div style="background:var(--bg);border:1.5px solid var(--rule);border-radius:14px;padding:14px;animation:fi .3s ease">'+
+      '<div style="font-family:DM Serif Display,serif;font-size:clamp(18px,4vw,24px);color:'+sh.col+';margin-bottom:10px">'+sh.name+'</div>'+
+      '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px">'+
+        '<div style="background:var(--card);border:1.5px solid var(--rule);border-radius:8px;padding:8px 12px;text-align:center;flex:1">'+
+          '<div style="font-family:DM Serif Display,serif;font-size:22px;color:'+sh.col+'">'+sh.sides+'</div>'+
+          '<div style="font-size:11px;color:var(--muted)">sides</div>'+
+        '</div>'+
+        '<div style="background:var(--card);border:1.5px solid var(--rule);border-radius:8px;padding:8px 12px;text-align:center;flex:1">'+
+          '<div style="font-family:DM Serif Display,serif;font-size:22px;color:'+sh.col+'">'+sh.sumAngles+'°</div>'+
+          '<div style="font-size:11px;color:var(--muted)">angle sum</div>'+
+        '</div>'+
+        (sh.eachAngle?'<div style="background:var(--card);border:1.5px solid var(--rule);border-radius:8px;padding:8px 12px;text-align:center;flex:1">'+
+          '<div style="font-family:DM Serif Display,serif;font-size:22px;color:'+sh.col+'">'+sh.eachAngle+'°</div>'+
+          '<div style="font-size:11px;color:var(--muted)">each angle</div>'+
+        '</div>':'')+
+      '</div>'+
+      props+
+      '<div style="background:rgba(124,58,237,.06);border:1.5px solid rgba(124,58,237,.15);border-radius:10px;padding:10px;margin-top:10px;font-size:13px;color:var(--ink2)">'+
+        '💡 '+sh.fact+
+      '</div>'+
+    '</div></div>';
+
+  document.getElementById('nia').innerHTML='<strong>'+sh.name+'</strong> — '+sh.sides+' sides, angle sum '+sh.sumAngles+'°. '+sh.fact;
+}
+
+function selectShape(idx){
+  activeShape=idx;
+  buildShapeExplorer();
+}
+
+// ── STEP 3 — Quiz ─────────────────────────────────────────
+function renderStep3(){quizIdx=0;quizCorrect=0;document.getElementById('nia').innerHTML=NIA[3];showQuizQ();}
+
+function showQuizQ(){
+  if(quizIdx>=QUIZ_QS.length){showQuizEnd();return;}
+  var q=QUIZ_QS[quizIdx];
+  var nia=document.getElementById('nia');if(nia)nia.innerHTML='Read carefully — then pick your answer.';
+  var stars='';for(var i=0;i<QUIZ_QS.length;i++)stars+='<div class="star'+(i<quizCorrect?' earned':'')+'" >⭐</div>';
+  var opts='';q.opts.forEach(function(o,oi){opts+='<button class="quiz-opt" id="qo'+oi+'" data-val="'+o+'" onclick="answerQIdx('+oi+')">'+o+'</button>';});
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel"><div class="stars-row">'+stars+'</div>'+
+    '<div class="quiz-q">'+q.q+'</div>'+
+    '<div class="quiz-opts">'+opts+'</div>'+
+    '<div class="quiz-result" id="qRes"></div></div>';
+}
+
+function answerQIdx(idx){
+  var q=QUIZ_QS[quizIdx];
+  var btns=document.querySelectorAll('.quiz-opt');
+  var chosen=btns[idx]?btns[idx].getAttribute('data-val'):'';
+  answerQ(chosen,q.answer);
+}
+
+function answerQ(chosen,correct){
+  var btns=document.querySelectorAll('.quiz-btn,.opt,.ans-tile,.ans-row');
+  btns.forEach(function(b){b.onclick=null;b.style.cursor='default';if(b.disabled!==undefined)b.disabled=true;});
+  var res=document.getElementById('qRes')||document.getElementById('pzRes')||document.getElementById('quizResult');
+  if(chosen===correct){
+
+    btns.forEach(function(b){if(b.getAttribute('data-val')===correct)b.className='quiz-opt correct';});
+    quizCorrect++;if(res){res.textContent='Correct.';res.className='quiz-result correct';}
+    document.getElementById('nia').innerHTML='Correct.';
+  
+  } else {
+
+    btns.forEach(function(b){
+      if(b.getAttribute('data-val')===chosen)b.className='quiz-opt wrong';
+      if(b.getAttribute('data-val')===correct)b.className='quiz-opt correct';
+    });
+    if(res){res.textContent='The answer is: '+correct;res.className='quiz-result wrong';}
+    document.getElementById('nia').innerHTML='The answer is <strong>'+correct+'</strong>.';
+  
+  }
+  quizIdx++;
+  var isLast=(quizIdx>=QUIZ_QS.length);
+  if(chosen===correct){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showQuizEnd():showQuizQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showQuizEnd():showQuizQ();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQuizEnd(){
+  var stars='';for(var i=0;i<QUIZ_QS.length;i++)stars+='<div class="star'+(i<quizCorrect?' earned':'')+'" >⭐</div>';
+  if(quizCorrect===4)confettiBurst();
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel"><div class="stars-row">'+stars+'</div>'+
+    '<div style="background:var(--bg);border:1.5px solid var(--rule);border-radius:12px;padding:18px;text-align:center">'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(18px,4vw,24px);margin-bottom:6px">'+
+      (quizCorrect===4?'Perfect score.':quizCorrect>=3?'Almost perfect.':quizCorrect>=2?'Good work.':'Keep going.')+
+    '</div><div style="font-size:14px;color:var(--muted)">You got <strong style="color:var(--red)">'+quizCorrect+'</strong> out of 4 correct.</div>'+
+    '<div style="text-align:center;margin-top:16px">'+'<button onclick="goStep(-4)" style="padding:10px 28px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)">Start again</button>'+'</div>'+'</div></div>';
+  document.getElementById('nia').innerHTML=(quizCorrect===4?'<strong>Perfect.</strong> ':'')+
+    'Angles of a triangle sum to 180°. Any polygon: (n-2)×180°. Acute < 90° < Obtuse < 180° < Reflex < 360°.';
+}
+
+// ── STEP 4 — Summary ──────────────────────────────────────
+function renderStep4(){
+  var shCards=SHAPES.map(function(sh){
+    return '<div style="background:var(--bg);border:1.5px solid var(--rule);border-radius:12px;padding:12px;text-align:center">'+
+      sh.svg()+
+      '<div style="font-size:12px;font-weight:700;color:'+sh.col+';margin-top:4px">'+sh.name+'</div>'+
+      '<div style="font-size:11px;color:var(--muted)">'+sh.sumAngles+'°</div>'+
+      '</div>';
+  }).join('');
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel">'+
+    '<div class="panel-title">What we learned</div>'+
+    '<div class="pf-row" style="padding-top:0"><div class="pf-icon">✅</div><div>Angles: <strong style="color:var(--ink)">Acute</strong> (< 90°), <strong style="color:var(--ink)">Right</strong> (= 90°), <strong style="color:var(--ink)">Obtuse</strong> (90°–180°), <strong style="color:var(--ink)">Straight</strong> (180°), <strong style="color:var(--ink)">Reflex</strong> (> 180°).</div></div>'+
+    '<div class="pf-row"><div class="pf-icon">✅</div><div>Triangle angles always sum to <strong style="color:var(--ink)">180°</strong>. Any polygon: <strong style="color:var(--ink)">(n - 2) × 180°</strong>.</div></div>'+
+    '<div class="pf-row"><div class="pf-icon">✅</div><div>A <strong style="color:var(--ink)">regular polygon</strong> has all sides equal and all angles equal: each angle = sum ÷ n.</div></div>'+
+    '<div class="pf-row" style="border-bottom:none"><div class="pf-icon">🚀</div><div>Next — <strong style="color:var(--ink)">Statistics</strong>: mean, median, mode and range.</div></div>'+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">'+shCards+'</div>';
+  confettiBurst();
+}
+
+function goStep(dir){
+  currentStep=Math.max(0,Math.min(4,currentStep+dir));
+  dots(currentStep);
+  document.getElementById('nia').innerHTML=NIA[currentStep];
+  document.getElementById('btnBack').disabled=(currentStep===0);
+  document.getElementById('btnNext').textContent=BTNS[currentStep];
+  document.getElementById('btnNext').disabled=false;
+  if(currentStep===4){document.getElementById('btnNext').onclick=function(){goStep(-4);};}
+  else{document.getElementById('btnNext').onclick=function(){goStep(1);};}
+  RENDERS[currentStep]();
+}
+goStep(0);
+</script>
+</body>
+</html>

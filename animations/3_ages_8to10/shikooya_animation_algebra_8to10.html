@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya - Basic Algebra (Ages 8-10)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
+  :root{--ink:#0f1117;--ink2:#3a3d4a;--muted:#8b8fa8;--bg:#f7f6f2;--card:#ffffff;
+    --accent:#4f46e5;--accent2:#f59e0b;--green:#059669;--red:#dc2626;
+    --rule:rgba(0,0,0,.07);--pr:24px;--sh:0 2px 16px rgba(0,0,0,.08);}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:20px;color:var(--ink);}
+  .shell{width:100%;max-width:660px;}
+  .top-bar{display:flex;align-items:center;margin-bottom:16px;}
+  .age-pill{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);border:1.5px solid var(--rule);border-radius:20px;padding:4px 12px;}
+  .title-block{text-align:center;margin-bottom:20px;}
+  .title-block h1{font-family:'DM Serif Display',serif;font-size:clamp(22px,5vw,30px);
+    color:var(--ink);line-height:1.15;}
+  .title-block h1 em{font-style:italic;color:var(--accent);}
+  .title-block p{font-size:13px;color:var(--muted);margin-top:6px;font-weight:500;}
+  .stepper{display:flex;gap:6px;justify-content:center;margin-bottom:24px;}
+  .step-dot{width:6px;height:6px;border-radius:50%;background:var(--rule);
+    border:1.5px solid #ccc;transition:all .3s;}
+  .step-dot.active{background:var(--accent2);border-color:var(--accent2);transform:scale(1.6);}
+  .step-dot.done{background:var(--accent);border-color:var(--accent);}
+  .nia-strip{display:flex;gap:12px;align-items:flex-start;background:var(--card);
+    border:1.5px solid var(--rule);border-radius:var(--pr);padding:14px 16px;
+    margin-bottom:20px;box-shadow:var(--sh);min-height:64px;}
+  .nia-dot{width:36px;height:36px;border-radius:50%;flex-shrink:0;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:18px;
+    box-shadow:0 2px 8px rgba(79,70,229,.3);animation:bob 3s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  .nia-text{font-size:clamp(13px,2.8vw,15px);line-height:1.65;color:var(--ink2);flex:1;}
+  .nia-text strong{color:var(--accent);font-weight:700;}
+  .nia-text em{color:var(--accent2);font-style:normal;font-weight:700;}
+  .panel{background:var(--card);border:1.5px solid var(--rule);border-radius:var(--pr);
+    padding:24px;margin-bottom:16px;box-shadow:var(--sh);}
+  .pf-row{display:flex;gap:12px;align-items:flex-start;padding:12px 0;
+    border-bottom:1px solid var(--rule);font-size:clamp(13px,2.5vw,14px);
+    line-height:1.7;color:var(--ink2);}
+  .pf-row:last-child{border-bottom:none;padding-bottom:0;}
+  .pf-row:first-child{padding-top:0;}
+  .pf-icon{font-size:20px;flex-shrink:0;margin-top:1px;}
+  .scale-svg{max-width:320px;width:100%;display:block;margin:0 auto;}
+  .eq-block{text-align:center;padding:20px 0 16px;border-bottom:1px solid var(--rule);margin-bottom:16px;}
+  .eq-text{font-family:'DM Serif Display',serif;font-size:clamp(32px,7vw,48px);
+    color:var(--ink);letter-spacing:-.01em;line-height:1;}
+  .eq-text .xvar{color:var(--accent2);border-bottom:3px solid var(--accent2);padding-bottom:4px;}
+  .eq-text .op{color:var(--accent);margin:0 4px;}
+  .eq-subtitle{font-size:13px;color:var(--muted);margin-top:18px;font-weight:500;}
+  .story-text{font-size:clamp(13px,2.8vw,15px);color:var(--ink2);line-height:1.7;
+    text-align:center;padding:0 8px 16px;border-bottom:1px solid var(--rule);margin-bottom:16px;}
+  .choices-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:10px;text-align:center;}
+  .choices-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:4px;}
+  .choice-btn{width:clamp(64px,16vw,80px);height:clamp(64px,16vw,80px);border-radius:16px;
+    border:2px solid var(--rule);background:var(--bg);
+    font-family:'DM Serif Display',serif;font-size:clamp(22px,5vw,32px);
+    color:var(--ink);cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);
+    box-shadow:0 1px 4px rgba(0,0,0,.06);}
+  .choice-btn:hover{border-color:var(--accent2);background:rgba(245,158,11,.06);
+    transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1);}
+  .choice-btn.correct{background:rgba(5,150,105,.1);border-color:var(--green);
+    color:var(--green);animation:pop .4s ease;}
+  .choice-btn.wrong{background:rgba(220,38,38,.08);border-color:var(--red);
+    color:var(--red);animation:shake .3s ease;}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .steps-reveal{background:rgba(79,70,229,.04);border:1.5px solid rgba(79,70,229,.15);
+    border-radius:16px;padding:16px;margin-top:16px;animation:fi .4s ease;}
+  @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .steps-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:10px;}
+  .step-line{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;
+    font-size:clamp(13px,2.5vw,14px);color:var(--ink2);line-height:1.6;}
+  .step-line:last-child{margin-bottom:0;}
+  .step-num{width:20px;height:20px;border-radius:50%;flex-shrink:0;background:var(--accent);
+    color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;
+    justify-content:center;margin-top:2px;}
+  .prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+  .prog-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .prog-pips{display:flex;gap:5px;}
+  .prog-pip{width:10px;height:10px;border-radius:50%;background:var(--rule);
+    border:1.5px solid #ccc;transition:all .3s;}
+  .prog-pip.dp{background:var(--accent);border-color:var(--accent);}
+  .prog-pip.cp{background:var(--accent2);border-color:var(--accent2);transform:scale(1.3);}
+  .explore-eq{font-family:'DM Serif Display',serif;font-size:clamp(36px,8vw,52px);
+    text-align:center;line-height:1;margin:16px 0;color:var(--ink);transition:all .2s;}
+  .explore-eq .xv{color:var(--accent2);}
+  .explore-eq .rv{color:var(--accent);}
+  .slider-wrap{padding:0 4px;margin-bottom:4px;}
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:6px;
+    border-radius:3px;background:var(--rule);outline:none;cursor:pointer;touch-action:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;
+    border-radius:50%;background:var(--accent);border:3px solid #fff;cursor:grab;
+    box-shadow:0 2px 8px rgba(79,70,229,.3);}
+  input[type=range]::-webkit-slider-thumb:active{cursor:grabbing;}
+  input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;
+    background:var(--accent);border:3px solid #fff;cursor:grab;}
+  .slider-ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);
+    font-weight:600;padding:0 2px;margin-top:4px;}
+  .balance-status{text-align:center;margin-top:12px;font-size:clamp(14px,3vw,16px);
+    font-weight:700;transition:color .3s;}
+  .quiz-q-text{font-family:'DM Serif Display',serif;font-size:clamp(18px,4vw,24px);
+    text-align:center;line-height:1.4;margin-bottom:20px;color:var(--ink);}
+  .quiz-opts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+  .quiz-opt{min-width:100px;min-height:52px;border-radius:12px;border:1.5px solid var(--rule);
+    background:var(--bg);font-family:'DM Sans',sans-serif;font-size:clamp(13px,3vw,15px);
+    font-weight:600;cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);
+    color:var(--ink);padding:8px 14px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+  .quiz-opt:hover{border-color:var(--accent);transform:translateY(-1px);}
+  .quiz-opt.correct{background:rgba(5,150,105,.1);border-color:var(--green);color:var(--green);animation:pop .4s ease;}
+  .quiz-opt.wrong{background:rgba(220,38,38,.06);border-color:var(--red);color:var(--red);animation:shake .3s ease;}
+  .quiz-result{text-align:center;margin-top:12px;font-size:14px;font-weight:700;min-height:22px;}
+  .quiz-result.correct{color:var(--green);}
+  .quiz-result.wrong{color:var(--red);}
+  .stars-row{display:flex;justify-content:center;gap:6px;margin-bottom:16px;}
+  .star{font-size:22px;opacity:.2;transition:all .3s;}
+  .star.earned{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+  .result-card{background:var(--bg);border:1.5px solid var(--rule);border-radius:16px;padding:20px;text-align:center;}
+  .result-card .big{font-family:'DM Serif Display',serif;font-size:clamp(20px,5vw,28px);color:var(--ink);margin-bottom:6px;}
+  .result-card .sub{font-size:14px;color:var(--muted);}
+  .result-card .sub strong{color:var(--red);}
+  .sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
+  .sum-card{background:var(--bg);border:1.5px solid var(--rule);border-radius:14px;padding:14px;}
+  .sum-eq{font-family:'DM Serif Display',serif;font-size:clamp(16px,4vw,20px);color:var(--accent);margin-bottom:4px;}
+  .sum-work{font-size:11px;color:var(--muted);line-height:1.7;}
+  .sum-ans{font-family:'DM Serif Display',serif;font-size:clamp(18px,4vw,22px);color:var(--accent2);margin-top:4px;}
+  .nav-row{display:flex;gap:10px;}
+  .btn{min-height:52px;padding:0 22px;border-radius:14px;border:none;
+    font-family:'DM Sans',sans-serif;font-size:clamp(14px,3vw,16px);font-weight:700;
+    cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);}
+  .btn:active{transform:scale(.97);}
+  .btn-back{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);min-width:52px;}
+  .btn-back:hover{border-color:#aaa;color:var(--ink);}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-next{background:var(--accent);color:#fff;flex:1;box-shadow:0 4px 14px rgba(79,70,229,.3);}
+  .btn-next:hover{background:#4338ca;transform:translateY(-1px);box-shadow:0 6px 18px rgba(79,70,229,.35);}
+  .confetti-container{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .confetti-piece{position:absolute;border-radius:2px;animation:cf 2s ease-in forwards;}
+  @keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="shell">
+  <div class="top-bar"><div class="age-pill">Ages 8-10</div></div>
+  <div class="title-block">
+    <h1>The <em>Mystery Bag</em> - Basic Algebra</h1>
+    <p>Finding the unknown</p>
+  </div>
+  <div class="stepper">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia-strip">
+    <div class="nia-dot">&#127775;</div>
+    <div class="nia-text" id="nia">There is a <strong>mystery bag</strong> on the scale. We know the total - can we work out what is inside? That is exactly what algebra does: it finds the <em>unknown</em>.</div>
+  </div>
+  <div id="mainArea"></div>
+  <div class="nav-row">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>&#8592;</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let&apos;s go &#8594;</button>
+  </div>
+</div>
+<div class="confetti-container" id="confetti"></div>
+<script>
+var currentStep=0,puzzleLevel=0,quizIdx=0,quizCorrect=0,levelAnswered=false;
+
+var PUZZLES=[
+  {label:'1 of 4',story:'A bag of apples plus 3 more equals 7 apples total.',
+   eqHtml:'<span class="xvar">x</span><span class="op">+</span>3<span class="op">=</span>7',
+   answer:4,choices:[2,3,4,5],
+   steps:['x + 3 = 7','Subtract 3 from both sides','x = 7 - 3 = 4','Check: 4 + 3 = 7 ✓'],
+   explain:'x = 4, because 4 + 3 = 7.'},
+  {label:'2 of 4',story:'Two identical bags together weigh 10.',
+   eqHtml:'2<span class="xvar">x</span><span class="op">=</span>10',
+   answer:5,choices:[3,4,5,6],
+   steps:['2x = 10','Divide both sides by 2','x = 10 / 2 = 5','Check: 2 x 5 = 10 ✓'],
+   explain:'x = 5, because 2 x 5 = 10.'},
+  {label:'3 of 4',story:'A bag with 2 taken out leaves 6.',
+   eqHtml:'<span class="xvar">x</span><span class="op">-</span>2<span class="op">=</span>6',
+   answer:8,choices:[4,6,8,10],
+   steps:['x - 2 = 6','Add 2 to both sides','x = 6 + 2 = 8','Check: 8 - 2 = 6 ✓'],
+   explain:'x = 8, because 8 - 2 = 6.'},
+  {label:'4 of 4',story:'Three bags plus 1 equals 13.',
+   eqHtml:'3<span class="xvar">x</span><span class="op">+</span>1<span class="op">=</span>13',
+   answer:4,choices:[3,4,5,6],
+   steps:['3x + 1 = 13','Step 1: subtract 1 from both sides: 3x = 12','Step 2: divide both sides by 3: x = 4','Check: 3x4+1 = 13 ✓'],
+   explain:'x = 4. Two steps: subtract first, then divide.'},
+];
+
+var QUIZ_QS=[
+  {q:'In algebra, what does x represent?',
+   opts:['The letter X','An unknown number','A multiplication sign','The number 10'],
+   answer:'An unknown number'},
+  {q:'Solve: x + 5 = 9',opts:['3','4','5','14'],answer:'4'},
+  {q:'Solve: 2x = 14',opts:['7','12','28','2'],answer:'7'},
+  {q:'What operation undoes multiplication?',
+   opts:['Addition','Subtraction','Division','Squaring'],answer:'Division'},
+];
+
+var NIA=[
+  "There is a <strong>mystery bag</strong> on the scale. We know the total - can we work out what is inside? That is exactly what algebra does: it finds the <em>unknown</em>.",
+  "<strong>x</strong> is the mystery number. Look at the equation, pick the value of x that makes it true - then see the step-by-step working.",
+  "Now explore freely. Move the slider to change x - and watch both sides of the equation update. Both sides must <em>always stay equal</em>.",
+  "Quiz time. Four questions - all from what we just covered.",
+  "You understand basic algebra. The foundation of all advanced mathematics."
+];
+var BTNS=["Start puzzles","Explore equations","Quiz","Summary","Play again"];
+var RENDERS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4];
+
+function dots(s){for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<s?' done':i===s?' active':'');}}
+
+function confettiBurst(){
+  var c=document.getElementById('confetti');c.innerHTML='';
+  var cols=['#4f46e5','#f59e0b','#059669','#dc2626','#0ea5e9','#8b5cf6'];
+  for(var i=0;i<48;i++){var p=document.createElement('div');p.className='confetti-piece';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[Math.floor(Math.random()*cols.length)]+
+    ';width:'+(6+Math.random()*7)+'px;height:'+(6+Math.random()*7)+'px;'+
+    'border-radius:'+(Math.random()>.5?'50%':'2px')+';'+
+    'animation-delay:'+(Math.random()*.6)+'s;animation-duration:'+(1.6+Math.random())+'s';
+    c.appendChild(p);}
+  setTimeout(function(){c.innerHTML='';},3200);
+}
+
+function scaleSVG(balanced){
+  // Full 3D isometric balance scale
+  var W=320, H=180;
+  var bc=balanced?'#4f46e5':'#dc2626';
+  var tilt=balanced?0:10; // degrees beam tilts when unbalanced
+
+  // Isometric helpers — project 3D to 2D isometric
+  function iso(x,y,z){
+    // standard isometric: x right, y up, z toward viewer
+    var sx = W/2 + (x - z) * 0.866;
+    var sy = H/2 - y + (x + z) * 0.5;
+    return [sx, sy];
+  }
+
+  var s = '<svg viewBox="0 0 '+W+' '+H+'" class="scale-svg" xmlns="http://www.w3.org/2000/svg">';
+
+  // ── BASE BLOCK (3D box) ───────────────────────────────
+  // Bottom rectangle top face, front face, side face
+  var bx=0, by=-60, bw=18, bh=8, bd=12;
+  // top face
+  var tl=iso(bx,by,0), tr=iso(bx+bw,by,0), br2=iso(bx+bw,by,bd), bl2=iso(bx,by,bd);
+  s+='<polygon points="'+tl[0]+','+tl[1]+' '+tr[0]+','+tr[1]+' '+br2[0]+','+br2[1]+' '+bl2[0]+','+bl2[1]+'" fill="#b0bec5"/>';
+  // front face
+  var fl1=iso(bx,by,bd), fr1=iso(bx+bw,by,bd), fr2b=iso(bx+bw,by-bh,bd), fl2b=iso(bx,by-bh,bd);
+  s+='<polygon points="'+fl1[0]+','+fl1[1]+' '+fr1[0]+','+fr1[1]+' '+fr2b[0]+','+fr2b[1]+' '+fl2b[0]+','+fl2b[1]+'" fill="#90a4ae"/>';
+  // right face
+  var rr1=iso(bx+bw,by,0), rr2=iso(bx+bw,by,bd), rr3=iso(bx+bw,by-bh,bd), rr4=iso(bx+bw,by-bh,0);
+  s+='<polygon points="'+rr1[0]+','+rr1[1]+' '+rr2[0]+','+rr2[1]+' '+rr3[0]+','+rr3[1]+' '+rr4[0]+','+rr4[1]+'" fill="#78909c"/>';
+
+  // ── POLE (thin vertical cylinder approximation) ───────
+  var px=9, pz=6, ptop=-60+bh, pbottom=-60;
+  var p1=iso(px-2,pbottom,pz), p2=iso(px+2,pbottom,pz);
+  var p3=iso(px+2,ptop+65,pz), p4=iso(px-2,ptop+65,pz);
+  s+='<polygon points="'+p1[0]+','+p1[1]+' '+p2[0]+','+p2[1]+' '+p3[0]+','+p3[1]+' '+p4[0]+','+p4[1]+'" fill="'+bc+'" opacity="0.9"/>';
+  // pole front edge highlight
+  s+='<line x1="'+p1[0]+'" y1="'+p1[1]+'" x2="'+p4[0]+'" y2="'+p4[1]+'" stroke="white" stroke-width="1" opacity="0.4"/>';
+
+  // ── PIVOT SPHERE at top of pole ───────────────────────
+  var pivotPos=iso(px,ptop+65,pz);
+  s+='<circle cx="'+pivotPos[0]+'" cy="'+pivotPos[1]+'" r="7" fill="'+bc+'"/>';
+  s+='<circle cx="'+(pivotPos[0]-2)+'" cy="'+(pivotPos[1]-2)+'" r="2.5" fill="white" opacity="0.5"/>';
+
+  // ── BEAM (rotated by tilt) ────────────────────────────
+  // Beam goes from left arm to right arm, pivoting at centre
+  // We approximate the tilt with slight vertical offset on each side
+  var beamY=ptop+65;
+  var leftOff=balanced?0:tilt*0.6;    // left pan goes up when lighter
+  var rightOff=balanced?0:-tilt*0.6;  // right pan goes down when heavier
+
+  var beamLeft=iso(px-56, beamY+leftOff, pz);
+  var beamRight=iso(px+56, beamY+rightOff, pz);
+  var beamCentre=iso(px, beamY, pz);
+
+  // Beam as thick 3D bar
+  var bThick=4;
+  s+='<line x1="'+beamLeft[0]+'" y1="'+beamLeft[1]+'" x2="'+beamRight[0]+'" y2="'+beamRight[1]+'" stroke="'+bc+'" stroke-width="6" stroke-linecap="round"/>';
+  s+='<line x1="'+beamLeft[0]+'" y1="'+(beamLeft[1]+bThick)+'" x2="'+beamRight[0]+'" y2="'+(beamRight[1]+bThick)+'" stroke="'+bc+'" stroke-width="2" opacity="0.35"/>';
+
+  // ── CHAINS / STRINGS ──────────────────────────────────
+  var chainLen=28;
+  var leftPanPos=iso(px-56, beamY+leftOff-chainLen, pz);
+  var rightPanPos=iso(px+56, beamY+rightOff-chainLen, pz);
+
+  // Left chain
+  s+='<line x1="'+beamLeft[0]+'" y1="'+beamLeft[1]+'" x2="'+leftPanPos[0]+'" y2="'+leftPanPos[1]+'" stroke="#90a4ae" stroke-width="1.5"/>';
+  // Right chain
+  s+='<line x1="'+beamRight[0]+'" y1="'+beamRight[1]+'" x2="'+rightPanPos[0]+'" y2="'+rightPanPos[1]+'" stroke="#90a4ae" stroke-width="1.5"/>';
+
+  // ── PANS (3D ellipse dishes) ──────────────────────────
+  function drawPan(cx,cy,label,isLeft){
+    var rx=26, ry=9;
+    // shadow ellipse
+    s+='<ellipse cx="'+cx+'" cy="'+(cy+4)+'" rx="'+(rx-2)+'" ry="'+(ry-2)+'" fill="rgba(0,0,0,.12)"/>';
+    // rim top
+    s+='<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+rx+'" ry="'+ry+'" fill="#cfd8dc" stroke="#90a4ae" stroke-width="1.5"/>';
+    // inner bowl highlight
+    s+='<ellipse cx="'+cx+'" cy="'+(cy+1)+'" rx="'+(rx-6)+'" ry="'+(ry-4)+'" fill="#e8edf0" opacity="0.7"/>';
+    // bottom edge of pan (3D depth)
+    s+='<ellipse cx="'+cx+'" cy="'+(cy+5)+'" rx="'+rx+'" ry="'+(ry*0.6)+'" fill="none" stroke="#b0bec5" stroke-width="1"/>';
+    // Label inside pan
+    s+='<text x="'+cx+'" y="'+(cy+4)+'" text-anchor="middle" dominant-baseline="middle" '+
+      'font-size="13" font-family="DM Serif Display,serif" font-style="italic" fill="#374151">'+label+'</text>';
+  }
+
+  drawPan(leftPanPos[0], leftPanPos[1], 'x', true);
+  drawPan(rightPanPos[0], rightPanPos[1], '?', false);
+
+  // ── STATUS TEXT ────────────────────────────────────────
+  var statusY=18;
+  s+='<text x="'+W/2+'" y="'+statusY+'" text-anchor="middle" font-size="12" '+
+    'font-family="DM Sans,sans-serif" font-weight="700" fill="'+bc+'">'+
+    (balanced?'⚖ Both sides balanced':'⚖ Out of balance')+
+    '</text>';
+
+  s+='</svg>';
+  return s;
+}
+
+function renderStep0(){
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel">'+
+    '<div class="pf-row"><div class="pf-icon">&#128216;</div><div><strong style="color:var(--ink)">What you will learn:</strong> Using letters to represent unknown numbers, and solving equations by working backwards.</div></div>'+
+    '<div class="pf-row"><div class="pf-icon">&#127758;</div><div><strong style="color:var(--ink)">Why it matters:</strong> Every branch of advanced mathematics uses algebra. From engineering to computing - algebra describes the unknown.</div></div>'+
+    '<div class="pf-row"><div class="pf-icon">&#127919;</div><div><strong style="color:var(--ink)">By the end:</strong> You will solve one-step and two-step equations, and see every equation as a balanced scale.</div></div>'+
+    '</div>'+
+    '<div class="panel" style="text-align:center">'+
+    '<p style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:16px">The big idea</p>'+
+    scaleSVG(true)+
+    '<p style="font-size:clamp(14px,3vw,16px);color:var(--ink2);margin-top:16px;line-height:1.7">An equation is a <strong style="color:var(--ink)">balanced scale</strong>.<br>Whatever you do to one side, you must do to the other.</p>'+
+    '</div>';
+}
+
+function renderStep1(){puzzleLevel=0;levelAnswered=false;showPuzzle();}
+
+function showPuzzle(){
+  if(puzzleLevel>=PUZZLES.length){showAllDone();return;}
+  var pz=PUZZLES[puzzleLevel];levelAnswered=false;
+  var pips='';for(var i=0;i<PUZZLES.length;i++)pips+='<div class="prog-pip'+(i<puzzleLevel?' dp':i===puzzleLevel?' cp':'')+'" ></div>';
+  var choices='';pz.choices.forEach(function(c){choices+='<button class="choice-btn" id="ab'+c+'" onclick="pickAnswer('+c+','+pz.answer+')">'+c+'</button>';});
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel">'+
+    '<div class="prog-row"><span class="prog-label">Puzzle '+pz.label+'</span><div class="prog-pips">'+pips+'</div></div>'+
+    '<p class="story-text">'+pz.story+'</p>'+
+    '<div class="eq-block"><div class="eq-text">'+pz.eqHtml+'</div><p class="eq-subtitle">What is the value of x?</p></div>'+
+    '<p class="choices-label">Pick your answer</p>'+
+    '<div class="choices-row">'+choices+'</div>'+
+    '<div id="stepsBox"></div>'+
+    '<div class="quiz-result" id="pzResult"></div>'+
+    '</div>';
+}
+
+function pickAnswer(chosen,correct){
+  if(levelAnswered)return;levelAnswered=true;
+  var pz=PUZZLES[puzzleLevel];
+  var res=document.getElementById('pzResult');
+  var btn=document.getElementById('ab'+chosen);
+  var cBtn=document.getElementById('ab'+correct);
+  if(chosen===correct){
+    if(btn)btn.className='choice-btn correct';
+    if(res){res.textContent='Correct - x = '+correct;res.className='quiz-result correct';}
+    document.getElementById('nia').innerHTML='<strong>x = '+correct+'.</strong> '+pz.explain;
+    if(puzzleLevel===PUZZLES.length-1)confettiBurst();
+  } else {
+    if(btn)btn.className='choice-btn wrong';
+    if(cBtn)setTimeout(function(){if(cBtn)cBtn.className='choice-btn correct';},350);
+    if(res){res.textContent='x = '+correct+'. '+pz.explain;res.className='quiz-result wrong';}
+    document.getElementById('nia').innerHTML='x = <strong>'+correct+'</strong>. '+pz.explain;
+  }
+  var sb=document.getElementById('stepsBox');
+  if(sb){sb.innerHTML='<div class="steps-reveal"><div class="steps-title">Working</div>'+
+    pz.steps.map(function(s,i){return '<div class="step-line"><div class="step-num">'+(i+1)+'</div><div>'+s+'</div></div>';}).join('')+
+    '</div>';}
+  setTimeout(function(){puzzleLevel++;showPuzzle();},2600);
+}
+
+function showAllDone(){
+  // celebration handled in pickAnswer on correct last answer
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div style="font-size:52px;margin-bottom:16px">&#127890;</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(20px,5vw,28px);color:var(--ink);margin-bottom:8px">All four equations solved.</div>'+
+    '<p style="font-size:14px;color:var(--muted);line-height:1.7">You found the unknown in every puzzle by working backwards.</p>'+
+    '</div>';
+  document.getElementById('nia').innerHTML='You solved every equation. <strong>Algebra finds the unknown by working backwards</strong> - undoing each operation in reverse.';
+}
+
+function renderStep2(){
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel">'+
+    '<p style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;text-align:center">Equation explorer</p>'+
+    '<p style="font-size:13px;color:var(--ink2);text-align:center;margin-bottom:8px">x + 4 = ?</p>'+
+    '<div id="explEq" class="explore-eq"><span class="xv">3</span> + 4 = <span class="rv">7</span></div>'+
+    '<div class="slider-wrap">'+
+    '<input type="range" min="1" max="10" value="3" id="xSlider">'+
+    '<div class="slider-ticks"><span>x=1</span><span>x=5</span><span>x=10</span></div>'+
+    '</div>'+
+    '<div id="balStatus" class="balance-status" style="color:var(--green)">Both sides equal 7 when x = 3</div>'+
+    '</div>'+
+    '<div class="panel" style="padding:16px 24px">'+
+    '<p style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Key rules</p>'+
+    ['+ is undone by -','- is undone by +','x is undone by division','division is undone by x'].map(function(r){
+      return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--rule)">'+
+        '<div style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0"></div>'+
+        '<div style="font-size:14px;color:var(--ink2);font-weight:500">'+r+'</div></div>';
+    }).join('')+
+    '</div>';
+  var sl=document.getElementById('xSlider');
+  if(sl)sl.addEventListener('input',function(){updateExplore(parseInt(this.value));});
+  updateExplore(3);
+}
+
+function updateExplore(x){
+  var right=x+4;
+  var eq=document.getElementById('explEq');
+  if(eq)eq.innerHTML='<span class="xv">'+x+'</span> + 4 = <span class="rv">'+right+'</span>';
+  var bs=document.getElementById('balStatus');
+  if(bs)bs.textContent='Both sides equal '+right+' when x = '+x;
+  var nia=document.getElementById('nia');
+  if(nia)nia.innerHTML='When <strong>x = '+x+'</strong>, then x + 4 = <em>'+right+'</em>. Both sides balance. Algebra reverses this - if we know the answer is '+right+', we can find x.';
+}
+
+function renderStep3(){quizIdx=0;quizCorrect=0;document.getElementById('nia').innerHTML=NIA[3];showQuizQ();}
+
+function showQuizQ(){
+  if(quizIdx>=QUIZ_QS.length){showQuizEnd();return;}
+  var q=QUIZ_QS[quizIdx];
+  var nia=document.getElementById('nia');if(nia)nia.innerHTML='Read carefully - then pick your answer.';
+  var stars='';for(var i=0;i<QUIZ_QS.length;i++)stars+='<div class="star'+(i<quizCorrect?' earned':'')+'" >&#11088;</div>';
+  var opts='';
+  q.opts.forEach(function(o,oi){
+    var safe=o.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+    opts+='<button class="quiz-opt" id="qo'+oi+'" data-val="'+safe+'" onclick="answerQIdx('+oi+')">'+o+'</button>';
+  });
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel"><div class="stars-row">'+stars+'</div><div class="quiz-q-text">'+q.q+'</div>'+
+    '<div class="quiz-opts">'+opts+'</div><div class="quiz-result" id="qRes"></div></div>';
+}
+
+function answerQIdx(idx){
+  var btns=document.querySelectorAll('.quiz-opt');
+  var chosen=btns[idx]?btns[idx].getAttribute('data-val'):'';
+  var correct=QUIZ_QS[quizIdx].answer;
+  // find correct btn
+  var cIdx=-1;
+  btns.forEach(function(b,i){if(b.getAttribute('data-val')===correct)cIdx=i;});
+  answerQ(chosen,correct);
+}
+function answerQ(chosen,correct){
+
+  var btns=document.querySelectorAll('.quiz-opt');btns.forEach(function(b){b.disabled=true;});
+  var res=document.getElementById('qRes');
+  if(chosen===correct){
+    btns.forEach(function(b){if(b.textContent.trim()===correct)b.className='quiz-opt correct';});
+    quizCorrect++;if(res){res.textContent='Correct.';res.className='quiz-result correct';}
+    document.getElementById('nia').innerHTML='Correct.';
+  } else {
+    btns.forEach(function(b){if(b.textContent.trim()===chosen)b.className='quiz-opt wrong';if(b.textContent.trim()===correct)b.className='quiz-opt correct';});
+    if(res){res.textContent='The answer is: '+correct;res.className='quiz-result wrong';}
+    document.getElementById('nia').innerHTML='The answer is <strong>'+correct+'</strong>.';
+  }
+    quizIdx++;
+  var isLast=(quizIdx>=QUIZ_QS.length);
+  if(chosen===correct){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showQuizEnd():showQuizQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showQuizEnd():showQuizQ();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQuizEnd(){
+  var stars='';for(var i=0;i<QUIZ_QS.length;i++)stars+='<div class="star'+(i<quizCorrect?' earned':'')+'" >&#11088;</div>';
+  if(quizCorrect===4)confettiBurst();
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel"><div class="stars-row">'+stars+'</div>'+
+    '<div class="result-card">'+
+    '<div class="big">'+(quizCorrect===4?'Perfect score.':quizCorrect>=3?'Almost perfect.':quizCorrect>=2?'Good work.':'Keep going.')+'</div>'+
+    '<div class="sub">You got <strong>'+quizCorrect+'</strong> out of 4 correct.</div>'+
+    '<div style="text-align:center;margin-top:16px">'+'<button onclick="goStep(-4)" style="padding:10px 28px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)">Start again</button>'+'</div>'+'</div></div>';
+  document.getElementById('nia').innerHTML=(quizCorrect===4?'<strong>Perfect.</strong> ':'<strong>Well done.</strong> ')+'Algebra finds the unknown by working backwards.';
+}
+
+function renderStep4(){
+  var cards=PUZZLES.map(function(pz){
+    return '<div class="sum-card"><div class="sum-eq">'+pz.eqHtml+'</div>'+
+      '<div class="sum-work">'+pz.steps[1]+'<br>'+pz.steps[2]+'</div>'+
+      '<div class="sum-ans">x = '+pz.answer+'</div></div>';
+  }).join('');
+  document.getElementById('mainArea').innerHTML=
+    '<div class="panel">'+
+    '<p style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">What we learned</p>'+
+    '<div class="pf-row"><div class="pf-icon">&#9989;</div><div>A <strong style="color:var(--ink)">letter (x)</strong> represents an unknown number. An equation must balance on both sides.</div></div>'+
+    '<div class="pf-row"><div class="pf-icon">&#9989;</div><div>To solve, <strong style="color:var(--ink)">work backwards</strong> - undo each operation in reverse order.</div></div>'+
+    '<div class="pf-row"><div class="pf-icon">&#9989;</div><div>+ is undone by -, and multiplication is undone by division. Always apply to both sides.</div></div>'+
+    '<div class="pf-row" style="border-bottom:none"><div class="pf-icon">&#128640;</div><div>Next: <strong style="color:var(--ink)">Measurement and Unit Conversions</strong>.</div></div>'+
+    '</div>'+
+    '<div class="sum-grid">'+cards+'</div>';
+  confettiBurst();
+}
+
+function goStep(dir){
+  currentStep=Math.max(0,Math.min(4,currentStep+dir));
+  dots(currentStep);
+  document.getElementById('nia').innerHTML=NIA[currentStep];
+  document.getElementById('btnBack').disabled=(currentStep===0);
+  document.getElementById('btnNext').textContent=BTNS[currentStep];
+  document.getElementById('btnNext').disabled=false;
+  if(currentStep===4){document.getElementById('btnNext').onclick=function(){goStep(-4);};}
+  else{document.getElementById('btnNext').onclick=function(){goStep(1);};}
+  RENDERS[currentStep]();
+}
+goStep(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya - Speed, Time and Distance (Ages 9-12)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
+  :root{--ink:#0f1117;--ink2:#4b5563;--muted:#9ca3af;--bg:#f9f8f4;--card:#fff;
+    --accent:#4f46e5;--accent2:#f59e0b;--green:#059669;--red:#dc2626;
+    --rule:rgba(0,0,0,.06);--sh:0 1px 12px rgba(0,0,0,.06);--r:18px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px;color:var(--ink);}
+  .shell{width:100%;max-width:620px;}
+  .top{text-align:center;margin-bottom:24px;}
+  .badge{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);display:inline-block;margin-bottom:12px;}
+  .top h1{font-family:'DM Serif Display',serif;font-size:clamp(24px,5vw,34px);
+    color:var(--ink);line-height:1.1;margin-bottom:6px;}
+  .top h1 em{font-style:italic;color:var(--accent);}
+  .top p{font-size:13px;color:var(--muted);font-weight:500;}
+  .stepper{display:flex;gap:5px;justify-content:center;margin-bottom:24px;}
+  .step-dot{width:5px;height:5px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .step-dot.active{background:var(--accent2);transform:scale(1.8);}
+  .step-dot.done{background:var(--accent);}
+  .nia{display:flex;gap:12px;align-items:center;background:var(--card);
+    border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px;
+    margin-bottom:20px;box-shadow:var(--sh);min-height:60px;}
+  .nia-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+    animation:bob 3s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .nia-text{font-size:14px;line-height:1.55;color:var(--ink2);flex:1;}
+  .nia-text strong{color:var(--accent);font-weight:700;}
+  .nia-text em{color:var(--accent2);font-style:normal;font-weight:700;}
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);
+    padding:22px;margin-bottom:16px;box-shadow:var(--sh);}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:14px;}
+  .formula-box{background:rgba(79,70,229,.06);border:1.5px solid rgba(79,70,229,.25);
+    border-radius:14px;padding:16px;text-align:center;margin:10px 0;}
+  .formula{font-family:'DM Serif Display',serif;font-size:clamp(20px,4.5vw,28px);
+    color:var(--accent);margin:6px 0;line-height:1.3;}
+  .s-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;
+    font-size:13px;color:var(--ink2);line-height:1.6;}
+  .s-row:last-child{margin-bottom:0;}
+  .s-num{width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;
+    font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:1px;}
+  .slide-nav{display:flex;gap:6px;justify-content:center;margin-top:14px;}
+  .sdot{width:6px;height:6px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .sdot.on{background:var(--accent);transform:scale(1.4);}
+  .snav{display:flex;gap:8px;justify-content:center;margin-top:12px;}
+  .sbtn{padding:8px 20px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;
+    font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+  .sbtn.prev{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);}
+  .sbtn.prev:disabled{opacity:.3;cursor:not-allowed;}
+  .sbtn.nxt{background:var(--accent);color:#fff;}
+  .puz-q{font-family:'DM Serif Display',serif;font-size:clamp(17px,4vw,22px);
+    text-align:center;line-height:1.4;margin-bottom:16px;color:var(--ink);}
+  .prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .prog-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .prog-pips{display:flex;gap:5px;}
+  .prog-pip{width:8px;height:8px;border-radius:50%;background:var(--rule);border:1.5px solid #d1d5db;transition:all .3s;}
+  .prog-pip.dp{background:var(--accent);border-color:var(--accent);}
+  .prog-pip.cp{background:var(--accent2);border-color:var(--accent2);transform:scale(1.3);}
+  .res{text-align:center;margin-top:10px;font-size:14px;font-weight:700;min-height:20px;}
+  .res.ok{color:var(--green);}
+  .res.no{color:var(--red);}
+  .stars{display:flex;justify-content:center;gap:5px;margin-bottom:16px;}
+  .star{font-size:20px;opacity:.18;transition:all .3s;}
+  .star.on{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .nav{display:flex;gap:10px;margin-top:4px;}
+  .btn{min-height:50px;padding:0 22px;border-radius:14px;border:none;
+    font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;
+    cursor:pointer;transition:all .2s;}
+  .btn:active{transform:scale(.97);}
+  .btn-back{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);min-width:50px;}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-next{background:var(--accent);color:#fff;flex:1;box-shadow:0 4px 14px rgba(79,70,229,.2);}
+  .btn-next:hover{background:#4338ca;transform:translateY(-1px);}
+  .cc{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .cp{position:absolute;border-radius:2px;animation:cf 2s ease-in forwards;}
+  @keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="shell">
+  <div class="top">
+    <div class="badge">Ages 9 - 12</div>
+    <h1><em>Speed</em>, Time and Distance</h1>
+    <p>How fast, how long, how far — always connected</p>
+  </div>
+  <div class="stepper">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia">
+    <div class="nia-dot">&#127775;</div>
+    <div class="nia-text" id="nia">
+      A car travels <strong>120km in 2 hours</strong>. How fast is it going? Speed, Time and Distance are always connected — know two, find the third.
+    </div>
+  </div>
+  <div id="main"></div>
+  <div class="nav">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>&#8592;</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let&apos;s go &#8594;</button>
+  </div>
+</div>
+<div class="cc" id="cc"></div>
+<script>
+var step=0,qIdx=0,qScore=0,puzzleLevel=0,puzzleScore=0,puzzleResults=[],levelAnswered=false,qHistory=[];
+
+var OPT_COLS=['#4f46e5','#0369a1','#059669','#b45309'];
+var OPT_LBLS=['A','B','C','D'];
+
+function renderOpts(opts,idPfx,clickFn,disMap){
+  var allShort=opts.every(function(o){return String(o).length<=6;});
+  var html='';
+  if(allShort){
+    html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">';
+    opts.forEach(function(o,i){
+      var dis=disMap?disMap[i]:'';
+      var bg='#ffffff',bc='#e5e7eb',tc='#0f1117';
+      if(dis==='correct'){bg='rgba(5,150,105,.12)';bc='#059669';tc='#059669';}
+      else if(dis==='wrong'){bg='rgba(220,38,38,.08)';bc='#dc2626';tc='#dc2626';}
+      html+='<button id="'+idPfx+i+'" data-val="'+o+'" '+(clickFn&&!dis?'onclick="'+clickFn+'('+i+')"':'')+
+        ' style="min-height:80px;border-radius:16px;border:2px solid '+bc+';background:'+bg+';'+
+        'cursor:'+(dis?'default':'pointer')+';display:flex;align-items:center;justify-content:center;'+
+        'font-family:DM Serif Display,serif;font-size:clamp(20px,4vw,28px);color:'+tc+';padding:12px;'+
+        'border-left:5px solid '+OPT_COLS[i%OPT_COLS.length]+';'+
+        'transition:all .25s cubic-bezier(.34,1.56,.64,1)">'+o+'</button>';
+    });
+    html+='</div>';
+  } else {
+    html='<div style="display:flex;flex-direction:column;gap:8px;margin:12px 0">';
+    opts.forEach(function(o,i){
+      var dis=disMap?disMap[i]:'';
+      var bg='#ffffff',bc='#e5e7eb',tc='#0f1117',lc=OPT_COLS[i%OPT_COLS.length];
+      if(dis==='correct'){bg='rgba(5,150,105,.12)';bc='#059669';tc='#059669';lc='#059669';}
+      else if(dis==='wrong'){bg='rgba(220,38,38,.08)';bc='#dc2626';tc='#dc2626';lc='#dc2626';}
+      html+='<button id="'+idPfx+i+'" data-val="'+o+'" '+(clickFn&&!dis?'onclick="'+clickFn+'('+i+')"':'')+
+        ' style="min-height:54px;border-radius:14px;border:1.5px solid '+bc+';background:'+bg+';'+
+        'cursor:'+(dis?'default':'pointer')+';display:flex;align-items:center;gap:14px;'+
+        'padding:12px 16px;width:100%;box-sizing:border-box;transition:all .2s">'+
+        '<div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;'+
+        'justify-content:center;font-size:13px;font-weight:700;color:#fff;background:'+lc+'">'+OPT_LBLS[i]+'</div>'+
+        '<div style="font-family:DM Sans,sans-serif;font-size:14px;font-weight:600;color:'+tc+';line-height:1.4;flex:1;text-align:left">'+o+'</div>'+
+        '</button>';
+    });
+    html+='</div>';
+  }
+  return html;
+}
+
+function markOpts(idPfx,chosen,correct){
+  [0,1,2,3].forEach(function(i){
+    var b=document.getElementById(idPfx+i);if(!b)return;
+    var bv=b.getAttribute('data-val');
+    var isAns=Array.isArray(correct)?correct.indexOf(bv)>=0:bv===correct;
+    b.onclick=null;b.style.cursor='default';
+    if(bv===chosen&&isAns){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';b.style.color='#059669';}
+    else if(bv===chosen&&!isAns){b.style.background='rgba(220,38,38,.08)';b.style.borderColor='#dc2626';b.style.color='#dc2626';}
+    else if(isAns){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';}
+  });
+}
+
+function sdtTriangleSVG(highlight){
+  // highlight: 'D', 'S', 'T', or null
+  var dFill=highlight==='D'?'#4f46e5':'rgba(79,70,229,.12)';
+  var sFill=highlight==='S'?'#4f46e5':'rgba(79,70,229,.08)';
+  var tFill=highlight==='T'?'#4f46e5':'rgba(79,70,229,.08)';
+  var dTc=highlight==='D'?'#fff':'#4f46e5';
+  var sTc=highlight==='S'?'#fff':'#4f46e5';
+  var tTc=highlight==='T'?'#fff':'#4f46e5';
+  return '<svg viewBox="0 0 220 130" width="200" height="120" style="display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg">'+
+    // D top
+    '<rect x="60" y="8" width="100" height="46" rx="10" fill="'+dFill+'" stroke="#4f46e5" stroke-width="2"/>'+
+    '<text x="110" y="38" text-anchor="middle" font-size="22" fill="'+dTc+'" font-family="DM Serif Display,serif" font-weight="700">D</text>'+
+    // dividing line
+    '<line x1="60" y1="54" x2="160" y2="54" stroke="#4f46e5" stroke-width="1.5"/>'+
+    // S left
+    '<rect x="60" y="54" width="50" height="46" rx="0" style="border-radius:0 0 0 10px" fill="'+sFill+'" stroke="#4f46e5" stroke-width="2"/>'+
+    '<text x="85" y="84" text-anchor="middle" font-size="22" fill="'+sTc+'" font-family="DM Serif Display,serif" font-weight="700">S</text>'+
+    // multiply sign
+    '<line x1="110" y1="54" x2="110" y2="100" stroke="#4f46e5" stroke-width="1.5"/>'+
+    // T right
+    '<rect x="110" y="54" width="50" height="46" rx="0" fill="'+tFill+'" stroke="#4f46e5" stroke-width="2"/>'+
+    '<text x="135" y="84" text-anchor="middle" font-size="22" fill="'+tTc+'" font-family="DM Serif Display,serif" font-weight="700">T</text>'+
+    // outer border
+    '<rect x="60" y="8" width="100" height="92" rx="10" fill="none" stroke="#4f46e5" stroke-width="2"/>'+
+    // Labels
+    '<text x="40" y="38" text-anchor="end" font-size="10" fill="#9ca3af" font-family="DM Sans,sans-serif" font-weight="700">Cover D</text>'+
+    '<text x="40" y="84" text-anchor="end" font-size="10" fill="#9ca3af" font-family="DM Sans,sans-serif" font-weight="700">Cover S</text>'+
+    '<text x="172" y="84" text-anchor="start" font-size="10" fill="#9ca3af" font-family="DM Sans,sans-serif" font-weight="700">Cover T</text>'+
+    '</svg>';
+}
+
+var PUZZLES=[
+  {q:'S = 50 km/h, T = 4 hours\nWhat is D?',
+   opts:['150km','200km','180km','220km'],ans:'200km',
+   explain:'D = S x T = 50 x 4 = 200 km.'},
+  {q:'D = 90 km, T = 3 hours\nWhat is S?',
+   opts:['25km/h','30km/h','35km/h','40km/h'],ans:'30km/h',
+   explain:'S = D / T = 90 / 3 = 30 km/h.'},
+  {q:'D = 120 km, S = 60 km/h\nWhat is T?',
+   opts:['1 hour','2 hours','3 hours','4 hours'],ans:'2 hours',
+   explain:'T = D / S = 120 / 60 = 2 hours.'},
+  {q:'A train travels 150 km at 75 km/h.\nHow long does the journey take?',
+   opts:['1 hour','2 hours','3 hours','4 hours'],ans:'2 hours',
+   explain:'T = D / S = 150 / 75 = 2 hours.'},
+];
+
+var QS=[
+  {q:'D = 200 km, S = 80 km/h. T = ?',
+   opts:['2 hours','2.5 hours','3 hours','4 hours'],ans:'2.5 hours'},
+  {q:'S = 45 km/h, T = 2 hours. D = ?',
+   opts:['80km','85km','90km','95km'],ans:'90km'},
+  {q:'A cyclist travels 30 km in 90 minutes. Speed in km/h = ?',
+   opts:['15km/h','20km/h','25km/h','30km/h'],ans:'20km/h'},
+  {q:'Which formula gives you Speed?',
+   opts:['S = D x T','S = D / T','S = T / D','S = D + T'],ans:'S = D / T'},
+];
+
+var NIA=[
+  'Know two values — find the third. Speed, Time and Distance are always connected.',
+  'Cover what you want to find — the triangle shows the formula.',
+  'Units must match. And average speed is not the average of two speeds.',
+  'Four puzzles. Apply the triangle.',
+  'Four questions. Think carefully.',
+];
+var BTNS=['The formulas','Units and average speed','Practice','Quiz','Summary'];
+
+function burst(){
+  var c=document.getElementById('cc');c.innerHTML='';
+  var cols=['#4f46e5','#f59e0b','#059669','#dc2626','#0369a1','#7c3aed'];
+  for(var i=0;i<48;i++){
+    var p=document.createElement('div');p.className='cp';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[i%cols.length]+
+      ';width:'+(5+Math.random()*7)+'px;height:'+(5+Math.random()*7)+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+
+      ';animation-delay:'+(Math.random()*.5)+'s;animation-duration:'+(1.5+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){c.innerHTML='';},3000);
+}
+
+function renderStep0(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Two real questions</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">'+
+          '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:14px">'+
+            '<div style="font-size:13px;color:var(--muted);font-weight:600;margin-bottom:6px">&#128664; Car journey</div>'+
+            '<div style="font-family:DM Serif Display,serif;font-size:clamp(16px,3.5vw,20px);color:var(--ink);margin-bottom:6px">Travels 120 km in 2 hours. How fast?</div>'+
+            '<div style="font-size:13px;color:var(--accent);font-weight:700">Speed = 120 / 2 = 60 km/h</div>'+
+          '</div>'+
+          '<div style="background:rgba(79,70,229,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:14px">'+
+            '<div style="font-size:13px;color:var(--muted);font-weight:600;margin-bottom:6px">&#128642; Train journey</div>'+
+            '<div style="font-family:DM Serif Display,serif;font-size:clamp(16px,3.5vw,20px);color:var(--ink);margin-bottom:6px">Travels at 80 km/h for 3 hours. How far?</div>'+
+            '<div style="font-size:13px;color:var(--accent);font-weight:700">Distance = 80 x 3 = 240 km</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px;font-size:13px;color:var(--ink2);font-weight:600;text-align:center">'+
+          'Speed, Distance and Time are always connected.<br>Know any two — find the third.'+
+        '</div></div>',
+      nia:'Two types of question — finding speed and finding distance. The same three values are always involved: <strong>Speed</strong>, <strong>Distance</strong>, <strong>Time</strong>.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">The magic triangle</div>'+
+        '<div style="margin:8px 0 14px">'+sdtTriangleSVG(null)+'</div>'+
+        '<div style="display:flex;flex-direction:column;gap:6px">'+
+        [
+          {cover:'D',result:'D = S x T',eg:'Cover D → S x T'},
+          {cover:'S',result:'S = D / T',eg:'Cover S → D / T'},
+          {cover:'T',result:'T = D / S',eg:'Cover T → D / S'},
+        ].map(function(r){
+          return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:1px solid var(--rule);border-radius:10px">'+
+            '<div style="width:28px;height:28px;border-radius:8px;background:var(--accent);color:#fff;font-family:DM Serif Display,serif;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+r.cover+'</div>'+
+            '<div style="font-family:DM Serif Display,serif;font-size:18px;color:var(--accent);flex:1">'+r.result+'</div>'+
+            '<div style="font-size:11px;color:var(--muted);font-weight:600">'+r.eg+'</div>'+
+            '</div>';
+        }).join('')+
+        '</div></div>',
+      nia:'Cover the value you want to find — the triangle shows what to do with the other two. <strong>D = S x T</strong>, <strong>S = D / T</strong>, <strong>T = D / S</strong>.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s0b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s0n()">'+(sl<S.length-1?'Next &#8594;':'The formulas &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+  }
+  window.s0n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s0b=function(){if(sl>0){sl--;show();}};
+  show();
+}
+
+function renderStep1(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Finding Distance — D = S x T</div>'+
+        '<div style="display:flex;justify-content:center;margin-bottom:10px">'+sdtTriangleSVG('D')+'</div>'+
+        '<div class="formula-box"><div class="formula">D = S &times; T</div></div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px;margin-top:10px">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px">Example: S = 60 km/h, T = 3 hours</div>'+
+          '<div class="s-row"><div class="s-num">1</div><div>D = S x T = 60 x 3</div></div>'+
+          '<div class="s-row"><div class="s-num">2</div><div>D = <strong style="color:var(--accent)">180 km</strong></div></div>'+
+          '<div style="margin-top:8px;background:rgba(79,70,229,.05);border-radius:8px;padding:8px;font-size:12px;color:var(--ink2)">'+
+            'Think of it: 60 km every hour, for 3 hours = 60 + 60 + 60 = 180 km.'+
+          '</div>'+
+        '</div></div>',
+      nia:'<strong>D = S x T</strong>. Speed tells you how far you go in one hour. Multiply by the number of hours to get total distance.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Finding Speed and Time</div>'+
+        '<div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap">'+
+          '<div style="flex:1;min-width:130px;background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px;text-align:center">'+
+            sdtTriangleSVG('S')+
+            '<div class="formula" style="font-size:clamp(16px,3.5vw,20px);margin-top:6px">S = D &divide; T</div>'+
+          '</div>'+
+          '<div style="flex:1;min-width:130px;background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px;text-align:center">'+
+            sdtTriangleSVG('T')+
+            '<div class="formula" style="font-size:clamp(16px,3.5vw,20px);margin-top:6px">T = D &divide; S</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px">'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px">'+
+            '<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px">Finding S: cyclist covers 45 km in 3 hours</div>'+
+            '<div style="font-family:DM Serif Display,serif;font-size:18px;color:var(--accent)">S = 45 / 3 = <strong>15 km/h</strong></div>'+
+          '</div>'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:12px">'+
+            '<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px">Finding T: car travels 240 km at 80 km/h</div>'+
+            '<div style="font-family:DM Serif Display,serif;font-size:18px;color:var(--accent)">T = 240 / 80 = <strong>3 hours</strong></div>'+
+          '</div>'+
+        '</div></div>',
+      nia:'<strong>S = D / T</strong> and <strong>T = D / S</strong>. In both cases you divide. The triangle makes it easy — cover what you want, the remaining two show the operation.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s1b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s1n()">'+(sl<S.length-1?'Next &#8594;':'Units &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s1n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s1b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+function renderStep2(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Units must match</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">'+
+          '<div style="background:rgba(5,150,105,.06);border:1.5px solid rgba(5,150,105,.2);border-radius:12px;padding:12px">'+
+            '<div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:6px">&#10003; Correct — units match</div>'+
+            '<div style="font-family:DM Serif Display,serif;font-size:16px;color:var(--ink)">Speed: km/h &nbsp; Time: hours &nbsp; Distance: km</div>'+
+          '</div>'+
+          '<div style="background:rgba(220,38,38,.05);border:1.5px solid rgba(220,38,38,.2);border-radius:12px;padding:12px">'+
+            '<div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:6px">&#10005; Wrong — units do not match</div>'+
+            '<div style="font-family:DM Serif Display,serif;font-size:16px;color:var(--ink)">Speed: km/h &nbsp; Time: <strong style="color:var(--red)">minutes</strong> &nbsp; Distance: km</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:8px">Converting minutes to hours:</div>'+
+          '<div class="s-row"><div class="s-num">1</div><div>30 minutes = 30/60 = <strong style="color:var(--accent)">0.5 hours</strong></div></div>'+
+          '<div class="s-row"><div class="s-num">2</div><div>90 minutes = 90/60 = <strong style="color:var(--accent)">1.5 hours</strong></div></div>'+
+          '<div class="s-row"><div class="s-num">3</div><div>45 minutes = 45/60 = <strong style="color:var(--accent)">0.75 hours</strong></div></div>'+
+        '</div></div>',
+      nia:'Always check units before calculating. If speed is in km/h, time <strong>must</strong> be in hours. Convert minutes by dividing by 60.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Average speed — a common trap</div>'+
+        '<div style="background:rgba(220,38,38,.05);border:1.5px solid rgba(220,38,38,.2);border-radius:12px;padding:14px;margin-bottom:12px">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:6px">&#10005; Wrong method</div>'+
+          '<div style="font-size:13px;color:var(--ink2)">Average of 60 km/h and 40 km/h = (60+40)/2 = 50 km/h &nbsp; <strong style="color:var(--red)">Incorrect.</strong></div>'+
+        '</div>'+
+        '<div style="background:rgba(5,150,105,.06);border:1.5px solid rgba(5,150,105,.2);border-radius:12px;padding:14px;margin-bottom:10px">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px">&#10003; Correct method: Total D / Total T</div>'+
+          '<div class="s-row"><div class="s-num">1</div><div>60 km at 60 km/h: T = 60/60 = <strong>1 hour</strong></div></div>'+
+          '<div class="s-row"><div class="s-num">2</div><div>60 km at 40 km/h: T = 60/40 = <strong>1.5 hours</strong></div></div>'+
+          '<div class="s-row"><div class="s-num">3</div><div>Total D = 120 km, Total T = 2.5 hours</div></div>'+
+          '<div class="s-row"><div class="s-num">4</div><div>Average speed = 120 / 2.5 = <strong style="color:var(--green)">48 km/h</strong></div></div>'+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:10px;font-size:12px;color:var(--ink2);font-weight:600">'+
+          'Average speed = Total distance / Total time. Always.'+
+        '</div></div>',
+      nia:'Average speed is <strong>not</strong> the average of two speeds. Use Total Distance / Total Time — you spend more time at the slower speed, so it pulls the average down.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s2b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s2n()">'+(sl<S.length-1?'Next &#8594;':'Practice &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s2n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s2b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+function renderStep3(){puzzleLevel=0;puzzleScore=0;puzzleResults=[];levelAnswered=false;showPuzzle();}
+
+function showPuzzle(){
+  if(puzzleLevel>=PUZZLES.length){showPuzzleDone();return;}
+  var pz=PUZZLES[puzzleLevel];levelAnswered=false;
+  var pips='';for(var i=0;i<PUZZLES.length;i++)pips+='<div class="prog-pip'+(i<puzzleLevel?' dp':i===puzzleLevel?' cp':'')+'" ></div>';
+  var qDisplay=pz.q.replace(/\n/g,'<br>');
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="prog-row"><span class="prog-label">Puzzle '+(puzzleLevel+1)+' of '+PUZZLES.length+'</span><div class="prog-pips">'+pips+'</div></div>'+
+    '<div class="puz-q">'+qDisplay+'</div>'+
+    renderOpts(pz.opts,'popt','pickPuz',null)+
+    '<div class="res" id="pzRes"></div></div>';
+  document.getElementById('nia').innerHTML='Use the triangle. Pick your answer.';
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){
+    if(puzzleLevel>0){puzzleLevel--;if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}levelAnswered=false;showPuzzle();}
+    else{goStep(-1);}
+  };}
+}
+
+function pickPuz(idx){
+  if(levelAnswered)return;levelAnswered=true;
+  var pz=PUZZLES[puzzleLevel];
+  var chosen=document.getElementById('popt'+idx)?document.getElementById('popt'+idx).getAttribute('data-val'):'';
+  var ok=(chosen===pz.ans);
+  puzzleResults[puzzleLevel]=ok;
+  markOpts('popt',chosen,pz.ans);
+  var res=document.getElementById('pzRes');
+  if(ok){puzzleScore++;if(res){res.textContent='Correct. '+pz.explain;res.className='res ok';}document.getElementById('nia').innerHTML='Correct. '+pz.explain;}
+  else{if(res){res.textContent='Not quite. '+pz.explain;res.className='res no';}document.getElementById('nia').innerHTML=pz.explain;}
+  puzzleLevel++;
+  var isLast=(puzzleLevel>=PUZZLES.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showPuzzleDone():showPuzzle();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showPuzzleDone():showPuzzle();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showPuzzleDone(){
+  var perfect=(puzzleScore>=PUZZLES.length);
+  if(perfect)burst();
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){
+    puzzleLevel=PUZZLES.length-1;
+    if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}
+    levelAnswered=false;showPuzzle();
+  };}
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div style="font-size:48px;margin-bottom:14px">'+(perfect?'&#127919;':'&#128077;')+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'All four puzzles correct!':'Practice complete \u2014 '+puzzleScore+' of '+PUZZLES.length+' correct.')+
+    '</div>'+
+    (perfect?'':'<p style="font-size:14px;color:var(--muted)">Tap &#8592; to retry any puzzle.</p>')+
+    '</div>';
+  document.getElementById('nia').innerHTML=perfect?'All four correct. Ready for the quiz.':'Good effort. Use &#8592; to review before the quiz.';
+}
+
+function renderStep4(){qIdx=0;qScore=0;qHistory=[];document.getElementById('nia').innerHTML=NIA[4];showQ();}
+
+function showQ(){
+  if(qIdx>=QS.length){showQEnd();return;}
+  var q=QS[qIdx];
+  var nia=document.getElementById('nia');if(nia)nia.innerHTML='Pick your answer.';
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div class="puz-q">'+q.q+'</div>'+
+    renderOpts(q.opts,'qopt','pickQ',null)+
+    '<div class="res" id="qRes"></div></div>';
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){if(qIdx>0&&qHistory.length>0){showQPrev(qIdx-1);}else{goStep(-1);};};}
+}
+
+function showQPrev(idx){
+  if(idx<0||!qHistory[idx])return;
+  var q=QS[idx];var h=qHistory[idx];
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<h.score?' on':'')+'">&#11088;</div>';
+  var disMap={};
+  q.opts.forEach(function(o,i){
+    if(o===h.chosen&&h.wasCorrect)disMap[i]='correct';
+    else if(o===h.chosen&&!h.wasCorrect)disMap[i]='wrong';
+    else if(o===h.correct&&!h.wasCorrect)disMap[i]='correct';
+    else disMap[i]='';
+  });
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:8px">Question '+(idx+1)+' \u2014 reviewed</div>'+
+    '<div class="puz-q">'+q.q+'</div>'+
+    renderOpts(q.opts,'qopt',null,disMap)+
+    '<div style="display:flex;gap:8px;justify-content:center;margin-top:14px">'+
+    '<button onclick="showQPrev('+(idx-1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);opacity:'+(idx===0?.3:1)+'" '+(idx===0?'disabled':'')+'>&#8592; Prev</button>'+
+    (idx<qIdx-1?'<button onclick="showQPrev('+(idx+1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted)">Next &#8594;</button>':
+     '<button onclick="showQ()" style="padding:8px 16px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:700;cursor:pointer">Continue quiz &#8594;</button>')+
+    '</div></div>';
+  document.getElementById('nia').innerHTML=(h.wasCorrect?'Correct! ':'Answer was <strong>'+h.correct+'</strong>. ')+'Reviewing question '+(idx+1)+'.';
+}
+
+function pickQ(idx){
+  var q=QS[qIdx];
+  [0,1,2,3].forEach(function(i){var b=document.getElementById('qopt'+i);if(b){b.onclick=null;b.style.cursor='default';}});
+  var chosen=document.getElementById('qopt'+idx)?document.getElementById('qopt'+idx).getAttribute('data-val'):'';
+  var ok=(chosen===q.ans);
+  qHistory[qIdx]={chosen:chosen,correct:q.ans,wasCorrect:ok,score:qScore+(ok?1:0)};
+  markOpts('qopt',chosen,q.ans);
+  var res=document.getElementById('qRes');
+  if(ok){qScore++;if(res){res.textContent='Correct.';res.className='res ok';}document.getElementById('nia').innerHTML='Correct.';}
+  else{if(res){res.textContent='Answer: '+q.ans;res.className='res no';}document.getElementById('nia').innerHTML='Answer: <strong>'+q.ans+'</strong>.';}
+  qIdx++;
+  var isLast=(qIdx>=QS.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showQEnd():showQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showQEnd():showQ();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQEnd(){
+  var perfect=(qScore===QS.length);if(perfect)burst();
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div class="stars" style="margin-bottom:20px">'+stars+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'Perfect.':qScore>=3?'Almost perfect.':qScore>=2?'Good work.':'Keep going.')+
+    '</div>'+
+    '<div style="font-size:14px;color:var(--muted);margin-bottom:20px">'+qScore+' of '+QS.length+' correct</div>'+
+    '<button onclick="goStep(-4)" style="padding:10px 28px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)">Start again</button>'+
+    '</div>';
+  document.getElementById('nia').innerHTML=(perfect?'<strong>Perfect.</strong> ':'')+'D = S\u00d7T. S = D\u00f7T. T = D\u00f7S. Units must match. Average speed = Total D \u00f7 Total T.';
+}
+
+function renderStep4summary(){
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="panel-title">The SDT triangle</div>'+
+    '<div style="margin:8px 0 14px">'+sdtTriangleSVG(null)+'</div>'+
+    '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">'+
+    [
+      {f:'D = S \u00d7 T',d:'Cover D in the triangle'},
+      {f:'S = D \u00f7 T',d:'Cover S in the triangle'},
+      {f:'T = D \u00f7 S',d:'Cover T in the triangle'},
+    ].map(function(r){
+      return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:1px solid var(--rule);border-radius:10px">'+
+        '<div style="font-family:DM Serif Display,serif;font-size:18px;color:var(--accent);flex:1">'+r.f+'</div>'+
+        '<div style="font-size:12px;color:var(--muted);font-weight:600">'+r.d+'</div>'+
+        '</div>';
+    }).join('')+
+    '</div>'+
+    '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">'+
+      '<div style="background:rgba(79,70,229,.05);border:1px solid rgba(79,70,229,.15);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink2)">&#9888; Units must match: km/h with hours, m/s with seconds.</div>'+
+      '<div style="background:rgba(79,70,229,.05);border:1px solid rgba(79,70,229,.15);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink2)">&#9888; Average speed = Total Distance \u00f7 Total Time. Not the average of speeds.</div>'+
+    '</div>'+
+    '<div style="padding-top:12px;border-top:1px solid var(--rule);font-size:13px;color:var(--ink2)">'+
+      'Next: <strong style="color:var(--ink)">Puzzle Solving</strong>'+
+    '</div></div>';
+}
+
+var RS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4,renderStep4summary];
+
+function goStep(dir){
+  step=Math.max(0,Math.min(5,step+dir));
+  var dotStep=Math.min(step,4);
+  for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<dotStep?' done':i===dotStep?' active':'');}
+  document.getElementById('nia').innerHTML=NIA[Math.min(step,NIA.length-1)];
+  document.getElementById('btnBack').disabled=(step===0);
+  var bl=['The formulas','Units & average speed','Practice','Quiz','Summary','Start again'];
+  document.getElementById('btnNext').textContent=(bl[step]||'Next')+' \u2192';
+  if(step>=5){document.getElementById('btnNext').onclick=function(){goStep(-5);};}
+  else{document.getElementById('btnNext').onclick=function(){goStep(1);};}
+  if(step!==3&&step!==4){
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=(step===0);bb.onclick=function(){goStep(-1);};}
+  }
+  RS[Math.min(step,RS.length-1)]();
+}
+goStep(0);
+</script>
+</body>
+</html>

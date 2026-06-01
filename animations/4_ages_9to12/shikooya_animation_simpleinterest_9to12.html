@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya - Simple Interest (Ages 9-12)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
+  :root{--ink:#0f1117;--ink2:#4b5563;--muted:#9ca3af;--bg:#f9f8f4;--card:#fff;
+    --accent:#4f46e5;--accent2:#f59e0b;--green:#4f46e5;--red:#dc2626;
+    --rule:rgba(0,0,0,.06);--sh:0 1px 12px rgba(0,0,0,.06);--r:18px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px;color:var(--ink);}
+  .shell{width:100%;max-width:620px;}
+  .top{text-align:center;margin-bottom:24px;}
+  .badge{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);display:inline-block;margin-bottom:12px;}
+  .top h1{font-family:'DM Serif Display',serif;font-size:clamp(24px,5vw,34px);
+    color:var(--ink);line-height:1.1;margin-bottom:6px;}
+  .top h1 em{font-style:italic;color:var(--accent);}
+  .top p{font-size:13px;color:var(--muted);font-weight:500;}
+  .stepper{display:flex;gap:5px;justify-content:center;margin-bottom:24px;}
+  .step-dot{width:5px;height:5px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .step-dot.active{background:var(--accent2);transform:scale(1.8);}
+  .step-dot.done{background:var(--accent);}
+  .nia{display:flex;gap:12px;align-items:center;background:var(--card);
+    border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px;
+    margin-bottom:20px;box-shadow:var(--sh);min-height:60px;}
+  .nia-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+    animation:bob 3s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .nia-text{font-size:14px;line-height:1.55;color:var(--ink2);flex:1;}
+  .nia-text strong{color:var(--accent);font-weight:700;}
+  .nia-text em{color:var(--accent2);font-style:normal;font-weight:700;}
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);
+    padding:22px;margin-bottom:16px;box-shadow:var(--sh);}
+  .panel-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:14px;}
+  .formula-box{background:rgba(5,150,105,.06);border:1.5px solid rgba(5,150,105,.25);
+    border-radius:14px;padding:16px;text-align:center;margin:10px 0;}
+  .formula{font-family:'DM Serif Display',serif;font-size:clamp(22px,5vw,32px);
+    color:var(--accent);margin:6px 0;}
+  .s-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;
+    font-size:13px;color:var(--ink2);line-height:1.6;}
+  .s-row:last-child{margin-bottom:0;}
+  .s-num{width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;
+    font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:1px;}
+  .slide-nav{display:flex;gap:6px;justify-content:center;margin-top:14px;}
+  .sdot{width:6px;height:6px;border-radius:50%;background:#d1d5db;transition:all .3s;}
+  .sdot.on{background:var(--accent);transform:scale(1.4);}
+  .snav{display:flex;gap:8px;justify-content:center;margin-top:12px;}
+  .sbtn{padding:8px 20px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;
+    font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+  .sbtn.prev{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);}
+  .sbtn.prev:disabled{opacity:.3;cursor:not-allowed;}
+  .sbtn.nxt{background:var(--accent);color:#fff;}
+  .puz-q{font-family:'DM Serif Display',serif;font-size:clamp(17px,4vw,22px);
+    text-align:center;line-height:1.4;margin-bottom:16px;color:var(--ink);}
+  .prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .prog-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .prog-pips{display:flex;gap:5px;}
+  .prog-pip{width:8px;height:8px;border-radius:50%;background:var(--rule);border:1.5px solid #d1d5db;transition:all .3s;}
+  .prog-pip.dp{background:var(--accent);border-color:var(--accent);}
+  .prog-pip.cp{background:var(--accent2);border-color:var(--accent2);transform:scale(1.3);}
+  .res{text-align:center;margin-top:10px;font-size:14px;font-weight:700;min-height:20px;}
+  .res.ok{color:var(--green);}
+  .res.no{color:var(--red);}
+  .stars{display:flex;justify-content:center;gap:5px;margin-bottom:16px;}
+  .star{font-size:20px;opacity:.18;transition:all .3s;}
+  .star.on{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .nav{display:flex;gap:10px;margin-top:4px;}
+  .btn{min-height:50px;padding:0 22px;border-radius:14px;border:none;
+    font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;
+    cursor:pointer;transition:all .2s;}
+  .btn:active{transform:scale(.97);}
+  .btn-back{background:var(--bg);border:1.5px solid var(--rule);color:var(--muted);min-width:50px;}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-next{background:var(--accent);color:#fff;flex:1;box-shadow:0 4px 14px rgba(79,70,229,.2);}
+  .btn-next:hover{background:#047857;transform:translateY(-1px);}
+  .cc{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .cp{position:absolute;border-radius:2px;animation:cf 2s ease-in forwards;}
+  @keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="shell">
+  <div class="top">
+    <div class="badge">Ages 9 - 12</div>
+    <h1>Simple <em>Interest</em> — Money Working for You</h1>
+    <p>How banks calculate interest on savings and loans</p>
+  </div>
+  <div class="stepper">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia">
+    <div class="nia-dot">&#127775;</div>
+    <div class="nia-text" id="nia">
+      If you lend someone <strong>£100</strong> and they return <strong>£110</strong> a year later, the extra £10 is <em>interest</em> — the reward for lending money.
+    </div>
+  </div>
+  <div id="main"></div>
+  <div class="nav">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>&#8592;</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let&apos;s go &#8594;</button>
+  </div>
+</div>
+<div class="cc" id="cc"></div>
+<script>
+var step=0,qIdx=0,qScore=0,puzzleLevel=0,puzzleScore=0,puzzleResults=[],levelAnswered=false,qHistory=[];
+
+// ── Option renderer (inline styles) ───────────────────────
+var OPT_COLS=['#059669','#0369a1','#7c3aed','#b45309'];
+var OPT_LBLS=['A','B','C','D'];
+
+function renderOpts(opts,idPfx,clickFn,disMap){
+  var allShort=opts.every(function(o){return String(o).length<=6;});
+  var html='';
+  if(allShort){
+    html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">';
+    opts.forEach(function(o,i){
+      var dis=disMap?disMap[i]:'';
+      var bg='#ffffff',bc='#e5e7eb',tc='#0f1117';
+      if(dis==='correct'){bg='rgba(5,150,105,.12)';bc='#059669';tc='#059669';}
+      else if(dis==='wrong'){bg='rgba(220,38,38,.08)';bc='#dc2626';tc='#dc2626';}
+      html+='<button id="'+idPfx+i+'" data-val="'+o+'" '+(clickFn&&!dis?'onclick="'+clickFn+'('+i+')"':'')+
+        ' style="min-height:80px;border-radius:16px;border:2px solid '+bc+';background:'+bg+';'+
+        'cursor:'+(dis?'default':'pointer')+';display:flex;align-items:center;justify-content:center;'+
+        'font-family:DM Serif Display,serif;font-size:clamp(20px,4vw,28px);color:'+tc+';padding:12px;'+
+        'border-left:5px solid '+OPT_COLS[i%OPT_COLS.length]+';'+
+        'transition:all .25s cubic-bezier(.34,1.56,.64,1)">'+o+'</button>';
+    });
+    html+='</div>';
+  } else {
+    html='<div style="display:flex;flex-direction:column;gap:8px;margin:12px 0">';
+    opts.forEach(function(o,i){
+      var dis=disMap?disMap[i]:'';
+      var bg='#ffffff',bc='#e5e7eb',tc='#0f1117',lc=OPT_COLS[i%OPT_COLS.length];
+      if(dis==='correct'){bg='rgba(5,150,105,.12)';bc='#059669';tc='#059669';lc='#059669';}
+      else if(dis==='wrong'){bg='rgba(220,38,38,.08)';bc='#dc2626';tc='#dc2626';lc='#dc2626';}
+      html+='<button id="'+idPfx+i+'" data-val="'+o+'" '+(clickFn&&!dis?'onclick="'+clickFn+'('+i+')"':'')+
+        ' style="min-height:54px;border-radius:14px;border:1.5px solid '+bc+';background:'+bg+';'+
+        'cursor:'+(dis?'default':'pointer')+';display:flex;align-items:center;gap:14px;'+
+        'padding:12px 16px;width:100%;box-sizing:border-box;transition:all .2s">'+
+        '<div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;'+
+        'justify-content:center;font-size:13px;font-weight:700;color:#fff;background:'+lc+'">'+OPT_LBLS[i]+'</div>'+
+        '<div style="font-family:DM Sans,sans-serif;font-size:14px;font-weight:600;color:'+tc+';line-height:1.4;flex:1;text-align:left">'+o+'</div>'+
+        '</button>';
+    });
+    html+='</div>';
+  }
+  return html;
+}
+
+function markOpts(idPfx,chosen,correct){
+  [0,1,2,3].forEach(function(i){
+    var b=document.getElementById(idPfx+i);if(!b)return;
+    var bv=b.getAttribute('data-val');
+    var isAns=Array.isArray(correct)?correct.indexOf(bv)>=0:bv===correct;
+    b.onclick=null;b.style.cursor='default';
+    if(bv===chosen&&isAns){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';b.style.color='#059669';}
+    else if(bv===chosen&&!isAns){b.style.background='rgba(220,38,38,.08)';b.style.borderColor='#dc2626';b.style.color='#dc2626';}
+    else if(isAns){b.style.background='rgba(5,150,105,.12)';b.style.borderColor='#059669';}
+  });
+}
+
+// ── Puzzles ───────────────────────────────────────────────
+var PUZZLES=[
+  {q:'P = £200, R = 5%, T = 3 years\nWhat is the Simple Interest?',
+   opts:['£20','£25','£30','£35'],ans:'£30',
+   explain:'SI = 200 x 5 x 3 / 100 = 3000 / 100 = £30.'},
+  {q:'P = £800, R = 3%, T = 2 years\nWhat is the total amount?',
+   opts:['£824','£848','£860','£880'],ans:'£848',
+   explain:'SI = 800 x 3 x 2 / 100 = £48. Total = 800 + 48 = £848.'},
+  {q:'SI = £60, P = £500, T = 3 years\nWhat is the rate R?',
+   opts:['2%','3%','4%','5%'],ans:'4%',
+   explain:'R = SI x 100 / (P x T) = 60 x 100 / (500 x 3) = 6000 / 1500 = 4%.'},
+  {q:'SI = £40, P = £400, R = 5%\nWhat is T (in years)?',
+   opts:['1','2','3','4'],ans:'2',
+   explain:'T = SI x 100 / (P x R) = 40 x 100 / (400 x 5) = 4000 / 2000 = 2 years.'},
+];
+
+// ── Quiz ──────────────────────────────────────────────────
+var QS=[
+  {q:'What does P stand for in the SI formula?',
+   opts:['Percentage','Principal','Profit','Payment'],ans:'Principal'},
+  {q:'P = £600, R = 4%, T = 2 years. SI = ?',
+   opts:['£36','£48','£24','£60'],ans:'£48'},
+  {q:'Total Amount after Simple Interest equals:',
+   opts:['P x R x T','P + SI','SI / 100','P x T'],ans:'P + SI'},
+  {q:'SI = £90, P = £1000, R = 3%. What is T?',
+   opts:['2 years','3 years','4 years','5 years'],ans:'3 years'},
+];
+
+var NIA=[
+  'If you lend someone <strong>£100</strong> and they return <strong>£110</strong> a year later, the extra £10 is <em>interest</em>.',
+  'Three ingredients: <strong>P</strong>, <strong>R</strong> and <strong>T</strong>. One formula: SI = P x R x T / 100.',
+  'The formula works in all directions. Know any three values — find the fourth.',
+  'Four puzzles. Apply the formula.',
+  'Four questions. Think carefully.',
+];
+var BTNS=['The formula','Finding P, R or T','Practice','Quiz','Summary'];
+
+function burst(){
+  var c=document.getElementById('cc');c.innerHTML='';
+  var cols=['#059669','#f59e0b','#0369a1','#dc2626','#7c3aed','#0891b2'];
+  for(var i=0;i<48;i++){
+    var p=document.createElement('div');p.className='cp';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[i%cols.length]+
+      ';width:'+(5+Math.random()*7)+'px;height:'+(5+Math.random()*7)+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+
+      ';animation-delay:'+(Math.random()*.5)+'s;animation-duration:'+(1.5+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){c.innerHTML='';},3000);
+}
+
+// ── STEP 0: Preface ───────────────────────────────────────
+function renderStep0(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">What is interest?</div>'+
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">'+
+          '<div style="background:rgba(5,150,105,.06);border:1.5px solid rgba(79,70,229,.2);border-radius:12px;padding:14px;text-align:center">'+
+            '<div style="font-size:28px;margin-bottom:6px">&#128176;</div>'+
+            '<div style="font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Savings</div>'+
+            '<div style="font-size:13px;color:var(--ink2);line-height:1.6">You save £100. The bank pays you interest. Your money <strong>grows</strong>.</div>'+
+          '</div>'+
+          '<div style="background:rgba(220,38,38,.05);border:1.5px solid rgba(220,38,38,.15);border-radius:12px;padding:14px;text-align:center">'+
+            '<div style="font-size:28px;margin-bottom:6px">&#127968;</div>'+
+            '<div style="font-size:12px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Loan</div>'+
+            '<div style="font-size:13px;color:var(--ink2);line-height:1.6">You borrow £100. You pay interest. You owe <strong>more</strong> than you borrowed.</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px;font-size:13px;color:var(--ink2);line-height:1.8">'+
+          '&#128176; You lend a friend <strong>£100</strong> for a year.<br>'+
+          '&#129351; They return <strong>£110</strong> a year later.<br>'+
+          '&#10004; The extra <strong style="color:var(--accent)">£10</strong> is the interest — your reward for lending.'+
+        '</div></div>',
+      nia:'Interest is the extra money paid for using someone else\'s money. It is the <strong>reward for saving</strong> and the <strong>cost of borrowing</strong>.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Simple Interest vs Compound Interest</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">'+
+          '<div style="background:rgba(5,150,105,.06);border:1.5px solid rgba(5,150,105,.25);border-radius:12px;padding:14px">'+
+            '<div style="font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">&#10003; Simple Interest — today</div>'+
+            '<div style="font-size:13px;color:var(--ink2);margin-bottom:8px">Interest is calculated only on the <strong>original amount</strong>. The same amount of interest is added every year.</div>'+
+            '<div style="display:flex;gap:6px;align-items:flex-end">'+
+              [100,5,5,5].map(function(h,i){
+                return '<div style="display:flex;flex-direction:column;align-items:center;gap:3px">'+
+                  '<div style="width:36px;background:var(--green);border-radius:4px 4px 0 0;height:'+(h/2)+'px;opacity:'+(i===0?1:0.5)+'"></div>'+
+                  '<div style="font-size:10px;color:var(--muted);font-weight:600">'+(i===0?'£100':'+£5')+'</div>'+
+                  '<div style="font-size:10px;color:var(--muted)">Yr '+(i===0?'0':i)+'</div>'+
+                  '</div>';
+              }).join('')+
+            '</div>'+
+          '</div>'+
+          '<div style="background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:14px">'+
+            '<div style="font-size:12px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Compound Interest — later</div>'+
+            '<div style="font-size:13px;color:var(--ink2)">Interest is calculated on the original amount <strong>plus</strong> previous interest. It grows faster and faster.</div>'+
+          '</div>'+
+        '</div></div>',
+      nia:'Simple Interest adds the <strong>same amount</strong> every year. Compound Interest grows bigger each year because you earn interest on your interest too. Today we master Simple Interest.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s0b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s0n()">'+(sl<S.length-1?'Next &#8594;':'The formula &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+  }
+  window.s0n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s0b=function(){if(sl>0){sl--;show();}};
+  show();
+}
+
+// ── STEP 1: The formula ───────────────────────────────────
+function renderStep1(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Three ingredients — one formula</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">'+
+        [
+          {l:'P',n:'Principal',d:'The original amount of money',eg:'£500 saved in a bank',col:'#059669'},
+          {l:'R',n:'Rate',d:'The percentage interest per year',eg:'4% per year',col:'#0369a1'},
+          {l:'T',n:'Time',d:'How long the money is saved or borrowed',eg:'3 years',col:'#7c3aed'},
+        ].map(function(r){
+          return '<div style="display:flex;align-items:center;gap:14px;padding:12px 14px;background:var(--bg);border:1px solid var(--rule);border-radius:12px">'+
+            '<div style="width:44px;height:44px;border-radius:12px;background:'+r.col+';color:#fff;font-family:DM Serif Display,serif;font-size:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+r.l+'</div>'+
+            '<div><div style="font-size:13px;font-weight:700;color:var(--ink)">'+r.n+'</div>'+
+              '<div style="font-size:12px;color:var(--ink2)">'+r.d+'</div>'+
+              '<div style="font-size:11px;color:var(--muted);font-style:italic">e.g. '+r.eg+'</div></div>'+
+            '</div>';
+        }).join('')+
+        '</div>'+
+        '<div class="formula-box">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Simple Interest formula</div>'+
+          '<div class="formula">SI = P &times; R &times; T &divide; 100</div>'+
+        '</div></div>',
+      nia:'Three ingredients: <strong>P</strong> (Principal), <strong>R</strong> (Rate %), <strong>T</strong> (Time in years). Multiply all three together, then divide by 100.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Two worked examples</div>'+
+        '<div style="display:flex;flex-direction:column;gap:10px">'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px">'+
+            '<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:10px">Example 1: P=£500, R=4%, T=3 years</div>'+
+            '<div class="s-row"><div class="s-num">1</div><div>SI = 500 &times; 4 &times; 3 &divide; 100</div></div>'+
+            '<div class="s-row"><div class="s-num">2</div><div>SI = 6000 &divide; 100 = <strong style="color:var(--accent)">£60</strong></div></div>'+
+            '<div class="s-row"><div class="s-num">3</div><div>Total = P + SI = 500 + 60 = <strong style="color:var(--green)">£560</strong></div></div>'+
+          '</div>'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px">'+
+            '<div style="font-size:12px;font-weight:700;color:#0369a1;margin-bottom:10px">Example 2: P=£1000, R=5%, T=2 years</div>'+
+            '<div class="s-row"><div class="s-num" style="background:#0369a1">1</div><div>SI = 1000 &times; 5 &times; 2 &divide; 100</div></div>'+
+            '<div class="s-row"><div class="s-num" style="background:#0369a1">2</div><div>SI = 10000 &divide; 100 = <strong style="color:#0369a1">£100</strong></div></div>'+
+            '<div class="s-row"><div class="s-num" style="background:#0369a1">3</div><div>Total = 1000 + 100 = <strong style="color:var(--green)">£1100</strong></div></div>'+
+          '</div>'+
+        '</div></div>',
+      nia:'Multiply P &times; R &times; T first, then divide by 100. Always add SI to P to get the <strong>total amount</strong>.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s1b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s1n()">'+(sl<S.length-1?'Next &#8594;':'Rearranging &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s1n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s1b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 2: Rearranging ───────────────────────────────────
+function renderStep2(){
+  var sl=0;
+  var S=[
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Finding P, R or T</div>'+
+        '<div style="background:rgba(5,150,105,.05);border:1.5px solid rgba(79,70,229,.2);border-radius:14px;padding:14px;text-align:center;margin-bottom:12px">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px">Starting formula</div>'+
+          '<div class="formula" style="font-size:clamp(18px,4vw,24px)">SI = P &times; R &times; T &divide; 100</div>'+
+        '</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px">'+
+        [
+          {find:'P',formula:'P = SI &times; 100 &divide; (R &times; T)',col:'#059669'},
+          {find:'R',formula:'R = SI &times; 100 &divide; (P &times; T)',col:'#0369a1'},
+          {find:'T',formula:'T = SI &times; 100 &divide; (P &times; R)',col:'#7c3aed'},
+        ].map(function(r){
+          return '<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg);border:1px solid var(--rule);border-radius:12px">'+
+            '<div style="width:28px;height:28px;border-radius:8px;background:'+r.col+';color:#fff;font-family:DM Serif Display,serif;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+r.find+'</div>'+
+            '<div style="font-family:DM Serif Display,serif;font-size:clamp(14px,3vw,18px);color:'+r.col+'">'+r.formula+'</div>'+
+            '</div>';
+        }).join('')+
+        '</div>'+
+        '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:10px 14px;font-size:12px;color:var(--ink2);margin-top:8px;font-weight:500">'+
+          'The pattern: whatever you want to find, multiply SI by 100 and divide by the product of the other two.'+
+        '</div></div>',
+      nia:'The formula rearranges cleanly. <strong>Multiply SI by 100</strong>, then divide by the product of the other two variables. The pattern is the same every time.'
+    },
+    {
+      html:'<div style="animation:fi .3s ease">'+
+        '<div class="panel-title">Two worked examples</div>'+
+        '<div style="display:flex;flex-direction:column;gap:10px">'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px">'+
+            '<div style="font-size:12px;font-weight:700;color:#0369a1;margin-bottom:10px">Finding R: SI=£30, P=£500, T=2 years</div>'+
+            '<div class="s-row"><div class="s-num" style="background:#0369a1">1</div><div>R = SI &times; 100 &divide; (P &times; T)</div></div>'+
+            '<div class="s-row"><div class="s-num" style="background:#0369a1">2</div><div>R = 30 &times; 100 &divide; (500 &times; 2) = 3000 &divide; 1000</div></div>'+
+            '<div class="s-row"><div class="s-num" style="background:#0369a1">3</div><div>R = <strong style="color:#0369a1">3%</strong></div></div>'+
+          '</div>'+
+          '<div style="background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:14px">'+
+            '<div style="font-size:12px;font-weight:700;color:#7c3aed;margin-bottom:10px">Finding T: SI=£60, P=£400, R=5%</div>'+
+            '<div class="s-row"><div class="s-num" style="background:#7c3aed">1</div><div>T = SI &times; 100 &divide; (P &times; R)</div></div>'+
+            '<div class="s-row"><div class="s-num" style="background:#7c3aed">2</div><div>T = 60 &times; 100 &divide; (400 &times; 5) = 6000 &divide; 2000</div></div>'+
+            '<div class="s-row"><div class="s-num" style="background:#7c3aed">3</div><div>T = <strong style="color:#7c3aed">3 years</strong></div></div>'+
+          '</div>'+
+        '</div></div>',
+      nia:'Finding R or T follows the same pattern. <strong>Multiply SI by 100</strong>, divide by the product of the other two. No new formula to memorise.'
+    },
+  ];
+  function show(){
+    var sdots=S.map(function(_,i){return '<div class="sdot'+(i===sl?' on':'')+'"></div>';}).join('');
+    document.getElementById('main').innerHTML='<div class="panel">'+S[sl].html+
+      '<div class="slide-nav">'+sdots+'</div>'+
+      '<div class="snav">'+
+        '<button class="sbtn prev" onclick="s2b()" '+(sl===0?'disabled':'')+'>&#8592; Back</button>'+
+        '<button class="sbtn nxt" onclick="s2n()">'+(sl<S.length-1?'Next &#8594;':'Practice &#8594;')+'</button>'+
+      '</div></div>';
+    document.getElementById('nia').innerHTML=S[sl].nia;
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=false;bb.onclick=function(){if(sl>0){sl--;show();}else{goStep(-1);}};}
+  }
+  window.s2n=function(){if(sl<S.length-1){sl++;show();}else{goStep(1);}};
+  window.s2b=function(){if(sl>0){sl--;show();}else{goStep(-1);}};
+  show();
+}
+
+// ── STEP 3: Puzzles ───────────────────────────────────────
+function renderStep3(){puzzleLevel=0;puzzleScore=0;puzzleResults=[];levelAnswered=false;showPuzzle();}
+
+function showPuzzle(){
+  if(puzzleLevel>=PUZZLES.length){showPuzzleDone();return;}
+  var pz=PUZZLES[puzzleLevel];levelAnswered=false;
+  var pips='';for(var i=0;i<PUZZLES.length;i++)pips+='<div class="prog-pip'+(i<puzzleLevel?' dp':i===puzzleLevel?' cp':'')+'" ></div>';
+  var qDisplay=pz.q.replace(/\n/g,'<br>');
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="prog-row"><span class="prog-label">Puzzle '+(puzzleLevel+1)+' of '+PUZZLES.length+'</span><div class="prog-pips">'+pips+'</div></div>'+
+    '<div class="puz-q">'+qDisplay+'</div>'+
+    renderOpts(pz.opts,'popt','pickPuz',null)+
+    '<div class="res" id="pzRes"></div></div>';
+  document.getElementById('nia').innerHTML='Apply the formula. Pick your answer.';
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){
+    if(puzzleLevel>0){puzzleLevel--;if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}levelAnswered=false;showPuzzle();}
+    else{goStep(-1);}
+  };}
+}
+
+function pickPuz(idx){
+  if(levelAnswered)return;levelAnswered=true;
+  var pz=PUZZLES[puzzleLevel];
+  var chosen=document.getElementById('popt'+idx)?document.getElementById('popt'+idx).getAttribute('data-val'):'';
+  var ok=(chosen===pz.ans);
+  puzzleResults[puzzleLevel]=ok;
+  markOpts('popt',chosen,pz.ans);
+  var res=document.getElementById('pzRes');
+  if(ok){puzzleScore++;if(res){res.textContent='Correct. '+pz.explain;res.className='res ok';}document.getElementById('nia').innerHTML='Correct. '+pz.explain;}
+  else{if(res){res.textContent='Not quite. '+pz.explain;res.className='res no';}document.getElementById('nia').innerHTML=pz.explain;}
+  puzzleLevel++;
+  var isLast=(puzzleLevel>=PUZZLES.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showPuzzleDone():showPuzzle();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showPuzzleDone():showPuzzle();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showPuzzleDone(){
+  var perfect=(puzzleScore>=PUZZLES.length);
+  if(perfect)burst();
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){
+    puzzleLevel=PUZZLES.length-1;
+    if(puzzleResults[puzzleLevel]===true){puzzleScore--;puzzleResults[puzzleLevel]=undefined;}
+    levelAnswered=false;showPuzzle();
+  };}
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div style="font-size:48px;margin-bottom:14px">'+(perfect?'&#127919;':'&#128077;')+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'All four puzzles correct!':'Practice complete \u2014 '+puzzleScore+' of '+PUZZLES.length+' correct.')+
+    '</div>'+
+    (perfect?'':'<p style="font-size:14px;color:var(--muted)">Tap &#8592; to retry any puzzle.</p>')+
+    '</div>';
+  document.getElementById('nia').innerHTML=perfect?'All four correct. Ready for the quiz.':'Good effort. Use &#8592; to review before the quiz.';
+}
+
+// ── STEP 4: Quiz ──────────────────────────────────────────
+function renderStep4(){qIdx=0;qScore=0;qHistory=[];document.getElementById('nia').innerHTML=NIA[4];showQ();}
+
+function showQ(){
+  if(qIdx>=QS.length){showQEnd();return;}
+  var q=QS[qIdx];
+  var nia=document.getElementById('nia');if(nia)nia.innerHTML='Pick your answer.';
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div class="puz-q">'+q.q+'</div>'+
+    renderOpts(q.opts,'qopt','pickQ',null)+
+    '<div class="res" id="qRes"></div></div>';
+  var bb=document.getElementById('btnBack');
+  if(bb){bb.disabled=false;bb.onclick=function(){if(qIdx>0&&qHistory.length>0){showQPrev(qIdx-1);}else{goStep(-1);};};}
+}
+
+function showQPrev(idx){
+  if(idx<0||!qHistory[idx])return;
+  var q=QS[idx];var h=qHistory[idx];
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<h.score?' on':'')+'">&#11088;</div>';
+  var disMap={};
+  q.opts.forEach(function(o,i){
+    if(o===h.chosen&&h.wasCorrect)disMap[i]='correct';
+    else if(o===h.chosen&&!h.wasCorrect)disMap[i]='wrong';
+    else if(o===h.correct&&!h.wasCorrect)disMap[i]='correct';
+    else disMap[i]='';
+  });
+  document.getElementById('main').innerHTML=
+    '<div class="panel"><div class="stars">'+stars+'</div>'+
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:8px">Question '+(idx+1)+' \u2014 reviewed</div>'+
+    '<div class="puz-q">'+q.q+'</div>'+
+    renderOpts(q.opts,'qopt',null,disMap)+
+    '<div style="display:flex;gap:8px;justify-content:center;margin-top:14px">'+
+    '<button onclick="showQPrev('+(idx-1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);opacity:'+(idx===0?.3:1)+'" '+(idx===0?'disabled':'')+'>&#8592; Prev</button>'+
+    (idx<qIdx-1?'<button onclick="showQPrev('+(idx+1)+')" style="padding:8px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted)">Next &#8594;</button>':
+     '<button onclick="showQ()" style="padding:8px 16px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:700;cursor:pointer">Continue quiz &#8594;</button>')+
+    '</div></div>';
+  document.getElementById('nia').innerHTML=(h.wasCorrect?'Correct! ':'Answer was <strong>'+h.correct+'</strong>. ')+'Reviewing question '+(idx+1)+'.';
+}
+
+function pickQ(idx){
+  var q=QS[qIdx];
+  [0,1,2,3].forEach(function(i){var b=document.getElementById('qopt'+i);if(b){b.onclick=null;b.style.cursor='default';}});
+  var chosen=document.getElementById('qopt'+idx)?document.getElementById('qopt'+idx).getAttribute('data-val'):'';
+  var ok=(chosen===q.ans);
+  qHistory[qIdx]={chosen:chosen,correct:q.ans,wasCorrect:ok,score:qScore+(ok?1:0)};
+  markOpts('qopt',chosen,q.ans);
+  var res=document.getElementById('qRes');
+  if(ok){qScore++;if(res){res.textContent='Correct.';res.className='res ok';}document.getElementById('nia').innerHTML='Correct.';}
+  else{if(res){res.textContent='Answer: '+q.ans;res.className='res no';}document.getElementById('nia').innerHTML='Answer: <strong>'+q.ans+'</strong>.';}
+  qIdx++;
+  var isLast=(qIdx>=QS.length);
+  if(ok){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;isLast?showQEnd():showQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxt=document.createElement('button');
+    nxt.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt.onclick=function(){clearTimeout(_t);_doAdv();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent=isLast?'See results \u2192':'Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){isLast?showQEnd():showQ();};
+    if(res&&res.parentNode)res.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQEnd(){
+  var perfect=(qScore===QS.length);if(perfect)burst();
+  var stars='';for(var i=0;i<QS.length;i++)stars+='<div class="star'+(i<qScore?' on':'')+'">&#11088;</div>';
+  document.getElementById('main').innerHTML=
+    '<div class="panel" style="text-align:center;padding:32px 24px">'+
+    '<div class="stars" style="margin-bottom:20px">'+stars+'</div>'+
+    '<div style="font-family:DM Serif Display,serif;font-size:clamp(22px,5vw,28px);margin-bottom:8px">'+
+      (perfect?'Perfect.':qScore>=3?'Almost perfect.':qScore>=2?'Good work.':'Keep going.')+
+    '</div>'+
+    '<div style="font-size:14px;color:var(--muted);margin-bottom:20px">'+qScore+' of '+QS.length+' correct</div>'+
+    '<button onclick="goStep(-4)" style="padding:10px 28px;border-radius:10px;border:1.5px solid var(--rule);background:var(--bg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)">Start again</button>'+
+    '</div>';
+  document.getElementById('nia').innerHTML=(perfect?'<strong>Perfect.</strong> ':'')+'SI = P\u00d7R\u00d7T\u00f7100. Total = P + SI. Rearrange to find P, R or T.';
+}
+
+// ── STEP 5 (index 4): Summary ─────────────────────────────
+function renderStep4summary(){
+  document.getElementById('main').innerHTML=
+    '<div class="panel">'+
+    '<div class="panel-title">Formula reference</div>'+
+    '<div class="formula-box" style="margin-bottom:10px">'+
+      '<div class="formula">SI = P \u00d7 R \u00d7 T \u00f7 100</div>'+
+      '<div style="font-size:13px;color:var(--ink2);margin-top:4px">Total Amount = P + SI</div>'+
+    '</div>'+
+    '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">'+
+    [
+      {find:'P',f:'P = SI \u00d7 100 \u00f7 (R \u00d7 T)',col:'#059669'},
+      {find:'R',f:'R = SI \u00d7 100 \u00f7 (P \u00d7 T)',col:'#0369a1'},
+      {find:'T',f:'T = SI \u00d7 100 \u00f7 (P \u00d7 R)',col:'#7c3aed'},
+    ].map(function(r){
+      return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:1px solid var(--rule);border-radius:10px">'+
+        '<div style="width:24px;height:24px;border-radius:6px;background:'+r.col+';color:#fff;font-family:DM Serif Display,serif;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+r.find+'</div>'+
+        '<div style="font-family:DM Serif Display,serif;font-size:16px;color:'+r.col+'">'+r.f+'</div>'+
+        '</div>';
+    }).join('')+
+    '</div>'+
+    '<div style="background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.15);border-radius:10px;padding:12px;font-size:13px;color:var(--ink2)">'+
+      '&#128176; <strong style="color:var(--ink)">Real-world uses:</strong> short-term loans, hire purchase, some savings accounts, and exam problems worldwide.'+
+    '</div>'+
+    '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--rule);font-size:13px;color:var(--ink2)">'+
+      'Next: <strong style="color:var(--ink)">Speed, Time and Distance</strong>'+
+    '</div></div>';
+}
+
+var RS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4,renderStep4summary];
+
+function goStep(dir){
+  step=Math.max(0,Math.min(5,step+dir));
+  var dotStep=Math.min(step,4);
+  for(var i=0;i<=4;i++){var d=document.getElementById('d'+i);if(d)d.className='step-dot'+(i<dotStep?' done':i===dotStep?' active':'');}
+  document.getElementById('nia').innerHTML=NIA[Math.min(step,NIA.length-1)];
+  document.getElementById('btnBack').disabled=(step===0);
+  var bl=['The formula','Finding P, R or T','Practice','Quiz','Summary','Start again'];
+  document.getElementById('btnNext').textContent=(bl[step]||'Next')+' \u2192';
+  if(step>=5){document.getElementById('btnNext').onclick=function(){goStep(-5);};}
+  else{document.getElementById('btnNext').onclick=function(){goStep(1);};}
+  if(step!==3&&step!==4){
+    var bb=document.getElementById('btnBack');
+    if(bb){bb.disabled=(step===0);bb.onclick=function(){goStep(-1);};}
+  }
+  RS[Math.min(step,RS.length-1)]();
+}
+goStep(0);
+</script>
+</body>
+</html>

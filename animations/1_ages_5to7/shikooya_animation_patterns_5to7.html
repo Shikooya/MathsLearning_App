@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya — Patterns (Ages 5–7)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap');
+  :root{
+    --txt:#1a1a2e;--panel:rgba(255,255,255,0.94);
+    --green:#43a047;--amber:#f59e0b;--violet:#7c5cfc;--rose:#f43f5e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Nunito',sans-serif;
+    background:linear-gradient(180deg,#fff8e1 0%,#fffde7 100%);
+    min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:16px;
+  }
+  .header{text-align:center;margin-bottom:12px;width:100%;max-width:700px;}
+  .age-badge{display:inline-block;background:linear-gradient(135deg,#ffb300,#e65100);
+    color:#fff;font-size:13px;font-weight:900;letter-spacing:.06em;
+    text-transform:uppercase;padding:5px 18px;border-radius:20px;
+    margin-bottom:8px;box-shadow:0 3px 10px rgba(230,81,0,.3);}
+  .header h1{font-family:'Fredoka One',cursive;font-size:clamp(22px,5vw,32px);
+    color:#e65100;text-shadow:0 2px 6px rgba(0,0,0,.1);line-height:1.2;}
+  .header h1 span{color:#43a047;}
+  .card{background:var(--panel);border-radius:28px;padding:20px;
+    max-width:700px;width:100%;
+    box-shadow:0 12px 48px rgba(0,0,0,.12);border:3px solid rgba(255,200,80,.4);}
+
+  /* Steps — 5 steps = d0..d4 */
+  .steps{display:flex;gap:8px;justify-content:center;margin-bottom:14px;}
+  .step-dot{width:10px;height:10px;border-radius:50%;background:#ddd;transition:all .3s;}
+  .step-dot.active{background:#ffb300;transform:scale(1.5);}
+  .step-dot.done{background:#43a047;}
+
+  /* Nia */
+  .nia-area{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;min-height:60px;}
+  .nia-avatar{width:52px;height:52px;flex-shrink:0;
+    background:linear-gradient(135deg,#ffb300,#e65100);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:26px;
+    box-shadow:0 4px 12px rgba(230,81,0,.3);animation:bob 2.5s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  .nia-bubble{background:linear-gradient(135deg,#fff8e1,#fffde7);
+    border:2.5px solid #ffcc02;border-radius:16px 16px 16px 4px;
+    padding:12px 16px;font-size:clamp(14px,3vw,17px);font-weight:700;
+    color:var(--txt);line-height:1.6;flex:1;}
+  .nia-bubble strong{color:#e65100;}
+  .nia-bubble em{color:#43a047;font-style:normal;font-weight:900;}
+
+  /* Preface */
+  .preface{background:linear-gradient(135deg,#fff8e1,#f1f8e9);
+    border-radius:18px;padding:16px 18px;margin-bottom:16px;
+    border:2.5px solid #ffcc80;}
+  .preface-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;
+    font-size:clamp(13px,2.5vw,15px);font-weight:700;color:var(--txt);line-height:1.6;}
+  .preface-row:last-child{margin-bottom:0;}
+  .preface-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+
+  /* Caterpillar scene */
+  .caterpillar-scene{
+    background:linear-gradient(180deg,#e8f5e9 0%,#c8e6c9 60%,#a5d6a7 60%,#81c784 100%);
+    border-radius:20px;border:3px solid #ffcc80;
+    padding:20px 16px 16px;margin-bottom:14px;
+    position:relative;overflow:hidden;min-height:180px;}
+
+  /* Flowers in background */
+  .bg-flowers{position:absolute;bottom:0;left:0;right:0;
+    display:flex;gap:20px;padding:0 10px;pointer-events:none;}
+  .flower{font-size:22px;opacity:.5;}
+
+  /* Caterpillar body */
+  .caterpillar-wrap{display:flex;align-items:center;gap:4px;
+    justify-content:center;flex-wrap:nowrap;overflow-x:auto;
+    padding:8px 4px;position:relative;z-index:2;}
+
+  /* Head */
+  .cat-head{font-size:clamp(36px,7vw,52px);flex-shrink:0;
+    animation:head-bob 1.5s ease-in-out infinite;}
+  @keyframes head-bob{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+
+  /* Segment */
+  .cat-seg{
+    width:clamp(48px,8vw,64px);height:clamp(48px,8vw,64px);
+    border-radius:50%;border:4px solid rgba(0,0,0,.15);
+    display:flex;align-items:center;justify-content:center;
+    font-size:clamp(22px,4vw,30px);flex-shrink:0;
+    cursor:pointer;
+    transition:transform .2s cubic-bezier(.34,1.56,.64,1);
+    box-shadow:0 4px 10px rgba(0,0,0,.15);
+    position:relative;
+  }
+  .cat-seg.missing{
+    background:#f5f5f5 !important;
+    border:4px dashed #bdbdbd;
+    animation:pulse-missing 1s ease-in-out infinite;
+  }
+  @keyframes pulse-missing{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+  .cat-seg.correct-flash{animation:correct-flash .5s ease;}
+  @keyframes correct-flash{0%{transform:scale(1)}40%{transform:scale(1.3)}70%{transform:scale(.9)}100%{transform:scale(1)}}
+  .cat-seg:not(.missing):hover{transform:scale(1.12);}
+  .missing-q{font-size:clamp(20px,4vw,28px);font-weight:900;color:#9e9e9e;}
+
+  /* Choice buttons */
+  .choices{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;}
+  .choice-btn{
+    width:clamp(56px,10vw,72px);height:clamp(56px,10vw,72px);
+    border-radius:50%;border:4px solid rgba(0,0,0,.12);
+    font-size:clamp(24px,5vw,34px);cursor:pointer;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);
+    box-shadow:0 4px 10px rgba(0,0,0,.15);
+    display:flex;align-items:center;justify-content:center;
+    background:#fff;
+  }
+  .choice-btn:hover{transform:scale(1.15);}
+  .choice-btn.used{opacity:.3;pointer-events:none;}
+
+  /* Pattern level indicator */
+  .level-badge{display:inline-flex;align-items:center;gap:6px;
+    background:rgba(255,200,80,.2);border:2px solid #ffcc80;
+    border-radius:12px;padding:5px 14px;margin-bottom:10px;
+    font-family:'Fredoka One',cursive;font-size:clamp(13px,3vw,16px);color:#e65100;}
+
+  /* Progress */
+  .progress-row{display:flex;gap:8px;justify-content:center;margin-bottom:10px;flex-wrap:wrap;}
+  .prog-dot{width:14px;height:14px;border-radius:50%;
+    background:#e0e0e0;border:2px solid #bdbdbd;transition:all .3s;}
+  .prog-dot.done-p{background:#43a047;border-color:#2e7d32;}
+  .prog-dot.current-p{background:#ffb300;border-color:#e65100;transform:scale(1.3);}
+
+  /* Quiz */
+  .quiz-area{background:linear-gradient(135deg,#fff8e1,#f1f8e9);
+    border-radius:18px;padding:16px 18px;margin-bottom:14px;
+    border:2.5px solid #ffcc80;}
+  .quiz-q{font-family:'Fredoka One',cursive;font-size:clamp(16px,4vw,22px);
+    color:var(--txt);margin-bottom:12px;text-align:center;line-height:1.5;}
+  .quiz-segs{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:14px;}
+  .quiz-seg{width:clamp(40px,7vw,52px);height:clamp(40px,7vw,52px);
+    border-radius:50%;border:3px solid rgba(0,0,0,.12);
+    display:flex;align-items:center;justify-content:center;
+    font-size:clamp(18px,4vw,26px);}
+  .quiz-seg.blank{background:#f5f5f5;border:3px dashed #bdbdbd;}
+  .quiz-options{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .quiz-btn{min-width:64px;min-height:64px;border-radius:50%;
+    border:3px solid #ddd;background:#fff;
+    font-size:clamp(24px,5vw,32px);
+    cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);
+    box-shadow:0 3px 8px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;}
+  .quiz-btn:hover{transform:scale(1.12);border-color:#ffb300;}
+  .quiz-btn.correct{background:linear-gradient(135deg,#66bb6a,#43a047);
+    border-color:#2e7d32;animation:pop .4s ease;}
+  .quiz-btn.wrong{background:linear-gradient(135deg,#ef9a9a,#e57373);
+    border-color:#c62828;animation:shake .3s ease;}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .quiz-result{text-align:center;margin-top:10px;font-family:'Fredoka One',cursive;
+    font-size:clamp(14px,3.5vw,18px);min-height:26px;}
+  .quiz-result.correct{color:#2e7d32;}
+  .quiz-result.wrong{color:#c62828;}
+
+  .stars{display:flex;justify-content:center;gap:6px;margin-bottom:10px;}
+  .star{font-size:28px;opacity:.25;transition:all .3s;}
+  .star.earned{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+
+  /* Nav */
+  .controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:4px;}
+  .btn{min-width:64px;min-height:56px;padding:12px 20px;border-radius:16px;border:none;
+    font-family:'Fredoka One',cursive;font-size:clamp(15px,3.5vw,19px);cursor:pointer;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 0 rgba(0,0,0,.18);}
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.18);}
+  .btn-next{background:linear-gradient(135deg,#ffb300,#e65100);color:#fff;flex:1;max-width:220px;}
+  .btn-next:hover{transform:translateY(-2px);}
+  .btn-back{background:linear-gradient(135deg,#90a4ae,#607d8b);color:#fff;}
+  .btn-back:hover{transform:translateY(-2px);}
+  .btn-back:disabled{opacity:.3;cursor:not-allowed;transform:none;}
+
+  .confetti-container{position:fixed;top:0;left:0;right:0;bottom:0;
+    pointer-events:none;z-index:100;overflow:hidden;}
+  .confetti-piece{position:absolute;border-radius:2px;
+    animation:confetti-fall 2s ease-in forwards;}
+  @keyframes confetti-fall{
+    0%{transform:translateY(-20px) rotate(0deg);opacity:1}
+    100%{transform:translateY(100vh) rotate(720deg);opacity:0}
+  }
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="header">
+  <div><span class="age-badge">Ages 5–7</span></div>
+  <h1>Patterns with <span>Catie the Caterpillar</span>! 🐛</h1>
+</div>
+<div class="card">
+  <!-- 5 steps = d0..d4 -->
+  <div class="steps">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia-area">
+    <div class="nia-avatar">🌟</div>
+    <div class="nia-bubble" id="nia">
+      Look at Catie the Caterpillar! Each segment of her body has a <strong>colour or shape</strong>. Do you notice something? The segments follow a <em>pattern</em>! 🐛
+    </div>
+  </div>
+  <div id="mainArea"></div>
+  <div class="controls">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>← Back</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">What is a pattern? →</button>
+  </div>
+</div>
+<div class="confetti-container" id="confetti"></div>
+
+<script>
+var currentStep = 0;
+var patternLevel = 0;
+var puzzlesCompleted = 0;
+var quizIdx = 0;
+var quizCorrect = 0;
+
+// ── Pattern levels ───────────────────────────────────────
+// Each level: segments array, missingIdx, choices (including correct)
+var LEVELS = [
+  {
+    label:'Level 1 — Colour Pattern',
+    intro:'The colours go: 🔴 🔵 🔴 🔵 ... Can you spot the rule?',
+    segments:['🔴','🔵','🔴','🔵','🔴','🔵','🔴'],
+    colors:['#f44336','#1976d2','#f44336','#1976d2','#f44336','#1976d2','#f44336'],
+    missingIdx:5,
+    answer:'🔵',
+    choices:['🔵','🔴','🟢','🟡'],
+    choiceColors:['#1976d2','#f44336','#43a047','#fbc02d'],
+  },
+  {
+    label:'Level 2 — Three Colours',
+    intro:'Now three colours: 🔴 🟢 🟡 🔴 🟢 🟡 ... What comes next?',
+    segments:['🔴','🟢','🟡','🔴','🟢','🟡','🔴'],
+    colors:['#f44336','#43a047','#fbc02d','#f44336','#43a047','#fbc02d','#f44336'],
+    missingIdx:4,
+    answer:'🟢',
+    choices:['🟡','🟢','🔴','🟣'],
+    choiceColors:['#fbc02d','#43a047','#f44336','#9c27b0'],
+  },
+  {
+    label:'Level 3 — Shape Pattern',
+    intro:'Now shapes! ⭐ 🔵 ⭐ 🔵 ... What is missing?',
+    segments:['⭐','🔵','⭐','🔵','⭐','🔵','⭐'],
+    colors:['#fbc02d','#1976d2','#fbc02d','#1976d2','#fbc02d','#1976d2','#fbc02d'],
+    missingIdx:6,
+    answer:'⭐',
+    choices:['🔵','❤️','⭐','🟢'],
+    choiceColors:['#1976d2','#e91e63','#fbc02d','#43a047'],
+  },
+  {
+    label:'Level 4 — Size Pattern',
+    intro:'The segments get bigger then smaller: Small 🔴 Medium 🟠 Big 🔴 Small ... What fits?',
+    segments:['🔴','🟠','🟣','🔴','🟠','🟣','🔴'],
+    colors:['#ef9a9a','#ff9800','#9c27b0','#ef9a9a','#ff9800','#9c27b0','#ef9a9a'],
+    missingIdx:3,
+    answer:'🔴',
+    choices:['🟠','🟣','🟡','🔴'],
+    choiceColors:['#ff9800','#9c27b0','#fbc02d','#ef9a9a'],
+  },
+];
+
+// ── Quiz questions ───────────────────────────────────────
+var QUIZ_QS = [
+  { segs:['🔴','🔵','🔴','🔵','?'], segColors:['#f44336','#1976d2','#f44336','#1976d2','#fff'],
+    answer:'🔵', opts:['🔴','🔵','🟢','⭐'], optColors:['#f44336','#1976d2','#43a047','#fbc02d'],
+    q:'What comes next?' },
+  { segs:['🟢','🟡','🟢','🟡','🟢','?'], segColors:['#43a047','#fbc02d','#43a047','#fbc02d','#43a047','#fff'],
+    answer:'🟡', opts:['🟢','🔴','🟡','🟣'], optColors:['#43a047','#f44336','#fbc02d','#9c27b0'],
+    q:'What comes next?' },
+  { segs:['⭐','❤️','⭐','❤️','?'], segColors:['#fbc02d','#e91e63','#fbc02d','#e91e63','#fff'],
+    answer:'⭐', opts:['❤️','⭐','🔵','🟢'], optColors:['#e91e63','#fbc02d','#1976d2','#43a047'],
+    q:'What is missing?' },
+  { segs:['🔴','🔴','🔵','🔴','🔴','?'], segColors:['#f44336','#f44336','#1976d2','#f44336','#f44336','#fff'],
+    answer:'🔵', opts:['🔴','🟢','🔵','🟡'], optColors:['#f44336','#43a047','#1976d2','#fbc02d'],
+    q:'What comes next?' },
+];
+
+// ── Helpers ──────────────────────────────────────────────
+function dots(s) {
+  for (var i = 0; i <= 4; i++) {
+    var d = document.getElementById('d' + i);
+    if (d) d.className = 'step-dot' + (i < s ? ' done' : i === s ? ' active' : '');
+  }
+}
+
+function confettiBurst() {
+  var c = document.getElementById('confetti');
+  c.innerHTML = '';
+  var cols = ['#ffe066','#f44336','#43a047','#1976d2','#fbc02d','#9c27b0'];
+  for (var i = 0; i < 52; i++) {
+    var p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.cssText = 'left:'+(Math.random()*100)+'%;background:'+cols[Math.floor(Math.random()*cols.length)]+
+      ';width:'+(8+Math.random()*8)+'px;height:'+(8+Math.random()*8)+'px;' +
+      'border-radius:'+(Math.random()>.5?'50%':'2px')+';' +
+      'animation-delay:'+(Math.random()*.6)+'s;animation-duration:'+(1.5+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){ c.innerHTML=''; }, 3000);
+}
+
+function buildCaterpillar(segments, colors, missingIdx, solved) {
+  var segCount = segments.length;
+  var segW = 52; // width of each body segment
+  var gap = 4;   // gap between segments
+  var svgW = 60 + segCount * (segW + gap) + 20; // head + segments + tail
+  var svgH = 110;
+  var cx = 30; // head centre x
+  var bodyY = 44; // centre y of body segments
+
+  var svgContent = '';
+
+  // ── Head ───────────────────────────────────────────────
+  // Antennae
+  svgContent += '<line x1="' + (cx-10) + '" y1="' + (bodyY-22) + '" x2="' + (cx-20) + '" y2="' + (bodyY-40) + '" stroke="#5d4037" stroke-width="3" stroke-linecap="round"/>';
+  svgContent += '<circle cx="' + (cx-20) + '" cy="' + (bodyY-41) + '" r="5" fill="#f44336"/>';
+  svgContent += '<line x1="' + (cx+10) + '" y1="' + (bodyY-22) + '" x2="' + (cx+20) + '" y2="' + (bodyY-40) + '" stroke="#5d4037" stroke-width="3" stroke-linecap="round"/>';
+  svgContent += '<circle cx="' + (cx+20) + '" cy="' + (bodyY-41) + '" r="5" fill="#f44336"/>';
+  // Head circle
+  svgContent += '<circle cx="' + cx + '" cy="' + bodyY + '" r="26" fill="#66bb6a" stroke="#2e7d32" stroke-width="3"/>';
+  // Eyes
+  svgContent += '<circle cx="' + (cx-9) + '" cy="' + (bodyY-8) + '" r="6" fill="#fff" stroke="#2e7d32" stroke-width="1.5"/>';
+  svgContent += '<circle cx="' + (cx+9) + '" cy="' + (bodyY-8) + '" r="6" fill="#fff" stroke="#2e7d32" stroke-width="1.5"/>';
+  svgContent += '<circle cx="' + (cx-8) + '" cy="' + (bodyY-8) + '" r="3" fill="#1a237e"/>';
+  svgContent += '<circle cx="' + (cx+10) + '" cy="' + (bodyY-8) + '" r="3" fill="#1a237e"/>';
+  // Pupils shine
+  svgContent += '<circle cx="' + (cx-7) + '" cy="' + (bodyY-10) + '" r="1.2" fill="#fff"/>';
+  svgContent += '<circle cx="' + (cx+11) + '" cy="' + (bodyY-10) + '" r="1.2" fill="#fff"/>';
+  // Smile
+  svgContent += '<path d="M ' + (cx-8) + ' ' + (bodyY+5) + ' Q ' + cx + ' ' + (bodyY+14) + ' ' + (cx+8) + ' ' + (bodyY+5) + '" fill="none" stroke="#1b5e20" stroke-width="2.5" stroke-linecap="round"/>';
+  // Rosy cheeks
+  svgContent += '<circle cx="' + (cx-14) + '" cy="' + (bodyY+4) + '" r="5" fill="#ef9a9a" opacity="0.6"/>';
+  svgContent += '<circle cx="' + (cx+14) + '" cy="' + (bodyY+4) + '" r="5" fill="#ef9a9a" opacity="0.6"/>';
+
+  // ── Body segments ───────────────────────────────────────
+  var startX = cx + 26; // where body starts
+  for (var i = 0; i < segCount; i++) {
+    var sx = startX + i * (segW + gap) + segW/2;
+    var isMissing = (i === missingIdx && !solved);
+    var segColor = isMissing ? '#e0e0e0' : colors[i];
+    var borderColor = isMissing ? '#9e9e9e' : 'rgba(0,0,0,0.2)';
+    var borderDash = isMissing ? 'stroke-dasharray="6,4"' : '';
+
+    // Connector line between segments (and between head and first seg)
+    if (i === 0) {
+      svgContent += '<line x1="' + (cx+24) + '" y1="' + bodyY + '" x2="' + (sx - segW/2) + '" y2="' + bodyY + '" stroke="#5d4037" stroke-width="4"/>';
+    } else {
+      var prevX = startX + (i-1) * (segW + gap) + segW/2;
+      svgContent += '<line x1="' + (prevX + segW/2) + '" y1="' + bodyY + '" x2="' + (sx - segW/2) + '" y2="' + bodyY + '" stroke="#5d4037" stroke-width="4"/>';
+    }
+
+    // Segment circle
+    svgContent += '<circle cx="' + sx + '" cy="' + bodyY + '" r="' + (segW/2) + '" fill="' + segColor + '" stroke="' + borderColor + '" stroke-width="3" ' + borderDash + '/>';
+
+    // Segment content — emoji or question mark
+    if (isMissing) {
+      svgContent += '<text x="' + sx + '" y="' + (bodyY+10) + '" text-anchor="middle" font-size="26" font-weight="900" fill="#9e9e9e" font-family="Nunito,sans-serif">?</text>';
+    } else {
+      svgContent += '<text x="' + sx + '" y="' + (bodyY+11) + '" text-anchor="middle" font-size="26" font-family="Arial,sans-serif">' + segments[i] + '</text>';
+    }
+
+    // Legs — two per segment, alternating up and down
+    var legY1 = bodyY + segW/2 - 2;
+    var legY2 = bodyY - segW/2 + 2;
+    // Left leg (down)
+    svgContent += '<line x1="' + (sx-10) + '" y1="' + legY1 + '" x2="' + (sx-18) + '" y2="' + (legY1+18) + '" stroke="#5d4037" stroke-width="3" stroke-linecap="round"/>';
+    svgContent += '<line x1="' + (sx-18) + '" y1="' + (legY1+18) + '" x2="' + (sx-28) + '" y2="' + (legY1+14) + '" stroke="#5d4037" stroke-width="2.5" stroke-linecap="round"/>';
+    // Right leg (down)
+    svgContent += '<line x1="' + (sx+10) + '" y1="' + legY1 + '" x2="' + (sx+18) + '" y2="' + (legY1+18) + '" stroke="#5d4037" stroke-width="3" stroke-linecap="round"/>';
+    svgContent += '<line x1="' + (sx+18) + '" y1="' + (legY1+18) + '" x2="' + (sx+28) + '" y2="' + (legY1+14) + '" stroke="#5d4037" stroke-width="2.5" stroke-linecap="round"/>';
+  }
+
+  // ── Tail ────────────────────────────────────────────────
+  var lastX = startX + (segCount-1) * (segW + gap) + segW;
+  svgContent += '<ellipse cx="' + (lastX+10) + '" cy="' + bodyY + '" rx="10" ry="7" fill="#43a047" stroke="#2e7d32" stroke-width="2"/>';
+
+  var html = '<div class="caterpillar-wrap" style="overflow-x:auto;padding:8px 4px">' +
+    '<svg viewBox="0 0 ' + svgW + ' ' + svgH + '" width="' + Math.min(svgW, 640) + '" height="' + svgH + '" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto">' +
+    svgContent +
+    '</svg></div>';
+  return html;
+}
+
+// ── STEP 0 — Preface ─────────────────────────────────────
+function renderStep0() {
+  // Show a simple demo caterpillar
+  var demoSegs = ['🔴','🔵','🔴','🔵','🔴','🔵'];
+  var demoCols = ['#f44336','#1976d2','#f44336','#1976d2','#f44336','#1976d2'];
+  var catHtml = buildCaterpillar(demoSegs, demoCols, -1, true);
+
+  document.getElementById('mainArea').innerHTML =
+    '<div class="preface">' +
+    '<div class="preface-row"><div class="preface-icon">📘</div><div><strong>What you will learn:</strong> What a pattern is — a rule that repeats — and how to find the missing piece.</div></div>' +
+    '<div class="preface-row"><div class="preface-icon">🌍</div><div><strong>Why it matters:</strong> Patterns are everywhere — in music, seasons, clothes, buildings. Spotting patterns is one of the most important skills in maths!</div></div>' +
+    '<div class="preface-row"><div class="preface-icon">🎯</div><div><strong>By the end:</strong> You will be able to spot a repeating pattern and work out what comes next — every time!</div></div>' +
+    '</div>' +
+    '<div class="caterpillar-scene" style="margin-bottom:10px">' +
+    '<div style="text-align:center;font-family:Fredoka One,cursive;font-size:clamp(13px,3vw,16px);color:#e65100;margin-bottom:8px">See the pattern? 🔴🔵🔴🔵...</div>' +
+    catHtml +
+    '<div class="bg-flowers"><span class="flower">🌸</span><span class="flower">🌼</span><span class="flower">🌺</span><span class="flower">🌸</span><span class="flower">🌼</span></div>' +
+    '</div>';
+}
+
+// ── STEP 1 — Pattern puzzles ──────────────────────────────
+var levelSolved = false;
+function renderStep1() {
+  patternLevel = 0;
+  levelSolved = false;
+  puzzlesCompleted = 0;
+  showLevel();
+}
+
+function showLevel() {
+  if (patternLevel >= LEVELS.length) {
+    showAllDone();
+    return;
+  }
+  var lv = LEVELS[patternLevel];
+  levelSolved = false;
+
+  var progHtml = '<div class="progress-row">';
+  for (var i = 0; i < LEVELS.length; i++) {
+    progHtml += '<div class="prog-dot' +
+      (i < patternLevel ? ' done-p' : i === patternLevel ? ' current-p' : '') + '"></div>';
+  }
+  progHtml += '</div>';
+
+  var catHtml = buildCaterpillar(lv.segments, lv.colors, lv.missingIdx, false);
+
+  var choicesHtml = '<div class="choices">';
+  lv.choices.forEach(function(ch, ci) {
+    choicesHtml += '<div class="choice-btn" style="background:' + lv.choiceColors[ci] + '" ' +
+      'onclick="pickChoice(\'' + ch + '\',\'' + lv.answer + '\',' + patternLevel + ')">' +
+      ch + '</div>';
+  });
+  choicesHtml += '</div>';
+
+  document.getElementById('mainArea').innerHTML =
+    progHtml +
+    '<div class="level-badge">🐛 ' + lv.label + '</div>' +
+    '<div style="font-size:clamp(13px,2.5vw,15px);font-weight:700;color:#555;margin-bottom:10px;text-align:center">' + lv.intro + '</div>' +
+    '<div class="caterpillar-scene">' +
+    catHtml +
+    '<div class="bg-flowers"><span class="flower">🌸</span><span class="flower">🌼</span><span class="flower">🌺</span><span class="flower">🌸</span><span class="flower">🌼</span></div>' +
+    '</div>' +
+    '<div style="text-align:center;font-family:Fredoka One,cursive;font-size:clamp(13px,3vw,16px);color:#e65100;margin-bottom:8px">Pick the missing segment! 👇</div>' +
+    choicesHtml +
+    '<div id="levelResult" style="text-align:center;font-family:Fredoka One,cursive;font-size:clamp(14px,3vw,18px);min-height:24px"></div>';
+}
+
+function pickChoice(chosen, correct, lvIdx) {
+  if (levelSolved) return;
+  var lv = LEVELS[lvIdx];
+  var res = document.getElementById('levelResult');
+
+  if (chosen === correct) {
+    levelSolved = true;
+    // Fill in the missing segment
+    var solved = buildCaterpillar(lv.segments, lv.colors, -1, true);
+    var scene = document.querySelector('.caterpillar-scene');
+    if (scene) scene.innerHTML = solved +
+      '<div class="bg-flowers"><span class="flower">🌸</span><span class="flower">🌼</span><span class="flower">🌺</span><span class="flower">🌸</span><span class="flower">🌼</span></div>';
+
+    if (res) { res.textContent = '✅ Well done! You found the pattern!'; res.style.color = '#2e7d32'; }
+    document.getElementById('nia').innerHTML =
+      '✅ <strong>Correct!</strong> ' + correct + ' fits the pattern! ' + lv.intro;
+
+    puzzlesCompleted++;
+    if (puzzlesCompleted === LEVELS.length) confettiBurst();
+
+    setTimeout(function() {
+      patternLevel++;
+      showLevel();
+    }, 1400);
+  } else {
+    if (res) { res.textContent = '❌ Not quite! Look at the rule again...'; res.style.color = '#c62828'; }
+    document.getElementById('nia').innerHTML = '💛 Look carefully at the pattern — what comes after <strong>' + lv.segments[lv.missingIdx - 1] + '</strong>?';
+    setTimeout(function() { if (res) { res.textContent = ''; } }, 1200);
+  }
+}
+
+function showAllDone() {
+  document.getElementById('mainArea').innerHTML =
+    '<div style="text-align:center;padding:16px 0">' +
+    '<div style="font-size:64px">🎉</div>' +
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(18px,4vw,26px);color:#e65100;margin-top:10px">You solved all 4 patterns!</div>' +
+    '<div style="font-size:clamp(13px,3vw,16px);font-weight:700;color:#555;margin-top:8px">Catie the Caterpillar is so happy! 🐛💚</div>' +
+    '</div>';
+  document.getElementById('nia').innerHTML = '🎉 Amazing! You found the rule in <strong>every</strong> pattern! A pattern is a rule that <em>repeats</em> — and you can always work it out!';
+}
+
+// ── STEP 2 — Create your own pattern ─────────────────────
+var myPattern = [];
+var PALETTE = [
+  { emoji:'🔴', color:'#f44336' },
+  { emoji:'🔵', color:'#1976d2' },
+  { emoji:'🟢', color:'#43a047' },
+  { emoji:'🟡', color:'#fbc02d' },
+  { emoji:'🟣', color:'#9c27b0' },
+  { emoji:'⭐', color:'#ff8f00' },
+  { emoji:'❤️', color:'#e91e63' },
+  { emoji:'🔶', color:'#ff6d00' },
+];
+
+function renderStep2() {
+  myPattern = [];
+  buildCreateScene();
+}
+
+function buildCreateScene() {
+  var catHtml = '<div class="caterpillar-wrap"><span class="cat-head">🐛</span>';
+  if (myPattern.length === 0) {
+    catHtml += '<div style="font-size:clamp(13px,3vw,16px);font-weight:700;color:#aaa;padding:12px">Pick colours to build your pattern!</div>';
+  } else {
+    myPattern.forEach(function(seg) {
+      catHtml += '<div class="cat-seg" style="background:' + seg.color + ';cursor:default"><span>' + seg.emoji + '</span></div>';
+    });
+  }
+  catHtml += '</div>';
+
+  var paletteHtml = '<div class="choices" style="margin-bottom:10px">';
+  PALETTE.forEach(function(p, i) {
+    paletteHtml += '<div class="choice-btn" style="background:' + p.color + '" onclick="addToPattern(' + i + ')">' + p.emoji + '</div>';
+  });
+  paletteHtml += '</div>';
+
+  document.getElementById('mainArea').innerHTML =
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(13px,3vw,16px);color:#e65100;margin-bottom:10px;text-align:center">Pick colours to build Catie\'s pattern! 🎨</div>' +
+    '<div class="caterpillar-scene" style="margin-bottom:10px">' +
+    catHtml +
+    '<div class="bg-flowers"><span class="flower">🌸</span><span class="flower">🌼</span><span class="flower">🌺</span><span class="flower">🌸</span><span class="flower">🌼</span></div>' +
+    '</div>' +
+    paletteHtml +
+    '<div style="display:flex;gap:8px;justify-content:center">' +
+    '<button onclick="undoLast()" style="padding:8px 18px;border-radius:12px;border:2px solid #ffcc80;background:#fff;font-family:Fredoka One,cursive;font-size:15px;cursor:pointer;color:#e65100">↩ Undo</button>' +
+    '<button onclick="clearMyPattern()" style="padding:8px 18px;border-radius:12px;border:2px solid #ffcc80;background:#fff;font-family:Fredoka One,cursive;font-size:15px;cursor:pointer;color:#e65100">🗑️ Clear</button>' +
+    '</div>';
+}
+
+function addToPattern(idx) {
+  if (myPattern.length >= 12) return;
+  myPattern.push(PALETTE[idx]);
+  buildCreateScene();
+  document.getElementById('nia').innerHTML = 'Great choice! Keep building your pattern — make sure it <em>repeats</em>! 🐛';
+}
+function undoLast() { myPattern.pop(); buildCreateScene(); }
+function clearMyPattern() { myPattern = []; buildCreateScene(); }
+
+// ── STEP 3 — Quiz ─────────────────────────────────────────
+function renderStep3() {
+  quizIdx = 0;
+  quizCorrect = 0;
+  showQuizQ();
+}
+
+function showQuizQ() {
+  if (quizIdx >= QUIZ_QS.length) { showQuizEnd(); return; }
+  var q = QUIZ_QS[quizIdx];
+  var stars = '';
+  for (var i = 0; i < QUIZ_QS.length; i++)
+    stars += '<div class="star' + (i < quizCorrect ? ' earned' : '') + '">⭐</div>';
+
+  // Build a proper caterpillar SVG for the quiz
+  var segHtml = buildCaterpillar(q.segs, q.segColors, q.segs.indexOf('?'), false);
+
+  var optsHtml = '<div class="quiz-options">';
+  q.opts.forEach(function(o, oi) {
+    optsHtml += '<button class="quiz-btn" style="background:' + q.optColors[oi] + '" onclick="answerQ(\'' + o + '\',\'' + q.answer + '\')">' + o + '</button>';
+  });
+  optsHtml += '</div>';
+
+  document.getElementById('mainArea').innerHTML =
+    '<div class="stars">' + stars + '</div>' +
+    '<div class="quiz-area">' +
+    '<div class="quiz-q">' + q.q + '</div>' +
+    segHtml +
+    optsHtml +
+    '<div class="quiz-result" id="qRes"></div>' +
+    '</div>';
+}
+
+function answerQ(chosen, correct) {
+  var btns = document.querySelectorAll('.quiz-btn');
+  btns.forEach(function(b) { b.disabled = true; });
+  var res = document.getElementById('qRes');
+  if (chosen === correct) {
+    btns.forEach(function(b) { if (b.textContent.trim() === correct) b.className = 'quiz-btn correct'; });
+    quizCorrect++;
+    if (res) { res.textContent = '✅ Correct! Great pattern spotting!'; res.className = 'quiz-result correct'; }
+    document.getElementById('nia').innerHTML = '✅ <strong>Correct!</strong> You spotted the pattern! 🐛';
+  } else {
+    btns.forEach(function(b) {
+      if (b.textContent.trim() === chosen) b.className = 'quiz-btn wrong';
+      if (b.textContent.trim() === correct) b.className = 'quiz-btn correct';
+    });
+    if (res) { res.textContent = '❌ Not quite! The answer is ' + correct; res.className = 'quiz-result wrong'; }
+    document.getElementById('nia').innerHTML = '💛 Look at the rule — what repeats? The answer is <strong>' + correct + '</strong>!';
+  }
+  quizIdx++;
+  if(chosen === correct){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;showQuizQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxtOk=document.createElement('button');
+    nxtOk.textContent='Next \u2192';
+    nxtOk.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxtOk.onclick=function(){clearTimeout(_t);_doAdv();};
+    var _r=document.getElementById('quizResult')||document.getElementById('qResult')||document.getElementById('qRes');
+    if(_r&&_r.parentNode)_r.parentNode.appendChild(nxtOk);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent='Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){showQuizQ();};
+    var _r2=document.getElementById('quizResult')||document.getElementById('qResult')||document.getElementById('qRes');
+    if(_r2&&_r2.parentNode)_r2.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQuizEnd() {
+  var stars = '';
+  for (var i = 0; i < QUIZ_QS.length; i++)
+    stars += '<div class="star' + (i < quizCorrect ? ' earned' : '') + '">⭐</div>';
+  var msg = quizCorrect === 4 ? '🏆 PERFECT! You are a pattern master!' :
+            quizCorrect >= 3 ? '🌟 Brilliant! Almost perfect!' :
+            quizCorrect >= 2 ? '👍 Good work! Keep practising!' : '💪 Keep looking for the rule!';
+  document.getElementById('mainArea').innerHTML =
+    '<div class="stars">' + stars + '</div>' +
+    '<div style="text-align:center;padding:16px;background:linear-gradient(135deg,#fff8e1,#f1f8e9);border-radius:18px;border:2.5px solid #ffcc80">' +
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(17px,4vw,24px);color:#e65100;margin-bottom:8px">' + msg + '</div>' +
+    '<div style="font-size:clamp(14px,3vw,17px);font-weight:700;color:#555">You got <strong style="color:#e53935">' + quizCorrect + '</strong> out of <strong>4</strong> correct!</div>' +
+    '</div>';
+  if (quizCorrect >= 3) confettiBurst();
+  document.getElementById('nia').innerHTML = quizCorrect === 4 ?
+    '🏆 <strong>Perfect!</strong> You can spot any pattern! Catie is so proud! 🐛' :
+    '🌟 Well done! Remember — a pattern is a <em>rule that repeats</em>!';
+}
+
+// ── STEP 4 — Summary ──────────────────────────────────────
+function renderStep4() {
+  document.getElementById('mainArea').innerHTML =
+    '<div style="text-align:center;padding:8px 0 14px">' +
+    '<div style="font-size:64px">🏆</div>' +
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(17px,4vw,24px);color:#e65100;margin-top:8px;margin-bottom:14px">You are a pattern spotter!</div>' +
+    '</div>' +
+    '<div class="preface">' +
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>A <strong>pattern</strong> is a rule that repeats — like 🔴🔵🔴🔵 or 🟢🟡🟢🟡.</div></div>' +
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>To find the missing piece — <strong>spot the rule</strong>, then follow it!</div></div>' +
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>Patterns are everywhere — in music 🎵, seasons 🍂❄️🌸☀️, tiles 🔲 and clothes 👕!</div></div>' +
+    '<div class="preface-row"><div class="preface-icon">🚀</div><div>Next — we will explore <strong>measurement</strong>!</div></div>' +
+    '</div>' +
+    '<div style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap">' +
+    ['🔴🔵🔴🔵','🟢🟡🟢🟡','⭐❤️⭐❤️','🟣🟢🟣🟢'].map(function(p){
+      return '<div style="background:rgba(255,200,80,.15);border:2px solid #ffcc80;border-radius:12px;' +
+        'padding:8px 14px;font-family:Fredoka One,cursive;font-size:clamp(14px,3vw,18px);letter-spacing:2px">' + p + '</div>';
+    }).join('') +
+    '</div>';
+  confettiBurst();
+}
+
+// ── Navigation ────────────────────────────────────────────
+var NIA = [
+  "Look at Catie the Caterpillar! Each segment of her body has a <strong>colour or shape</strong>. Do you notice something? The segments follow a <em>pattern</em>! 🐛",
+  "Help Catie! Each of her body segments follows a pattern — but one segment is <strong>missing</strong>! Pick the right one to complete her! 🐛",
+  "Now it is your turn! Pick colours from the palette to build <strong>your own pattern</strong> for Catie! 🎨",
+  "Quiz time! 🎉 Look at these caterpillars and pick the missing segment!",
+  "Amazing! 🏆 You are a brilliant pattern spotter — and Catie has never looked more colourful!"
+];
+
+var BTNS = [
+  "What is a pattern? →",
+  "Complete the pattern! →",
+  "Make your own! →",
+  "Quiz time! →",
+  "🔁 Play Again!"
+];
+
+var RENDERS = [renderStep0, renderStep1, renderStep2, renderStep3, renderStep4];
+
+function goStep(dir) {
+  currentStep = Math.max(0, Math.min(4, currentStep + dir));
+  dots(currentStep);
+  document.getElementById('nia').innerHTML = NIA[currentStep];
+  document.getElementById('btnBack').disabled = (currentStep === 0);
+  document.getElementById('btnNext').textContent = BTNS[currentStep];
+  document.getElementById('btnNext').disabled = false;
+  if (currentStep === 4) {
+    document.getElementById('btnNext').onclick = function(){ goStep(-4); };
+  } else {
+    document.getElementById('btnNext').onclick = function(){ goStep(1); };
+  }
+  RENDERS[currentStep]();
+}
+
+goStep(0);
+</script>
+</body>
+</html>

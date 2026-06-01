@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya — Why Probability? (Ages 8–10)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap');
+  :root{--bg:#fff7ed;--panel:#fff;--violet:#7c5cfc;--sky:#38bdf8;--em:#10b981;--rose:#f43f5e;--amber:#f59e0b;--txt:#1a1a2e;--muted:#6b7280;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+  .header{text-align:center;margin-bottom:16px;}
+  .header-tag{display:inline-block;background:rgba(245,158,11,.12);color:#d97706;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:6px;}
+  .header h1{font-family:'Baloo 2',cursive;font-size:clamp(18px,5vw,28px);color:var(--txt);}
+  .header h1 span{color:var(--amber);}
+  .card{background:var(--panel);border-radius:28px;padding:24px;max-width:700px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,.08);}
+  .steps{display:flex;gap:8px;justify-content:center;margin-bottom:14px;}
+  .step-dot{width:10px;height:10px;border-radius:50%;background:#e5e7eb;transition:all .3s;}
+  .step-dot.active{background:var(--amber);transform:scale(1.3);}
+  .step-dot.done{background:var(--em);}
+  .nia-area{display:flex;align-items:flex-start;gap:11px;margin-bottom:16px;min-height:62px;}
+  .nia-avatar{width:44px;height:44px;background:linear-gradient(135deg,var(--amber),#fb923c);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;box-shadow:0 4px 12px rgba(245,158,11,.3);animation:nb 2s ease-in-out infinite;}
+  @keyframes nb{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+  .nia-bubble{background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(251,146,60,.06));border:1.5px solid rgba(245,158,11,.2);border-radius:16px 16px 16px 4px;padding:12px 15px;font-size:clamp(12px,2.5vw,14px);font-weight:700;color:var(--txt);line-height:1.6;flex:1;}
+  /* Main layout */
+  .main-row{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;justify-content:center;}
+  /* Bag side */
+  .bag-side{display:flex;flex-direction:column;align-items:center;gap:12px;min-width:200px;}
+  canvas#bagCanvas{border-radius:12px;}
+  /* Marble controls */
+  .marble-controls{display:flex;flex-direction:column;gap:8px;width:100%;}
+  .marble-row{display:flex;align-items:center;gap:8px;justify-content:center;}
+  .m-dot{width:18px;height:18px;border-radius:50%;flex-shrink:0;}
+  .m-label{font-size:12px;font-weight:800;color:var(--txt);width:50px;}
+  .m-btn{width:28px;height:28px;border-radius:50%;border:2px solid #e5e7eb;background:#fff;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;line-height:1;}
+  .m-btn:hover{border-color:var(--amber);color:var(--amber);transform:scale(1.1);}
+  .m-count{font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;width:24px;text-align:center;}
+  .prob-fraction{font-size:11px;font-weight:700;color:var(--muted);margin-left:4px;}
+  /* Pick button */
+  .pick-btn{padding:12px 24px;border-radius:50px;border:none;background:linear-gradient(135deg,var(--amber),#fb923c);color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(245,158,11,.35);transition:all .2s;width:100%;}
+  .pick-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(245,158,11,.45);}
+  .pick-btn:active{transform:scale(.97);}
+  .pick-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+  .pick-count{font-size:11px;font-weight:700;color:var(--muted);text-align:center;}
+  /* Results side */
+  .results-side{flex:1;min-width:220px;display:flex;flex-direction:column;gap:12px;}
+  .result-header{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:center;}
+  /* Result bars */
+  .result-bars{display:flex;flex-direction:column;gap:8px;}
+  .result-row{display:flex;align-items:center;gap:8px;}
+  .r-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;}
+  .r-label{font-size:12px;font-weight:800;width:42px;color:var(--txt);}
+  .r-bar-wrap{flex:1;background:#f3f4f6;border-radius:20px;height:20px;overflow:hidden;position:relative;}
+  .r-bar{height:100%;border-radius:20px;transition:width .4s cubic-bezier(.34,1.2,.64,1);display:flex;align-items:center;justify-content:flex-end;padding-right:6px;}
+  .r-bar-txt{font-size:10px;font-weight:800;color:#fff;white-space:nowrap;}
+  .r-count{font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;width:24px;text-align:right;color:var(--txt);}
+  /* Last picked */
+  .last-picked{text-align:center;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;}
+  .picked-marble{font-size:44px;opacity:0;transform:scale(0) translateY(-20px);transition:all .35s cubic-bezier(.34,1.56,.64,1);}
+  .picked-marble.show{opacity:1;transform:scale(1) translateY(0);}
+  .picked-label{font-size:12px;font-weight:800;color:var(--muted);}
+  /* Insight */
+  .insight{background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(251,146,60,.06));border:1.5px solid rgba(245,158,11,.25);border-radius:14px;padding:12px 16px;font-size:13px;font-weight:700;color:var(--txt);line-height:1.7;opacity:0;transform:translateY(8px);transition:all .5s;text-align:center;}
+  .insight.show{opacity:1;transform:translateY(0);}
+  .insight strong{color:#d97706;}
+  /* Reset btn */
+  .reset-btn{padding:9px 20px;border-radius:50px;border:2px solid #e5e7eb;background:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;color:var(--muted);transition:all .2s;display:none;}
+  .reset-btn:hover{border-color:var(--violet);color:var(--violet);}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="header">
+  <div class="header-tag">Shikooya · Ages 8–10 · Concept Animation</div>
+  <h1>What is <span>probability</span>?</h1>
+</div>
+<div class="card">
+  <div class="steps">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+  </div>
+  <div class="nia-area">
+    <div class="nia-avatar">🦋</div>
+    <div class="nia-bubble" id="nia">There are marbles in the bag — but you cannot see them! 👜 Without looking, pick one. Which colour do you <em>think</em> you will get? Then keep picking and watch what happens!</div>
+  </div>
+
+  <div class="main-row">
+
+    <!-- Left: Bag + controls -->
+    <div class="bag-side">
+      <canvas id="bagCanvas" width="200" height="200"></canvas>
+
+      <!-- Marble count controls -->
+      <div class="marble-controls" id="marbleControls">
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:center">Change marble counts:</div>
+        <div class="marble-row">
+          <div class="m-dot" style="background:#f43f5e"></div>
+          <span class="m-label" style="color:#f43f5e">Red</span>
+          <button class="m-btn" onclick="changeMarble('red',-1)">−</button>
+          <span class="m-count" id="cntRed">3</span>
+          <button class="m-btn" onclick="changeMarble('red',1)">+</button>
+          <span class="prob-fraction" id="fRed"></span>
+        </div>
+        <div class="marble-row">
+          <div class="m-dot" style="background:#38bdf8"></div>
+          <span class="m-label" style="color:#38bdf8">Blue</span>
+          <button class="m-btn" onclick="changeMarble('blue',-1)">−</button>
+          <span class="m-count" id="cntBlue">5</span>
+          <button class="m-btn" onclick="changeMarble('blue',1)">+</button>
+          <span class="prob-fraction" id="fBlue"></span>
+        </div>
+        <div class="marble-row">
+          <div class="m-dot" style="background:#10b981"></div>
+          <span class="m-label" style="color:#10b981">Green</span>
+          <button class="m-btn" onclick="changeMarble('green',-1)">−</button>
+          <span class="m-count" id="cntGreen">2</span>
+          <button class="m-btn" onclick="changeMarble('green',1)">+</button>
+          <span class="prob-fraction" id="fGreen"></span>
+        </div>
+      </div>
+
+      <button class="pick-btn" id="pickBtn" onclick="pickMarble()">👜 Pick a marble!</button>
+      <div class="pick-count" id="pickCount">0 picks so far</div>
+      <button class="reset-btn" id="resetBtn" onclick="doReset()">🔄 Empty the chart</button>
+    </div>
+
+    <!-- Right: Results -->
+    <div class="results-side">
+      <div class="last-picked">
+        <div class="picked-marble" id="pickedMarble">🔴</div>
+        <div class="picked-label" id="pickedLabel">Pick a marble to start!</div>
+      </div>
+
+      <div class="result-header">Results so far</div>
+      <div class="result-bars">
+        <div class="result-row">
+          <div class="r-dot" style="background:#f43f5e"></div>
+          <div class="r-label">Red</div>
+          <div class="r-bar-wrap"><div class="r-bar" id="barRed" style="width:0%;background:#f43f5e"><span class="r-bar-txt" id="pctRed"></span></div></div>
+          <div class="r-count" id="countRed">0</div>
+        </div>
+        <div class="result-row">
+          <div class="r-dot" style="background:#38bdf8"></div>
+          <div class="r-label">Blue</div>
+          <div class="r-bar-wrap"><div class="r-bar" id="barBlue" style="width:0%;background:#38bdf8"><span class="r-bar-txt" id="pctBlue"></span></div></div>
+          <div class="r-count" id="countBlue">0</div>
+        </div>
+        <div class="result-row">
+          <div class="r-dot" style="background:#10b981"></div>
+          <div class="r-label">Green</div>
+          <div class="r-bar-wrap"><div class="r-bar" id="barGreen" style="width:0%;background:#10b981"><span class="r-bar-txt" id="pctGreen"></span></div></div>
+          <div class="r-count" id="countGreen">0</div>
+        </div>
+      </div>
+
+      <!-- Probability prediction -->
+      <div style="background:#f9fafb;border-radius:12px;padding:12px;margin-top:4px;">
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px">What probability predicts:</div>
+        <div class="result-bars" id="predBars">
+          <div class="result-row">
+            <div class="r-dot" style="background:rgba(244,63,94,.3)"></div>
+            <div class="r-label" style="color:var(--muted)">Red</div>
+            <div class="r-bar-wrap"><div class="r-bar" id="predRed" style="width:0%;background:rgba(244,63,94,.35)"><span class="r-bar-txt" id="predPctRed"></span></div></div>
+          </div>
+          <div class="result-row">
+            <div class="r-dot" style="background:rgba(56,189,248,.3)"></div>
+            <div class="r-label" style="color:var(--muted)">Blue</div>
+            <div class="r-bar-wrap"><div class="r-bar" id="predBlue" style="width:0%;background:rgba(56,189,248,.35)"><span class="r-bar-txt" id="predPctBlue"></span></div></div>
+          </div>
+          <div class="result-row">
+            <div class="r-dot" style="background:rgba(16,185,129,.3)"></div>
+            <div class="r-label" style="color:var(--muted)">Green</div>
+            <div class="r-bar-wrap"><div class="r-bar" id="predGreen" style="width:0%;background:rgba(16,185,129,.35)"><span class="r-bar-txt" id="predPctGreen"></span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="insight" id="insight">
+        🌟 After many picks, the results get <strong>closer and closer</strong> to what probability predicts!<br>
+        Probability doesn't tell you what WILL happen — it tells you what is <strong>likely</strong> to happen over many tries.<br>
+        Change the marble counts and watch the predictions shift!
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Marble counts
+let marbles={red:3,blue:5,green:2};
+// Results
+let results={red:0,blue:0,green:0};
+let totalPicks=0;
+let picking=false;
+let step=0;
+
+const COLOURS={red:'#f43f5e',blue:'#38bdf8',green:'#10b981'};
+const EMOJIS={red:'🔴',blue:'🔵',green:'🟢'};
+const NAMES={red:'Red',blue:'Blue',green:'Green'};
+
+const bagCv=document.getElementById('bagCanvas');
+const bct=bagCv.getContext('2d');
+
+const MSGS=[
+  "There are marbles in the bag — but you cannot see them! 👜 Without looking, pick one. Which colour do you <em>think</em> you will get? Then keep picking and watch what happens!",
+  "Keep picking! After many picks, do you notice the results getting closer to what probability predicts? 🤔",
+  "🌟 Look how close the results are to the predictions! The more you pick, the closer they get. That is what probability means — not certainty, but <strong>likelihood over many tries</strong>!",
+];
+
+function nia(t){ document.getElementById('nia').innerHTML=t; }
+function dots(s){ for(let i=0;i<=2;i++){ const d=document.getElementById('d'+i); d.className='step-dot'+(i<s?' done':i===s?' active':''); }}
+
+function total(){ return marbles.red+marbles.blue+marbles.green; }
+
+function updateProbs(){
+  const t=total();
+  ['red','blue','green'].forEach(c=>{
+    const pct=t>0?Math.round(marbles[c]/t*100):0;
+    document.getElementById('cnt'+cap(c)).textContent=marbles[c];
+    document.getElementById('f'+cap(c)).textContent=t>0?`${marbles[c]}/${t}`:'';
+    document.getElementById('pred'+cap(c)).style.width=pct+'%';
+    document.getElementById('predPct'+cap(c)).textContent=pct>8?pct+'%':'';
+  });
+  drawBag();
+}
+
+function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+function changeMarble(col,delta){
+  const newVal=marbles[col]+delta;
+  if(newVal<0||newVal>10||total()+delta<1||total()+delta>15) return;
+  marbles[col]=newVal;
+  updateProbs();
+}
+
+function updateResults(){
+  const t=totalPicks;
+  ['red','blue','green'].forEach(c=>{
+    const pct=t>0?Math.round(results[c]/t*100):0;
+    document.getElementById('bar'+cap(c)).style.width=pct+'%';
+    document.getElementById('pct'+cap(c)).textContent=pct>8?pct+'%':'';
+    document.getElementById('count'+cap(c)).textContent=results[c];
+  });
+  document.getElementById('pickCount').textContent=totalPicks+' pick'+(totalPicks!==1?'s':'')+' so far';
+}
+
+function pickMarble(){
+  if(picking||total()===0) return;
+  picking=true;
+  document.getElementById('pickBtn').disabled=true;
+
+  // Weighted random pick
+  const t=total();
+  const r=Math.random()*t;
+  let cum=0, picked='red';
+  for(const c of['red','blue','green']){
+    cum+=marbles[c];
+    if(r<cum){ picked=c; break; }
+  }
+
+  // Show picked marble animation
+  const marble=document.getElementById('pickedMarble');
+  const label=document.getElementById('pickedLabel');
+  marble.classList.remove('show');
+  marble.textContent=EMOJIS[picked];
+
+  setTimeout(()=>{
+    marble.classList.add('show');
+    label.textContent=NAMES[picked]+' marble!';
+    label.style.color=COLOURS[picked];
+    results[picked]++;
+    totalPicks++;
+    updateResults();
+
+    // Step progression
+    if(totalPicks===5&&step===0){
+      step=1; dots(1); nia(MSGS[1]);
+      document.getElementById('resetBtn').style.display='block';
+    }
+    if(totalPicks===20&&step===1){
+      step=2; dots(2); nia(MSGS[2]);
+      document.getElementById('insight').classList.add('show');
+    }
+
+    setTimeout(()=>{ picking=false; document.getElementById('pickBtn').disabled=false; },300);
+  },150);
+}
+
+function doReset(){
+  results={red:0,blue:0,green:0};
+  totalPicks=0; step=0; picking=false;
+  dots(0); nia(MSGS[0]);
+  updateResults();
+  document.getElementById('pickedMarble').classList.remove('show');
+  document.getElementById('pickedLabel').textContent='Pick a marble to start!';
+  document.getElementById('pickedLabel').style.color='';
+  document.getElementById('insight').classList.remove('show');
+  document.getElementById('resetBtn').style.display='none';
+}
+
+// ── Draw the bag ─────────────────────────────────────────
+function drawBag(){
+  bct.clearRect(0,0,200,200);
+
+  const cx=100,cy=110;
+
+  // Bag body
+  bct.save();
+  const bgd=bct.createRadialGradient(cx-20,cy-20,10,cx,cy,80);
+  bgd.addColorStop(0,'#fde68a'); bgd.addColorStop(1,'#d97706');
+  bct.fillStyle=bgd;
+  bct.beginPath();
+  bct.moveTo(cx-60,cy-30);
+  bct.bezierCurveTo(cx-70,cy+60,cx-50,cy+80,cx,cy+90);
+  bct.bezierCurveTo(cx+50,cy+80,cx+70,cy+60,cx+60,cy-30);
+  bct.bezierCurveTo(cx+40,cy-60,cx-40,cy-60,cx-60,cy-30);
+  bct.closePath();
+  bct.fill();
+  bct.strokeStyle='#92400e'; bct.lineWidth=2.5; bct.stroke();
+  bct.restore();
+
+  // Bag opening (top)
+  bct.fillStyle='#92400e';
+  bct.beginPath();
+  bct.ellipse(cx,cy-30,38,12,0,0,Math.PI*2);
+  bct.fill();
+
+  // Tie/knot
+  bct.fillStyle='#f59e0b';
+  bct.beginPath(); bct.roundRect(cx-12,cy-55,24,18,9); bct.fill();
+  bct.strokeStyle='#92400e'; bct.lineWidth=1.5; bct.stroke();
+
+  // Drawstring loops
+  bct.strokeStyle='#92400e'; bct.lineWidth=2.5; bct.lineCap='round';
+  bct.beginPath(); bct.moveTo(cx-8,cy-52); bct.bezierCurveTo(cx-24,cy-70,cx-20,cy-80,cx,cy-75); bct.stroke();
+  bct.beginPath(); bct.moveTo(cx+8,cy-52); bct.bezierCurveTo(cx+24,cy-70,cx+20,cy-80,cx,cy-75); bct.stroke();
+
+  // Marbles visible through bag (hint of colours)
+  const t=total();
+  if(t===0) return;
+  const cols=[];
+  for(const c of['red','blue','green']) for(let i=0;i<marbles[c];i++) cols.push(COLOURS[c]);
+  // Shuffle for display
+  for(let i=cols.length-1;i>0;i--){ const j=Math.floor(Math.random()*0.3+0.35*(i+1))%cols.length; [cols[i],cols[j]]=[cols[j],cols[i]]; }
+
+  const rows=3,perRow=Math.ceil(cols.length/rows);
+  let ci=0;
+  for(let r=0;r<rows&&ci<cols.length;r++){
+    for(let p=0;p<perRow&&ci<cols.length;p++){
+      const mx=cx-28+p*20+(r%2)*10;
+      const my=cy+20+r*22;
+      if(my>cy+85) break;
+      bct.beginPath(); bct.arc(mx,my,8,0,Math.PI*2);
+      bct.fillStyle=cols[ci]+'cc';
+      bct.fill();
+      bct.strokeStyle='rgba(0,0,0,.2)'; bct.lineWidth=1; bct.stroke();
+      // Shine
+      bct.beginPath(); bct.arc(mx-2,my-2,3,0,Math.PI*2);
+      bct.fillStyle='rgba(255,255,255,.5)'; bct.fill();
+      ci++;
+    }
+  }
+
+  // Bag shine
+  bct.save();
+  bct.globalAlpha=0.18;
+  bct.fillStyle='white';
+  bct.beginPath();
+  bct.ellipse(cx-18,cy,14,28,-(Math.PI/5),0,Math.PI*2);
+  bct.fill();
+  bct.restore();
+}
+
+// Init
+updateProbs();
+updateResults();
+</script>
+</body>
+</html>

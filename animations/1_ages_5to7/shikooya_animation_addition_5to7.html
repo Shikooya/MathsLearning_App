@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya — Basic Addition (Ages 5–7)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap');
+  :root {
+    --red:#e53935;--green:#43a047;--amber:#f59e0b;--violet:#7c5cfc;
+    --sky:#87ceeb;--grass:#5cb85c;--wood:#8d6e63;--wood2:#6d4c41;
+    --txt:#1a1a2e;--panel:rgba(255,255,255,0.93);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Nunito',sans-serif;
+    background:linear-gradient(180deg,#fff9f0 0%,#fff3e0 100%);
+    min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:16px;
+  }
+  .header{text-align:center;margin-bottom:12px;width:100%;max-width:700px;}
+  .age-badge{display:inline-block;background:linear-gradient(135deg,#ff9800,#f44336);
+    color:#fff;font-size:13px;font-weight:900;letter-spacing:.06em;
+    text-transform:uppercase;padding:5px 18px;border-radius:20px;
+    margin-bottom:8px;box-shadow:0 3px 10px rgba(244,67,54,.3);}
+  .header h1{font-family:'Fredoka One',cursive;font-size:clamp(22px,5vw,32px);
+    color:#e65100;text-shadow:0 2px 6px rgba(0,0,0,.1);line-height:1.2;}
+  .header h1 span{color:#43a047;}
+  .card{background:var(--panel);border-radius:28px;padding:20px;
+    max-width:700px;width:100%;
+    box-shadow:0 12px 48px rgba(0,0,0,.12);border:3px solid rgba(255,200,100,.4);}
+  .steps{display:flex;gap:8px;justify-content:center;margin-bottom:14px;}
+  .step-dot{width:10px;height:10px;border-radius:50%;background:#ddd;transition:all .3s;}
+  .step-dot.active{background:#f59e0b;transform:scale(1.5);}
+  .step-dot.done{background:#43a047;}
+  .nia-area{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;min-height:60px;}
+  .nia-avatar{width:52px;height:52px;flex-shrink:0;
+    background:linear-gradient(135deg,#ff9800,#f44336);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:26px;
+    box-shadow:0 4px 12px rgba(244,67,54,.3);animation:bob 2.5s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  .nia-bubble{background:linear-gradient(135deg,#fff9f0,#fff3e0);
+    border:2.5px solid #ffcc02;border-radius:16px 16px 16px 4px;
+    padding:12px 16px;font-size:clamp(14px,3vw,17px);font-weight:700;
+    color:var(--txt);line-height:1.6;flex:1;
+    box-shadow:0 3px 12px rgba(255,204,2,.2);}
+  .nia-bubble strong{color:#e65100;}
+  .nia-bubble em{color:#43a047;font-style:normal;font-weight:900;}
+
+  /* Preface */
+  .preface{background:linear-gradient(135deg,#e8f5e9,#fff9c4);
+    border-radius:18px;padding:16px 18px;margin-bottom:16px;
+    border:2.5px solid #a5d6a7;}
+  .preface-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;
+    font-size:clamp(13px,2.5vw,15px);font-weight:700;color:var(--txt);line-height:1.6;}
+  .preface-row:last-child{margin-bottom:0;}
+  .preface-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+
+  /* Stall scene */
+  .stall-scene{background:linear-gradient(180deg,#fff9f0,#ffe0b2);
+    border-radius:20px;border:3px solid #ff9800;padding:16px 12px 12px;
+    margin-bottom:14px;position:relative;overflow:hidden;}
+
+  /* Stall roof */
+  .stall-roof{background:linear-gradient(135deg,#f44336,#e53935);
+    height:36px;border-radius:12px 12px 0 0;margin:-16px -12px 12px;
+    display:flex;align-items:center;justify-content:center;
+    border-bottom:4px solid #b71c1c;}
+  .stall-roof span{font-family:'Fredoka One',cursive;font-size:18px;
+    color:#fff;letter-spacing:.04em;text-shadow:0 1px 4px rgba(0,0,0,.3);}
+
+  /* Baskets */
+  .baskets-row{display:flex;gap:12px;justify-content:center;
+    align-items:flex-end;margin-bottom:12px;flex-wrap:wrap;}
+  .basket-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:120px;max-width:220px;}
+  .basket-label{font-family:'Fredoka One',cursive;font-size:clamp(13px,3vw,17px);
+    color:#5d4037;background:rgba(255,255,255,.7);padding:3px 10px;
+    border-radius:10px;border:1.5px solid #d7ccc8;}
+  .basket{background:linear-gradient(180deg,#8d6e63,#6d4c41);
+    border-radius:0 0 20px 20px;padding:10px 8px 8px;
+    border:3px solid #4e342e;position:relative;min-height:70px;
+    display:flex;flex-wrap:wrap;gap:4px;justify-content:center;align-items:center;}
+  .basket::before{content:'';position:absolute;top:-8px;left:-4px;right:-4px;
+    height:16px;background:linear-gradient(180deg,#a1887f,#8d6e63);
+    border-radius:8px 8px 0 0;border:3px solid #4e342e;border-bottom:none;}
+
+  /* Bowl */
+  .bowl-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:120px;max-width:180px;}
+  .bowl{background:linear-gradient(180deg,#fff9f0,#ffe0b2);
+    border-radius:0 0 40px 40px;padding:10px 8px 8px;
+    border:3px solid #ff9800;position:relative;min-height:80px;
+    display:flex;flex-wrap:wrap;gap:4px;justify-content:center;align-items:center;}
+  .bowl::before{content:'';position:absolute;top:-8px;left:-4px;right:-4px;
+    height:16px;background:linear-gradient(180deg,#ffe082,#ffd54f);
+    border-radius:8px 8px 0 0;border:3px solid #ff9800;border-bottom:none;}
+
+  /* Apple */
+  .apple{font-size:clamp(24px,5vw,32px);cursor:pointer;
+    transition:transform .15s cubic-bezier(.34,1.56,.64,1);
+    user-select:none;line-height:1;display:inline-block;}
+  .apple:hover{transform:scale(1.25);}
+  .apple.flying{animation:fly-apple .4s ease-in forwards;}
+  @keyframes fly-apple{
+    0%{transform:scale(1.2) translateY(0)}
+    50%{transform:scale(1.1) translateY(-30px)}
+    100%{transform:scale(1) translateY(0);opacity:.3}
+  }
+
+  /* Plus sign */
+  .plus-sign{font-family:'Fredoka One',cursive;font-size:clamp(28px,6vw,40px);
+    color:#e53935;align-self:center;padding:0 4px;}
+
+  /* Equation display */
+  .equation{text-align:center;margin-bottom:12px;
+    font-family:'Fredoka One',cursive;font-size:clamp(22px,5vw,36px);
+    color:var(--txt);line-height:1.3;}
+  .eq-num{color:#e53935;}
+  .eq-op{color:#43a047;margin:0 6px;}
+  .eq-result{color:#7c5cfc;
+    display:inline-block;
+    transition:all .3s cubic-bezier(.34,1.56,.64,1);}
+  .eq-result.pop{animation:pop .3s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
+
+  /* Slider controls */
+  .slider-row{display:flex;gap:12px;justify-content:center;
+    flex-wrap:wrap;margin-bottom:14px;}
+  .slider-group{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-width:120px;max-width:200px;}
+  .slider-label{font-size:13px;font-weight:800;color:#5d4037;text-transform:uppercase;letter-spacing:.04em;}
+  .slider-val{font-family:'Fredoka One',cursive;font-size:28px;color:#e53935;}
+  input[type=range]{width:100%;-webkit-appearance:none;height:6px;border-radius:3px;
+    background:#ffe0b2;outline:none;cursor:pointer;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;
+    border-radius:50%;background:#ff9800;border:3px solid #fff;cursor:pointer;
+    box-shadow:0 2px 6px rgba(0,0,0,.2);}
+
+  /* Quiz */
+  .quiz-area{background:linear-gradient(135deg,#e8f5e9,#fff9c4);
+    border-radius:18px;padding:16px 18px;margin-bottom:14px;
+    border:2.5px solid #a5d6a7;}
+  .quiz-q{font-family:'Fredoka One',cursive;font-size:clamp(16px,4vw,22px);
+    color:var(--txt);margin-bottom:14px;text-align:center;line-height:1.4;}
+  .quiz-options{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .quiz-btn{min-width:70px;min-height:70px;border-radius:18px;
+    border:3px solid #ddd;background:#fff;
+    font-family:'Fredoka One',cursive;font-size:clamp(20px,5vw,30px);
+    cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);
+    box-shadow:0 4px 8px rgba(0,0,0,.1);color:var(--txt);}
+  .quiz-btn:hover{transform:scale(1.1);border-color:#ff9800;}
+  .quiz-btn.correct{background:linear-gradient(135deg,#66bb6a,#43a047);
+    border-color:#2e7d32;color:#fff;animation:pop .4s ease;}
+  .quiz-btn.wrong{background:linear-gradient(135deg,#ef9a9a,#e57373);
+    border-color:#c62828;color:#fff;animation:shake .3s ease;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .quiz-result{text-align:center;margin-top:10px;font-family:'Fredoka One',cursive;
+    font-size:clamp(14px,3.5vw,18px);min-height:26px;}
+  .quiz-result.correct{color:#2e7d32;}
+  .quiz-result.wrong{color:#c62828;}
+
+  /* Stars */
+  .stars{display:flex;justify-content:center;gap:6px;margin-bottom:10px;}
+  .star{font-size:28px;opacity:.25;transition:all .3s;}
+  .star.earned{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+
+  /* Summary */
+  .summary-nums{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px;}
+  .sum-card{background:linear-gradient(135deg,#fff9f0,#ffe0b2);
+    border:2px solid #ff9800;border-radius:12px;padding:8px 12px;
+    font-family:'Fredoka One',cursive;font-size:clamp(14px,3vw,18px);color:#e65100;
+    text-align:center;min-width:80px;}
+
+  /* Nav */
+  .controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:4px;}
+  .btn{min-width:64px;min-height:56px;padding:12px 20px;border-radius:16px;border:none;
+    font-family:'Fredoka One',cursive;font-size:clamp(15px,3.5vw,19px);cursor:pointer;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 0 rgba(0,0,0,.18);}
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.18);}
+  .btn-next{background:linear-gradient(135deg,#7c5cfc,#5c35d4);color:#fff;flex:1;max-width:220px;}
+  .btn-next:hover{transform:translateY(-2px);}
+  .btn-back{background:linear-gradient(135deg,#90a4ae,#607d8b);color:#fff;}
+  .btn-back:hover{transform:translateY(-2px);}
+  .btn-back:disabled,.btn-next:disabled{opacity:.3;cursor:not-allowed;transform:none;}
+
+  /* Confetti */
+  .confetti-container{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;overflow:hidden;}
+  .confetti-piece{position:absolute;border-radius:2px;animation:confetti-fall 2s ease-in forwards;}
+  @keyframes confetti-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="header">
+  <div><span class="age-badge">Ages 5–7</span></div>
+  <h1>The <span>Apple Stall</span> 🍎 — Learning Addition!</h1>
+</div>
+<div class="card">
+  <div class="steps">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia-area">
+    <div class="nia-avatar">🌟</div>
+    <div class="nia-bubble" id="nia">Welcome to Priya's apple stall! Today we will learn how to <strong>add</strong> numbers together! 🍎</div>
+  </div>
+  <div id="mainArea"></div>
+  <div class="controls" id="ctrlRow">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>← Back</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let's go! →</button>
+  </div>
+</div>
+<div class="confetti-container" id="confetti"></div>
+
+<script>
+var currentStep = 0;
+var basket1Count = 3;
+var basket2Count = 4;
+var bowlCount = 0;
+var quizIdx = 0;
+var quizCorrect = 0;
+
+var NIA = [
+  "Welcome to Priya's apple stall! Today we will learn how to <strong>add</strong> numbers together! 🍎",
+  "Priya has <strong>two baskets</strong> of apples. Tap an apple from either basket to move it into the big bowl! Count as you go! 🍎",
+  "Now let us use the <strong>sliders</strong> to explore! Change how many apples are in each basket — watch the total change! 🌟",
+  "Quiz time! 🎉 Look at the apples and pick the right answer!",
+  "Amazing work! 🏆 You have learned to add numbers — one apple at a time!"
+];
+
+var BTNS = ["Let's go! →","Try it yourself! →","Explore! →","Quiz time! →","Finish! ⭐"];
+
+var quizQuestions = [
+  {q:"🍎🍎🍎 + 🍎🍎 = ?", a1:3, a2:2, answer:5, opts:[4,5,6,7]},
+  {q:"🍎🍎🍎🍎 + 🍎🍎🍎 = ?", a1:4, a2:3, answer:7, opts:[6,7,8,9]},
+  {q:"🍎🍎 + 🍎🍎🍎🍎🍎 = ?", a1:2, a2:5, answer:7, opts:[5,6,7,8]},
+  {q:"🍎🍎🍎🍎🍎 + 🍎🍎🍎🍎🍎 = ?", a1:5, a2:5, answer:10, opts:[8,9,10,11]},
+];
+
+function dots(s){
+  for(var i=0;i<=4;i++){
+    var d=document.getElementById('d'+i);
+    if(d) d.className='step-dot'+(i<s?' done':i===s?' active':'');
+  }
+}
+
+function confettiBurst(){
+  var c=document.getElementById('confetti');c.innerHTML='';
+  var cols=['#ffe066','#6abf69','#f44336','#7c5cfc','#4fc3f7','#ff9800'];
+  for(var i=0;i<48;i++){
+    var p=document.createElement('div');p.className='confetti-piece';
+    p.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[Math.floor(Math.random()*cols.length)]+
+      ';width:'+(8+Math.random()*8)+'px;height:'+(8+Math.random()*8)+'px'+
+      ';border-radius:'+(Math.random()>.5?'50%':'2px')+
+      ';animation-delay:'+(Math.random()*.6)+'s;animation-duration:'+(1.5+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){c.innerHTML='';},3000);
+}
+
+function buildApples(count, emoji){
+  var html='';
+  for(var i=0;i<count;i++) html+=emoji||'🍎';
+  return html;
+}
+
+// ── STEP 0 — Preface ──────────────────────────────────
+function renderStep0(){
+  document.getElementById('mainArea').innerHTML=
+    '<div class="preface">'+
+    '<div class="preface-row"><div class="preface-icon">📘</div><div><strong>What you will learn:</strong> What addition means — putting two groups of things together to find the total.</div></div>'+
+    '<div class="preface-row"><div class="preface-icon">🌍</div><div><strong>Why it matters:</strong> You add things every day! Adding sweets, counting friends, finding out how many apples are in a bowl.</div></div>'+
+    '<div class="preface-row"><div class="preface-icon">🎯</div><div><strong>By the end:</strong> You will be able to add any two small numbers together — and understand that addition means <em>putting groups together</em>!</div></div>'+
+    '</div>'+
+    '<div style="text-align:center;padding:16px 0">'+
+    '<div style="font-size:72px;animation:bob 2s ease-in-out infinite">🛒</div>'+
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(16px,4vw,24px);color:#e65100;margin-top:10px">Priya\'s Apple Stall</div>'+
+    '<div style="font-size:clamp(13px,3vw,16px);font-weight:700;color:#555;margin-top:6px">Help Priya count her apples by putting them in the big bowl!</div>'+
+    '</div>';
+}
+
+// ── STEP 1 — Interactive tap apples ───────────────────
+function renderStep1(){
+  basket1Count=3; basket2Count=4; bowlCount=0;
+  renderStall();
+}
+
+function renderStall(){
+  var total=basket1Count+basket2Count+bowlCount;
+  var inBowl=bowlCount;
+  // equation: show what's been moved
+  var left=basket1Count; var right=basket2Count;
+  var orig1=3; var orig2=4;
+  var moved1=orig1-left; var moved2=orig2-right;
+  var html=
+    '<div class="equation">'+
+    '<span class="eq-num">'+orig1+'</span>'+
+    '<span class="eq-op">+</span>'+
+    '<span class="eq-num">'+orig2+'</span>'+
+    '<span class="eq-op">=</span>'+
+    '<span class="eq-result" id="eqResult">'+(inBowl>0?inBowl:'?')+'</span>'+
+    '</div>'+
+    '<div class="stall-scene">'+
+    '<div class="stall-roof"><span>🍎 Priya\'s Apple Stall 🍎</span></div>'+
+    '<div class="baskets-row">'+
+    // Basket 1
+    '<div class="basket-wrap">'+
+    '<div class="basket-label">Basket 1</div>'+
+    '<div class="basket" id="basket1">';
+  for(var i=0;i<basket1Count;i++){
+    html+='<span class="apple" onclick="moveApple(1)" title="Tap to move!">🍎</span>';
+  }
+  html+='</div></div>'+
+    // Plus sign
+    '<div class="plus-sign">+</div>'+
+    // Basket 2
+    '<div class="basket-wrap">'+
+    '<div class="basket-label">Basket 2</div>'+
+    '<div class="basket" id="basket2">';
+  for(var j=0;j<basket2Count;j++){
+    html+='<span class="apple" onclick="moveApple(2)" title="Tap to move!">🍎</span>';
+  }
+  html+='</div></div>'+
+    // Bowl
+    '<div class="bowl-wrap">'+
+    '<div class="basket-label" style="border-color:#ff9800;background:rgba(255,236,179,.5)">🥣 Big Bowl</div>'+
+    '<div class="bowl" id="bowl">';
+  for(var k=0;k<bowlCount;k++){
+    html+='<span style="font-size:clamp(22px,4vw,28px);line-height:1">🍎</span>';
+  }
+  if(bowlCount===0) html+='<span style="font-size:13px;font-weight:700;color:#bbb">tap apples!</span>';
+  html+='</div></div>'+
+    '</div>'+
+    '</div>'+
+    '<div style="text-align:center;font-family:Fredoka One,cursive;font-size:clamp(14px,3vw,18px);color:#5d4037;margin-bottom:6px">'+
+    (bowlCount===0?'Tap the apples to move them into the bowl!':
+     (basket1Count+basket2Count>0?'Keep going! '+(basket1Count+basket2Count)+' apple'+(basket1Count+basket2Count!==1?'s':'')+' left!':
+     '🎉 All apples in the bowl! <strong>'+bowlCount+' apples</strong> total!'))+
+    '</div>';
+  document.getElementById('mainArea').innerHTML=html;
+
+  // Pop the result if bowl has apples
+  if(bowlCount>0){
+    var res=document.getElementById('eqResult');
+    if(res){res.classList.remove('pop');void res.offsetWidth;res.classList.add('pop');}
+  }
+  // Celebrate at end
+  if(basket1Count===0&&basket2Count===0){
+    confettiBurst();
+    document.getElementById('nia').innerHTML='🎉 <strong>'+bowlCount+' apples!</strong> You put all the apples together and got <em>'+bowlCount+'</em>! That is what addition means — putting groups together!';
+  }
+}
+
+function moveApple(basket){
+  if(basket===1&&basket1Count>0){basket1Count--;bowlCount++;renderStall();}
+  else if(basket===2&&basket2Count>0){basket2Count--;bowlCount++;renderStall();}
+}
+
+// ── STEP 2 — Sliders ──────────────────────────────────
+var sl1=3; var sl2=4;
+function renderStep2(){
+  sl1=3; sl2=4;
+  renderSliders();
+}
+
+function renderSliders(){
+  var total=sl1+sl2;
+  var html=
+    '<div class="equation">'+
+    '<span class="eq-num">'+sl1+'</span>'+
+    '<span class="eq-op">+</span>'+
+    '<span class="eq-num">'+sl2+'</span>'+
+    '<span class="eq-op">=</span>'+
+    '<span class="eq-result" id="slResult">'+total+'</span>'+
+    '</div>'+
+    '<div class="stall-scene">'+
+    '<div class="stall-roof"><span>🍎 Priya\'s Apple Stall 🍎</span></div>'+
+    '<div class="baskets-row">'+
+    '<div class="basket-wrap">'+
+    '<div class="basket-label">Basket 1 ('+sl1+')</div>'+
+    '<div class="basket">'+buildApples(sl1)+'</div></div>'+
+    '<div class="plus-sign">+</div>'+
+    '<div class="basket-wrap">'+
+    '<div class="basket-label">Basket 2 ('+sl2+')</div>'+
+    '<div class="basket">'+buildApples(sl2)+'</div></div>'+
+    '<div class="bowl-wrap">'+
+    '<div class="basket-label" style="border-color:#ff9800">🥣 Total ('+total+')</div>'+
+    '<div class="bowl">'+buildApples(total)+'</div></div>'+
+    '</div></div>'+
+    '<div class="slider-row">'+
+    '<div class="slider-group">'+
+    '<div class="slider-label">Basket 1</div>'+
+    '<div class="slider-val" id="sv1">'+sl1+'</div>'+
+    '<input type="range" min="0" max="8" value="'+sl1+'" oninput="updateSl(1,this.value)">'+
+    '</div>'+
+    '<div class="slider-group">'+
+    '<div class="slider-label">Basket 2</div>'+
+    '<div class="slider-val" id="sv2">'+sl2+'</div>'+
+    '<input type="range" min="0" max="8" value="'+sl2+'" oninput="updateSl(2,this.value)">'+
+    '</div>'+
+    '</div>';
+  document.getElementById('mainArea').innerHTML=html;
+}
+
+function updateSl(basket, val){
+  if(basket===1){sl1=parseInt(val);document.getElementById('sv1').textContent=sl1;}
+  else{sl2=parseInt(val);document.getElementById('sv2').textContent=sl2;}
+  renderSliders();
+  document.getElementById('nia').innerHTML='<strong>'+sl1+'</strong> apples + <strong>'+sl2+'</strong> apples = <em>'+(sl1+sl2)+'</em> apples altogether! 🍎';
+}
+
+// ── STEP 3 — Quiz ─────────────────────────────────────
+function renderStep3(){
+  quizIdx=0; quizCorrect=0;
+  showQuizQ();
+}
+
+function showQuizQ(){
+  if(quizIdx>=quizQuestions.length){showQuizEnd();return;}
+  var q=quizQuestions[quizIdx];
+  var stars='';
+  for(var i=0;i<quizQuestions.length;i++)
+    stars+='<div class="star'+(i<quizCorrect?' earned':'')+'">⭐</div>';
+  var opts='';
+  q.opts.forEach(function(o){
+    opts+='<button class="quiz-btn" onclick="answerQ('+o+','+q.answer+')">'+o+'</button>';
+  });
+  document.getElementById('mainArea').innerHTML=
+    '<div class="stars">'+stars+'</div>'+
+    '<div class="quiz-area">'+
+    '<div class="quiz-q">'+q.q+'</div>'+
+    '<div class="quiz-options">'+opts+'</div>'+
+    '<div class="quiz-result" id="qRes"></div>'+
+    '</div>';
+}
+
+function answerQ(chosen, correct){
+  var btns=document.querySelectorAll('.quiz-btn');
+  btns.forEach(function(b){b.disabled=true;});
+  var res=document.getElementById('qRes');
+  if(chosen===correct){
+    btns.forEach(function(b){if(parseInt(b.textContent)===correct)b.className='quiz-btn correct';});
+    quizCorrect++;
+    if(res){res.textContent='✅ Brilliant! '+correct+' is correct!';res.className='quiz-result correct';}
+    document.getElementById('nia').innerHTML='✅ <strong>Correct!</strong> Well done! 🍎';
+  } else {
+    btns.forEach(function(b){
+      if(parseInt(b.textContent)===chosen)b.className='quiz-btn wrong';
+      if(parseInt(b.textContent)===correct)b.className='quiz-btn correct';
+    });
+    if(res){res.textContent='❌ Not quite! The answer is '+correct;res.className='quiz-result wrong';}
+    document.getElementById('nia').innerHTML='💛 Not quite! Count the apples again — the answer is <strong>'+correct+'</strong>!';
+  }
+  quizIdx++;
+  if(chosen===correct){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;showQuizQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxtOk=document.createElement('button');
+    nxtOk.textContent='Next \u2192';
+    nxtOk.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxtOk.onclick=function(){clearTimeout(_t);_doAdv();};
+    var _r=document.getElementById('quizResult')||document.getElementById('qResult')||document.getElementById('qRes');
+    if(_r&&_r.parentNode)_r.parentNode.appendChild(nxtOk);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent='Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){showQuizQ();};
+    var _r2=document.getElementById('quizResult')||document.getElementById('qResult')||document.getElementById('qRes');
+    if(_r2&&_r2.parentNode)_r2.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQuizEnd(){
+  var stars='';
+  for(var i=0;i<quizQuestions.length;i++)
+    stars+='<div class="star'+(i<quizCorrect?' earned':'')+'">⭐</div>';
+  var msg=quizCorrect===4?'🏆 PERFECT! You are an addition superstar!':
+          quizCorrect>=3?'🌟 Brilliant! Almost perfect!':
+          quizCorrect>=2?'👍 Good work! Keep practising!':'💪 Keep counting — you will get there!';
+  document.getElementById('mainArea').innerHTML=
+    '<div class="stars">'+stars+'</div>'+
+    '<div style="text-align:center;padding:16px;background:linear-gradient(135deg,#e8f5e9,#fff9c4);border-radius:18px;border:2.5px solid #a5d6a7">'+
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(17px,4vw,24px);color:#2e7d32;margin-bottom:8px">'+msg+'</div>'+
+    '<div style="font-size:clamp(14px,3vw,17px);font-weight:700;color:#555">You got <strong style="color:#e53935">'+quizCorrect+'</strong> out of <strong>4</strong> correct!</div>'+
+    '</div>';
+  if(quizCorrect>=3)confettiBurst();
+  document.getElementById('nia').innerHTML=quizCorrect===4?
+    '🏆 <strong>Perfect score!</strong> You know your addition! 🍎+🍎 = more apples!':
+    '🌟 Well done! Remember — addition means <em>putting groups together</em>!';
+}
+
+// ── STEP 4 — Summary ──────────────────────────────────
+function renderStep4(){
+  var facts=[[1,1],[1,2],[2,2],[2,3],[3,3],[3,4],[4,4],[4,5],[5,5],[3,5]];
+  var cards=facts.map(function(f){
+    return '<div class="sum-card">'+f[0]+' + '+f[1]+' = <strong>'+(f[0]+f[1])+'</strong></div>';
+  }).join('');
+  document.getElementById('mainArea').innerHTML=
+    '<div style="text-align:center;padding:10px 0 14px">'+
+    '<div style="font-size:64px">🏆</div>'+
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(17px,4vw,24px);color:#2e7d32;margin-top:8px;margin-bottom:14px">You can add numbers together!</div>'+
+    '</div>'+
+    '<div class="preface">'+
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>Addition means <strong>putting two groups together</strong> to find the total.</div></div>'+
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>The <strong>+</strong> sign means "and also" — add these two groups!</div></div>'+
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>The order does not matter: <strong>3 + 4</strong> is the same as <strong>4 + 3</strong> — both equal 7!</div></div>'+
+    '<div class="preface-row"><div class="preface-icon">🚀</div><div>Next — we will learn <strong>subtraction</strong>: taking apples away!</div></div>'+
+    '</div>'+
+    '<div class="summary-nums">'+cards+'</div>';
+  confettiBurst();
+}
+
+// ── Navigation ─────────────────────────────────────────
+var RENDERS=[renderStep0,renderStep1,renderStep2,renderStep3,renderStep4];
+
+function goStep(dir){
+  currentStep=Math.max(0,Math.min(4,currentStep+dir));
+  dots(currentStep);
+  document.getElementById('nia').innerHTML=NIA[currentStep];
+  document.getElementById('btnBack').disabled=(currentStep===0);
+  document.getElementById('btnNext').textContent=currentStep<4?BTNS[currentStep]:'Complete! ⭐';
+  document.getElementById('btnNext').disabled=(currentStep===4);
+  RENDERS[currentStep]();
+}
+
+goStep(0);
+</script>
+</body>
+</html>

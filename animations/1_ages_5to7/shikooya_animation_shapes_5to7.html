@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<!-- © 2025 Shikooya. All rights reserved. Unauthorised copying, distribution or use without permission is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikooya — Shapes (Ages 5–7)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap');
+  :root{
+    --sky:#87CEEB;--sun:#FFD700;--grass:#5cb85c;
+    --txt:#1a1a2e;--panel:rgba(255,255,255,0.94);
+    --circle:#f44336;--square:#1976d2;--triangle:#f57c00;
+    --rectangle:#7b1fa2;--star:#fbc02d;--heart:#e91e63;
+    --diamond:#00897b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Nunito',sans-serif;
+    background:linear-gradient(180deg,#e3f2fd 0%,#bbdefb 100%);
+    min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:16px;
+  }
+  .header{text-align:center;margin-bottom:12px;width:100%;max-width:720px;}
+  .age-badge{display:inline-block;background:linear-gradient(135deg,#e91e63,#9c27b0);
+    color:#fff;font-size:13px;font-weight:900;letter-spacing:.06em;
+    text-transform:uppercase;padding:5px 18px;border-radius:20px;
+    margin-bottom:8px;box-shadow:0 3px 10px rgba(156,39,176,.3);}
+  .header h1{font-family:'Fredoka One',cursive;font-size:clamp(22px,5vw,32px);
+    color:#6a1b9a;text-shadow:0 2px 6px rgba(0,0,0,.1);line-height:1.2;}
+  .header h1 span{color:#f57c00;}
+  .card{background:var(--panel);border-radius:28px;padding:20px;
+    max-width:720px;width:100%;
+    box-shadow:0 12px 48px rgba(0,0,0,.12);border:3px solid rgba(180,140,255,.35);}
+
+  /* Steps — 5 steps = d0..d4 */
+  .steps{display:flex;gap:8px;justify-content:center;margin-bottom:14px;}
+  .step-dot{width:10px;height:10px;border-radius:50%;background:#ddd;transition:all .3s;}
+  .step-dot.active{background:#f57c00;transform:scale(1.5);}
+  .step-dot.done{background:#9c27b0;}
+
+  /* Nia */
+  .nia-area{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;min-height:60px;}
+  .nia-avatar{width:52px;height:52px;flex-shrink:0;
+    background:linear-gradient(135deg,#e91e63,#9c27b0);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:26px;
+    box-shadow:0 4px 12px rgba(156,39,176,.3);animation:bob 2.5s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  .nia-bubble{background:linear-gradient(135deg,#f3e5f5,#ede7f6);
+    border:2.5px solid #ce93d8;border-radius:16px 16px 16px 4px;
+    padding:12px 16px;font-size:clamp(14px,3vw,17px);font-weight:700;
+    color:var(--txt);line-height:1.6;flex:1;}
+  .nia-bubble strong{color:#6a1b9a;}
+  .nia-bubble em{color:#f57c00;font-style:normal;font-weight:900;}
+
+  /* Preface */
+  .preface{background:linear-gradient(135deg,#f3e5f5,#e8eaf6);
+    border-radius:18px;padding:16px 18px;margin-bottom:16px;
+    border:2.5px solid #ce93d8;}
+  .preface-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;
+    font-size:clamp(13px,2.5vw,15px);font-weight:700;color:var(--txt);line-height:1.6;}
+  .preface-row:last-child{margin-bottom:0;}
+  .preface-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+
+  /* City scene */
+  .city-scene{
+    background:linear-gradient(180deg,#87CEEB 0%,#b3e5fc 55%,#a5d6a7 55%,#81c784 100%);
+    border-radius:20px;border:3px solid #ce93d8;
+    padding:16px 12px 8px;margin-bottom:14px;
+    position:relative;overflow:hidden;min-height:220px;}
+
+  /* Sun */
+  .sun{position:absolute;top:10px;right:16px;font-size:36px;
+    animation:spin-sun 8s linear infinite;}
+  @keyframes spin-sun{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+  /* Buildings row */
+  .buildings{display:flex;gap:10px;justify-content:center;
+    align-items:flex-end;padding-bottom:4px;flex-wrap:wrap;}
+
+  /* Each building */
+  .building{display:flex;flex-direction:column;align-items:center;gap:4px;
+    cursor:pointer;transition:transform .2s cubic-bezier(.34,1.56,.64,1);}
+  .building:hover{transform:scale(1.06);}
+  .building.lit .shape-part{
+    filter:drop-shadow(0 0 10px rgba(255,200,0,.8));
+  }
+  .building-label{font-family:'Fredoka One',cursive;font-size:clamp(11px,2.5vw,14px);
+    color:#4a148c;background:rgba(255,255,255,.85);padding:2px 8px;
+    border-radius:8px;border:1.5px solid #ce93d8;white-space:nowrap;}
+
+  /* SVG shapes inside buildings */
+  .shape-part svg{display:block;}
+
+  /* Shape name popup */
+  .shape-popup{
+    position:absolute;top:8px;left:50%;transform:translateX(-50%);
+    background:#fff;border:3px solid #f57c00;border-radius:14px;
+    padding:8px 18px;font-family:'Fredoka One',cursive;
+    font-size:clamp(16px,4vw,22px);color:#e65100;
+    box-shadow:0 4px 16px rgba(0,0,0,.15);
+    opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);
+    pointer-events:none;white-space:nowrap;z-index:10;
+  }
+  .shape-popup.show{opacity:1;transform:translateX(-50%) translateY(4px);}
+
+  /* Facts panel */
+  .facts-panel{background:linear-gradient(135deg,#f3e5f5,#e8eaf6);
+    border-radius:14px;border:2px solid #ce93d8;
+    padding:12px 14px;margin-bottom:12px;
+    font-size:clamp(13px,2.5vw,15px);font-weight:700;color:var(--txt);
+    line-height:1.7;min-height:56px;transition:all .3s;}
+  .facts-panel strong{color:#6a1b9a;}
+
+  /* Shape grid — build your own scene */
+  .shape-grid{display:flex;flex-wrap:wrap;gap:10px;
+    justify-content:center;margin-bottom:14px;}
+  .shape-tile{display:flex;flex-direction:column;align-items:center;gap:6px;
+    background:rgba(255,255,255,.8);border:2.5px solid #ddd;border-radius:16px;
+    padding:10px 14px;cursor:pointer;min-width:80px;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);
+    box-shadow:0 3px 8px rgba(0,0,0,.08);}
+  .shape-tile:hover{transform:scale(1.1);border-color:#9c27b0;}
+  .shape-tile.selected{border-color:#f57c00;background:rgba(255,200,100,.15);
+    box-shadow:0 0 14px rgba(245,124,0,.3);}
+  .tile-label{font-family:'Fredoka One',cursive;font-size:clamp(12px,2.5vw,15px);
+    color:#4a148c;}
+
+  /* Canvas for build scene */
+  .build-canvas{background:linear-gradient(180deg,#87CEEB 0%,#b3e5fc 60%,#a5d6a7 60%,#81c784 100%);
+    border-radius:18px;border:3px solid #ce93d8;
+    padding:8px;margin-bottom:10px;min-height:160px;
+    display:flex;flex-wrap:wrap;gap:8px;
+    align-content:flex-start;justify-content:flex-start;
+    position:relative;overflow:hidden;}
+  .placed-shape{font-size:clamp(32px,7vw,48px);line-height:1;
+    cursor:pointer;animation:drop-in .3s cubic-bezier(.34,1.56,.64,1);
+    display:inline-block;}
+  @keyframes drop-in{0%{transform:scale(0) rotate(-20deg)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+
+  /* Quiz */
+  .quiz-area{background:linear-gradient(135deg,#f3e5f5,#e8eaf6);
+    border-radius:18px;padding:16px 18px;margin-bottom:14px;
+    border:2.5px solid #ce93d8;}
+  .quiz-q{font-family:'Fredoka One',cursive;font-size:clamp(16px,4vw,22px);
+    color:var(--txt);margin-bottom:14px;text-align:center;line-height:1.4;}
+  .quiz-options{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .quiz-btn{min-width:120px;min-height:64px;border-radius:16px;
+    border:3px solid #ddd;background:#fff;
+    font-family:'Fredoka One',cursive;font-size:clamp(15px,3.5vw,19px);
+    cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);
+    box-shadow:0 4px 8px rgba(0,0,0,.1);color:var(--txt);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+    padding:8px;}
+  .quiz-btn:hover{transform:scale(1.08);border-color:#9c27b0;}
+  .quiz-btn.correct{background:linear-gradient(135deg,#66bb6a,#43a047);
+    border-color:#2e7d32;color:#fff;animation:pop .4s ease;}
+  .quiz-btn.wrong{background:linear-gradient(135deg,#ef9a9a,#e57373);
+    border-color:#c62828;color:#fff;animation:shake .3s ease;}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .quiz-result{text-align:center;margin-top:10px;font-family:'Fredoka One',cursive;
+    font-size:clamp(14px,3.5vw,18px);min-height:26px;}
+  .quiz-result.correct{color:#2e7d32;}
+  .quiz-result.wrong{color:#c62828;}
+
+  .stars{display:flex;justify-content:center;gap:6px;margin-bottom:10px;}
+  .star{font-size:28px;opacity:.25;transition:all .3s;}
+  .star.earned{opacity:1;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+
+  /* Nav */
+  .controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:4px;}
+  .btn{min-width:64px;min-height:56px;padding:12px 20px;border-radius:16px;border:none;
+    font-family:'Fredoka One',cursive;font-size:clamp(15px,3.5vw,19px);cursor:pointer;
+    transition:all .2s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 0 rgba(0,0,0,.18);}
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.18);}
+  .btn-next{background:linear-gradient(135deg,#9c27b0,#6a1b9a);color:#fff;flex:1;max-width:220px;}
+  .btn-next:hover{transform:translateY(-2px);}
+  .btn-back{background:linear-gradient(135deg,#90a4ae,#607d8b);color:#fff;}
+  .btn-back:hover{transform:translateY(-2px);}
+  .btn-back:disabled,.btn-next:disabled{opacity:.3;cursor:not-allowed;transform:none;}
+
+  .confetti-container{position:fixed;top:0;left:0;right:0;bottom:0;
+    pointer-events:none;z-index:100;overflow:hidden;}
+  .confetti-piece{position:absolute;border-radius:2px;
+    animation:confetti-fall 2s ease-in forwards;}
+  @keyframes confetti-fall{
+    0%{transform:translateY(-20px) rotate(0deg);opacity:1}
+    100%{transform:translateY(100vh) rotate(720deg);opacity:0}
+  }
+
+  /* Back to menu button */
+  .back-menu{position:fixed;top:12px;left:12px;z-index:200;
+    display:flex;align-items:center;gap:6px;
+    padding:7px 12px;border-radius:20px;border:1.5px solid rgba(79,70,229,.2);
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+    color:#4f46e5;text-decoration:none;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all .2s;}
+  .back-menu:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+</style>
+</head>
+<body>
+<a class="back-menu" href="../../index.html">&#8592; All topics</a>
+
+<div class="header">
+  <div><span class="age-badge">Ages 5–7</span></div>
+  <h1>Shapes on the <span>City Street</span>! 🏙️</h1>
+</div>
+<div class="card">
+  <!-- 5 steps = dots d0..d4 -->
+  <div class="steps">
+    <div class="step-dot active" id="d0"></div>
+    <div class="step-dot" id="d1"></div>
+    <div class="step-dot" id="d2"></div>
+    <div class="step-dot" id="d3"></div>
+    <div class="step-dot" id="d4"></div>
+  </div>
+  <div class="nia-area">
+    <div class="nia-avatar">🌟</div>
+    <div class="nia-bubble" id="nia">
+      Look around you — <strong>shapes are everywhere!</strong> In houses, wheels, windows and doors. Let us explore the shapes hiding on our city street! 🏙️
+    </div>
+  </div>
+  <div id="mainArea"></div>
+  <div class="controls">
+    <button class="btn btn-back" id="btnBack" onclick="goStep(-1)" disabled>← Back</button>
+    <button class="btn btn-next" id="btnNext" onclick="goStep(1)">Let's explore! →</button>
+  </div>
+</div>
+<div class="confetti-container" id="confetti"></div>
+
+<script>
+var currentStep = 0;
+var activeShape = null;
+var placedShapes = [];
+var quizIdx = 0;
+var quizCorrect = 0;
+
+// 5 steps → d0..d4
+var NIA = [
+  "Look around you — <strong>shapes are everywhere!</strong> In houses, wheels, windows and doors. Let us explore the shapes hiding on our city street! 🏙️",
+  "Tap each building on the city street to discover the shape hiding inside it! 🔍",
+  "Now it is your turn! Pick a shape from the palette and tap the canvas to build your own city! 🏗️",
+  "Quiz time! Look at each shape and tell me its name! 🌟",
+  "Brilliant! 🏆 You know your shapes — and now you can spot them everywhere in the real world!"
+];
+
+var BTNS = [
+  "Let's explore! →",
+  "Discover shapes! →",
+  "Build a city! →",
+  "Quiz time! →",
+  "Finish! ⭐"
+];
+
+// Shape definitions
+var SHAPES = [
+  { name:'Circle', emoji:'⭕', color:'#f44336', sides:'No sides — perfectly round!',
+    fact:'Wheels are circles so they can roll smoothly! 🚗',
+    example:'wheel', svgPath:'<circle cx="40" cy="40" r="32" fill="#f44336" stroke="#b71c1c" stroke-width="4"/>' },
+  { name:'Square', emoji:'🟥', color:'#1976d2', sides:'4 equal sides and 4 equal corners',
+    fact:'Windows are often squares or rectangles — they let light in evenly! 🏠',
+    example:'window', svgPath:'<rect x="8" y="8" width="64" height="64" rx="4" fill="#1976d2" stroke="#0d47a1" stroke-width="4"/>' },
+  { name:'Triangle', emoji:'🔺', color:'#f57c00', sides:'3 sides and 3 corners',
+    fact:'Rooftops are triangles — rain slides off them easily! 🏠',
+    example:'roof', svgPath:'<polygon points="40,6 74,74 6,74" fill="#f57c00" stroke="#e65100" stroke-width="4"/>' },
+  { name:'Rectangle', emoji:'🟦', color:'#7b1fa2', sides:'4 sides — 2 long and 2 short',
+    fact:'Doors are rectangles — tall enough to walk through! 🚪',
+    example:'door', svgPath:'<rect x="6" y="12" width="68" height="56" rx="4" fill="#7b1fa2" stroke="#4a148c" stroke-width="4"/>' },
+  { name:'Star', emoji:'⭐', color:'#fbc02d', sides:'5 points!',
+    fact:'Stars remind us to look up and wonder at the night sky! ✨',
+    example:'badge', svgPath:'<polygon points="40,4 48,30 76,30 53,47 62,74 40,57 18,74 27,47 4,30 32,30" fill="#fbc02d" stroke="#f57f17" stroke-width="3"/>' },
+  { name:'Diamond', emoji:'🔷', color:'#00897b', sides:'4 equal sides, tilted!',
+    fact:'Diamonds look like squares standing on a corner! 💎',
+    example:'tile', svgPath:'<polygon points="40,4 76,40 40,76 4,40" fill="#00897b" stroke="#004d40" stroke-width="4"/>' },
+];
+
+// Quiz questions
+var quizQuestions = [
+  { svg:'<svg viewBox="0 0 80 80" width="60" height="60"><circle cx="40" cy="40" r="32" fill="#f44336" stroke="#b71c1c" stroke-width="4"/></svg>',
+    answer:'Circle', opts:['Circle','Square','Triangle','Rectangle'] },
+  { svg:'<svg viewBox="0 0 80 80" width="60" height="60"><polygon points="40,6 74,74 6,74" fill="#f57c00" stroke="#e65100" stroke-width="4"/></svg>',
+    answer:'Triangle', opts:['Circle','Triangle','Star','Diamond'] },
+  { svg:'<svg viewBox="0 0 80 80" width="60" height="60"><rect x="8" y="8" width="64" height="64" rx="4" fill="#1976d2" stroke="#0d47a1" stroke-width="4"/></svg>',
+    answer:'Square', opts:['Square','Rectangle','Diamond','Circle'] },
+  { svg:'<svg viewBox="0 0 80 80" width="60" height="60"><rect x="6" y="12" width="68" height="56" rx="4" fill="#7b1fa2" stroke="#4a148c" stroke-width="4"/></svg>',
+    answer:'Rectangle', opts:['Square','Triangle','Rectangle','Star'] },
+  { svg:'<svg viewBox="0 0 80 80" width="60" height="60"><polygon points="40,4 48,30 76,30 53,47 62,74 40,57 18,74 27,47 4,30 32,30" fill="#fbc02d" stroke="#f57f17" stroke-width="3"/></svg>',
+    answer:'Star', opts:['Diamond','Star','Circle','Triangle'] },
+];
+
+// ── Helpers ──────────────────────────────────────────────
+function dots(s) {
+  for (var i = 0; i <= 4; i++) {
+    var d = document.getElementById('d' + i);
+    if (d) d.className = 'step-dot' + (i < s ? ' done' : i === s ? ' active' : '');
+  }
+}
+
+function confettiBurst() {
+  var c = document.getElementById('confetti');
+  c.innerHTML = '';
+  var cols = ['#ffe066','#f44336','#9c27b0','#1976d2','#fbc02d','#00897b'];
+  for (var i = 0; i < 52; i++) {
+    var p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.cssText = 'left:'+(Math.random()*100)+'%;background:'+cols[Math.floor(Math.random()*cols.length)]+
+      ';width:'+(8+Math.random()*8)+'px;height:'+(8+Math.random()*8)+'px;' +
+      'border-radius:'+(Math.random()>.5?'50%':'2px')+';' +
+      'animation-delay:'+(Math.random()*.6)+'s;animation-duration:'+(1.5+Math.random())+'s';
+    c.appendChild(p);
+  }
+  setTimeout(function(){ c.innerHTML=''; }, 3000);
+}
+
+// ── STEP 0 — Preface ─────────────────────────────────────
+function renderStep0() {
+  document.getElementById('mainArea').innerHTML =
+    '<div class="preface">' +
+    '<div class="preface-row"><div class="preface-icon">📘</div><div><strong>What you will learn:</strong> The names of common shapes — circle, square, triangle, rectangle, star and diamond.</div></div>' +
+    '<div class="preface-row"><div class="preface-icon">🌍</div><div><strong>Why it matters:</strong> Shapes are everywhere! Every building, vehicle, and object around you is made from shapes. Knowing their names helps you describe the world.</div></div>' +
+    '<div class="preface-row"><div class="preface-icon">🎯</div><div><strong>By the end:</strong> You will be able to name 6 shapes and spot them in everyday life — wheels, roofs, doors, windows!</div></div>' +
+    '</div>' +
+    '<div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;padding:12px 0">' +
+    SHAPES.map(function(s){
+      return '<div style="display:flex;flex-direction:column;align-items:center;gap:4px">' +
+        '<svg viewBox="0 0 80 80" width="52" height="52" style="filter:drop-shadow(0 3px 6px rgba(0,0,0,.15))">' +
+        s.svgPath + '</svg>' +
+        '<div style="font-family:Fredoka One,cursive;font-size:13px;color:#4a148c">' + s.name + '</div>' +
+        '</div>';
+    }).join('') +
+    '</div>';
+}
+
+// ── STEP 1 — City explore ─────────────────────────────────
+var discovered = [];
+function renderStep1() {
+  discovered = [];
+  buildCity();
+}
+
+function buildCity() {
+  // Buildings: each contains a shape
+  var buildings = [
+    { label:'House Roof', shapeIdx:2, w:80, h:90, display:'<svg viewBox="0 0 80 90" width="80" height="90"><rect x="8" y="42" width="64" height="48" fill="#ef9a9a"/><polygon points="40,4 76,44 4,44" fill="#f57c00" stroke="#e65100" stroke-width="3"/><rect x="28" y="58" width="24" height="32" fill="#6d4c41"/></svg>' },
+    { label:'Wheel', shapeIdx:0, w:70, h:70, display:'<svg viewBox="0 0 70 70" width="70" height="70"><circle cx="35" cy="35" r="30" fill="#37474f" stroke="#263238" stroke-width="4"/><circle cx="35" cy="35" r="18" fill="#90a4ae"/><circle cx="35" cy="35" r="6" fill="#ffd54f"/><line x1="35" y1="5" x2="35" y2="65" stroke="#546e7a" stroke-width="3"/><line x1="5" y1="35" x2="65" y2="35" stroke="#546e7a" stroke-width="3"/></svg>' },
+    { label:'Window', shapeIdx:1, w:70, h:70, display:'<svg viewBox="0 0 70 70" width="70" height="70"><rect x="4" y="4" width="62" height="62" rx="6" fill="#b3e5fc" stroke="#1976d2" stroke-width="5"/><line x1="35" y1="4" x2="35" y2="66" stroke="#1976d2" stroke-width="3"/><line x1="4" y1="35" x2="66" y2="35" stroke="#1976d2" stroke-width="3"/></svg>' },
+    { label:'Door', shapeIdx:3, w:60, h:90, display:'<svg viewBox="0 0 60 90" width="60" height="90"><rect x="4" y="4" width="52" height="82" rx="4" fill="#8d6e63" stroke="#4e342e" stroke-width="4"/><circle cx="42" cy="48" r="5" fill="#ffd54f"/><rect x="12" y="18" width="16" height="20" rx="2" fill="#6d4c41"/><rect x="32" y="18" width="16" height="20" rx="2" fill="#6d4c41"/></svg>' },
+    { label:'Badge', shapeIdx:4, w:76, h:76, display:'<svg viewBox="0 0 80 80" width="76" height="76"><polygon points="40,4 48,30 76,30 53,47 62,74 40,57 18,74 27,47 4,30 32,30" fill="#fbc02d" stroke="#f57f17" stroke-width="3"/><text x="40" y="46" text-anchor="middle" font-size="18" fill="#4a148c" font-family="Fredoka One,cursive">★</text></svg>' },
+    { label:'Tile', shapeIdx:5, w:70, h:70, display:'<svg viewBox="0 0 80 80" width="70" height="70"><polygon points="40,4 76,40 40,76 4,40" fill="#00897b" stroke="#004d40" stroke-width="4"/></svg>' },
+  ];
+
+  var popup = discovered.length > 0 ?
+    '<div class="shape-popup show" id="popup">' + SHAPES[discovered[discovered.length-1]].name + '! ' + SHAPES[discovered[discovered.length-1]].emoji + '</div>' :
+    '<div class="shape-popup" id="popup"></div>';
+
+  var bHtml = buildings.map(function(b, idx) {
+    var isDisc = discovered.indexOf(b.shapeIdx) >= 0;
+    return '<div class="building' + (isDisc?' lit':'') + '" onclick="discoverShape(' + b.shapeIdx + ')" title="Tap me!">' +
+      b.display +
+      '<div class="building-label">' + (isDisc ? SHAPES[b.shapeIdx].name + ' ' + SHAPES[b.shapeIdx].emoji : '? Tap me!') + '</div>' +
+      '</div>';
+  }).join('');
+
+  var factHtml = '';
+  if (discovered.length > 0) {
+    var s = SHAPES[discovered[discovered.length-1]];
+    factHtml = '<div class="facts-panel"><strong>' + s.name + '</strong> — ' + s.sides + '<br>🌍 ' + s.fact + '</div>';
+  } else {
+    factHtml = '<div class="facts-panel" style="text-align:center;color:#aaa;font-style:italic">Tap a building to discover its shape! 🔍</div>';
+  }
+
+  var progressText = discovered.length + ' of ' + SHAPES.length + ' shapes discovered';
+
+  document.getElementById('mainArea').innerHTML =
+    '<div style="text-align:center;font-family:Fredoka One,cursive;font-size:clamp(13px,3vw,16px);color:#6a1b9a;margin-bottom:8px">' + progressText + '</div>' +
+    '<div class="city-scene" style="position:relative">' +
+    popup +
+    '<div class="sun">☀️</div>' +
+    '<div class="buildings">' + bHtml + '</div>' +
+    '</div>' +
+    factHtml;
+
+  if (discovered.length === SHAPES.length) {
+    confettiBurst();
+    document.getElementById('nia').innerHTML = '🎉 You found ALL <strong>6 shapes</strong>! Circle, Square, Triangle, Rectangle, Star and Diamond! You are a shape detective! 🔍';
+  }
+}
+
+function discoverShape(idx) {
+  if (discovered.indexOf(idx) < 0) {
+    discovered.push(idx);
+    var s = SHAPES[idx];
+    document.getElementById('nia').innerHTML =
+      s.emoji + ' <strong>' + s.name + '!</strong> ' + s.sides + ' — ' + s.fact;
+  }
+  buildCity();
+}
+
+// ── STEP 2 — Build your city ──────────────────────────────
+var selectedTileIdx = 0;
+function renderStep2() {
+  placedShapes = [];
+  selectedTileIdx = 0;
+  buildScene();
+}
+
+function buildScene() {
+  var tileHtml = SHAPES.map(function(s, i) {
+    return '<div class="shape-tile' + (i===selectedTileIdx?' selected':'') + '" onclick="selectTile(' + i + ')">' +
+      '<svg viewBox="0 0 80 80" width="44" height="44">' + s.svgPath + '</svg>' +
+      '<div class="tile-label">' + s.name + '</div>' +
+      '</div>';
+  }).join('');
+
+  var placedHtml = placedShapes.map(function(p) {
+    return '<svg viewBox="0 0 80 80" width="' + p.size + '" height="' + p.size + '" style="display:inline-block;filter:drop-shadow(0 2px 4px rgba(0,0,0,.2))">' + p.path + '</svg>';
+  }).join('');
+
+  document.getElementById('mainArea').innerHTML =
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(13px,3vw,16px);color:#6a1b9a;margin-bottom:8px;text-align:center">Select a shape and tap the canvas to place it!</div>' +
+    '<div class="shape-grid">' + tileHtml + '</div>' +
+    '<div class="build-canvas" id="buildCanvas" onclick="placeShape(event)">' +
+    placedHtml +
+    (placedShapes.length === 0 ? '<span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;font-weight:700;color:rgba(255,255,255,.7)">Tap here to place shapes!</span>' : '') +
+    '</div>' +
+    '<div style="display:flex;gap:8px;justify-content:center">' +
+    '<button onclick="clearCanvas()" style="padding:8px 18px;border-radius:12px;border:2px solid #ce93d8;background:#fff;font-family:Fredoka One,cursive;font-size:15px;cursor:pointer;color:#6a1b9a">🗑️ Clear</button>' +
+    '</div>';
+}
+
+function selectTile(idx) {
+  selectedTileIdx = idx;
+  buildScene();
+  document.getElementById('nia').innerHTML =
+    SHAPES[idx].emoji + ' You picked the <strong>' + SHAPES[idx].name + '</strong>! Now tap the canvas to place it!';
+}
+
+function placeShape(e) {
+  if (placedShapes.length >= 20) return;
+  var s = SHAPES[selectedTileIdx];
+  var size = 44 + Math.floor(Math.random() * 20);
+  placedShapes.push({ path: s.svgPath, size: size, name: s.name });
+  buildScene();
+}
+
+function clearCanvas() {
+  placedShapes = [];
+  buildScene();
+  document.getElementById('nia').innerHTML = 'Canvas cleared! Pick a shape and build something new! 🏗️';
+}
+
+// ── STEP 3 — Quiz ─────────────────────────────────────────
+function renderStep3() {
+  quizIdx = 0;
+  quizCorrect = 0;
+  showQuizQ();
+}
+
+function showQuizQ() {
+  if (quizIdx >= quizQuestions.length) { showQuizEnd(); return; }
+  var q = quizQuestions[quizIdx];
+  var stars = '';
+  for (var i = 0; i < quizQuestions.length; i++)
+    stars += '<div class="star' + (i < quizCorrect ? ' earned' : '') + '">⭐</div>';
+  var opts = '';
+  q.opts.forEach(function(o) {
+    opts += '<button class="quiz-btn" onclick="answerQ(\'' + o + '\',\'' + q.answer + '\')">' +
+      '<span style="font-size:clamp(14px,3vw,17px)">' + o + '</span>' +
+      '</button>';
+  });
+  document.getElementById('mainArea').innerHTML =
+    '<div class="stars">' + stars + '</div>' +
+    '<div class="quiz-area">' +
+    '<div class="quiz-q">What shape is this? ' + q.svg + '</div>' +
+    '<div class="quiz-options">' + opts + '</div>' +
+    '<div class="quiz-result" id="qRes"></div>' +
+    '</div>';
+}
+
+function answerQ(chosen, correct) {
+  var btns = document.querySelectorAll('.quiz-btn');
+  btns.forEach(function(b) { b.disabled = true; });
+  var res = document.getElementById('qRes');
+  if (chosen === correct) {
+    btns.forEach(function(b) {
+      if (b.querySelector('span') && b.querySelector('span').textContent.trim() === correct)
+        b.className = 'quiz-btn correct';
+    });
+    quizCorrect++;
+    if (res) { res.textContent = '✅ Correct! That is a ' + correct + '!'; res.className = 'quiz-result correct'; }
+    document.getElementById('nia').innerHTML = '✅ <strong>Correct!</strong> That is a <strong>' + correct + '</strong>! ' + SHAPES.find(function(s){return s.name===correct;}).emoji;
+  } else {
+    btns.forEach(function(b) {
+      var span = b.querySelector('span');
+      if (!span) return;
+      if (span.textContent.trim() === chosen) b.className = 'quiz-btn wrong';
+      if (span.textContent.trim() === correct) b.className = 'quiz-btn correct';
+    });
+    if (res) { res.textContent = '❌ Not quite! That is a ' + correct + '!'; res.className = 'quiz-result wrong'; }
+    document.getElementById('nia').innerHTML = '💛 Not quite! That shape is a <strong>' + correct + '</strong>!';
+  }
+  quizIdx++;
+  if(chosen === correct){
+    var _adv=false;
+    function _doAdv(){if(_adv)return;_adv=true;showQuizQ();}
+    var _t=setTimeout(_doAdv,1500);
+    var nxtOk=document.createElement('button');
+    nxtOk.textContent='Next \u2192';
+    nxtOk.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxtOk.onclick=function(){clearTimeout(_t);_doAdv();};
+    var _r=document.getElementById('quizResult')||document.getElementById('qResult')||document.getElementById('qRes');
+    if(_r&&_r.parentNode)_r.parentNode.appendChild(nxtOk);
+  } else {
+    var nxt2=document.createElement('button');
+    nxt2.textContent='Next \u2192';
+    nxt2.style.cssText='display:block;margin:14px auto 0;padding:10px 28px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.12)';
+    nxt2.onclick=function(){showQuizQ();};
+    var _r2=document.getElementById('quizResult')||document.getElementById('qResult')||document.getElementById('qRes');
+    if(_r2&&_r2.parentNode)_r2.parentNode.appendChild(nxt2);
+  }
+}
+
+function showQuizEnd() {
+  var stars = '';
+  for (var i = 0; i < quizQuestions.length; i++)
+    stars += '<div class="star' + (i < quizCorrect ? ' earned' : '') + '">⭐</div>';
+  var msg = quizCorrect === 5 ? '🏆 PERFECT! You know all your shapes!' :
+            quizCorrect >= 4 ? '🌟 Brilliant! Almost perfect!' :
+            quizCorrect >= 3 ? '👍 Good work! Keep practising!' : '💪 Keep looking — you will get there!';
+  document.getElementById('mainArea').innerHTML =
+    '<div class="stars">' + stars + '</div>' +
+    '<div style="text-align:center;padding:16px;background:linear-gradient(135deg,#f3e5f5,#e8eaf6);border-radius:18px;border:2.5px solid #ce93d8">' +
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(17px,4vw,24px);color:#6a1b9a;margin-bottom:8px">' + msg + '</div>' +
+    '<div style="font-size:clamp(14px,3vw,17px);font-weight:700;color:#555">You got <strong style="color:#e53935">' + quizCorrect + '</strong> out of <strong>5</strong> correct!</div>' +
+    '</div>';
+  if (quizCorrect >= 4) confettiBurst();
+  document.getElementById('nia').innerHTML = quizCorrect === 5 ?
+    '🏆 <strong>Perfect!</strong> You know every shape! 🔺⭕🟥🟦⭐🔷' :
+    '🌟 Well done! Keep spotting shapes around you every day!';
+}
+
+// ── STEP 4 — Summary ──────────────────────────────────────
+function renderStep4() {
+  var shapeCards = SHAPES.map(function(s) {
+    return '<div style="display:flex;flex-direction:column;align-items:center;gap:6px;' +
+      'background:rgba(255,255,255,.8);border:2.5px solid #ce93d8;border-radius:16px;' +
+      'padding:10px 14px;min-width:90px;max-width:110px;">' +
+      '<svg viewBox="0 0 80 80" width="48" height="48">' + s.svgPath + '</svg>' +
+      '<div style="font-family:Fredoka One,cursive;font-size:clamp(12px,2.5vw,15px);color:#4a148c">' + s.name + '</div>' +
+      '<div style="font-size:11px;font-weight:700;color:#888;text-align:center">' + s.sides + '</div>' +
+      '</div>';
+  }).join('');
+  document.getElementById('mainArea').innerHTML =
+    '<div style="text-align:center;padding:8px 0 14px">' +
+    '<div style="font-size:56px">🏆</div>' +
+    '<div style="font-family:Fredoka One,cursive;font-size:clamp(17px,4vw,24px);color:#6a1b9a;margin-top:8px;margin-bottom:14px">You know your shapes!</div>' +
+    '</div>' +
+    '<div class="preface">' +
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>Shapes have <strong>names</strong> based on their sides and corners.</div></div>' +
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>A <strong>circle</strong> has no sides. A <strong>triangle</strong> has 3. A <strong>square</strong> has 4 equal sides.</div></div>' +
+    '<div class="preface-row"><div class="preface-icon">✅</div><div>Shapes are <strong>everywhere</strong> — wheels, roofs, windows, doors, stars in the sky!</div></div>' +
+    '<div class="preface-row"><div class="preface-icon">🚀</div><div>Next — we will explore <strong>patterns</strong>!</div></div>' +
+    '</div>' +
+    '<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:14px">' + shapeCards + '</div>';
+  confettiBurst();
+}
+
+// ── Navigation ────────────────────────────────────────────
+var RENDERS = [renderStep0, renderStep1, renderStep2, renderStep3, renderStep4];
+
+function goStep(dir) {
+  currentStep = Math.max(0, Math.min(4, currentStep + dir));
+  dots(currentStep);
+  document.getElementById('nia').innerHTML = NIA[currentStep];
+  document.getElementById('btnBack').disabled = (currentStep === 0);
+  document.getElementById('btnNext').textContent = currentStep < 4 ? BTNS[currentStep] : '🔁 Play Again!';
+  document.getElementById('btnNext').disabled = false;
+  if (currentStep === 4) {
+    document.getElementById('btnNext').onclick = function(){ goStep(-4); };
+  } else {
+    document.getElementById('btnNext').onclick = function(){ goStep(1); };
+  }
+  RENDERS[currentStep]();
+}
+
+goStep(0);
+</script>
+</body>
+</html>
